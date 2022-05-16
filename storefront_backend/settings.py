@@ -27,6 +27,7 @@ INSTALLED_APPS = [
 
     'users',
     'document_management',
+    'inventory'
 ]
 
 MIDDLEWARE = [
