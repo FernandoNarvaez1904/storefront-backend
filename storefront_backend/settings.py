@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'users',
+    'document_management',
 ]
 
 MIDDLEWARE = [
