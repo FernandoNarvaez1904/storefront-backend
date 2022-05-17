@@ -5,6 +5,7 @@ class Product(models.Model):
     sku = models.CharField(max_length=255, unique=True)
     is_service = models.BooleanField(default=False)
     current_detail = models.ForeignKey("ProductDetail", on_delete=models.SET_NULL, null=True)
+    is_active = models.BooleanField(default=True)
 
 
 class ProductDetail(models.Model):
