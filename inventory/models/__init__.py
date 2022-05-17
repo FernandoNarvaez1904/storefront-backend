@@ -1,2 +1,2 @@
 from .product_model import Product, ProductDetail
-from .inventory_documents import ModifyStockDocument, InventoryDocument, LostAndDamagedDocument
+from .inventory_documents_model import ModifyStockDocument, InventoryDocument, LostAndDamagedDocument
