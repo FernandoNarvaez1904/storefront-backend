@@ -19,7 +19,6 @@ class ProductDetail(models.Model):
     root_product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_versions")
 
 
-# TODO TEST
 @receiver(post_save, sender=ProductDetail)
 def make_new_detail_current_detail(sender, instance: ProductDetail, **kwargs):
     root_product = instance.root_product
