@@ -1,6 +1,5 @@
 from abc import ABC
 from datetime import datetime
-from enum import auto
 from typing import List
 
 from strawberry_django_plus import gql
@@ -10,10 +9,10 @@ from inventory.models import Product, ModifyStockDocument
 
 @gql.django.type(Product)
 class ProductType(gql.Node, ABC):
-    id: auto
-    sku: auto
-    is_service: auto
-    is_active: auto
+    id: gql.auto
+    sku: gql.auto
+    is_service: gql.auto
+    is_active: gql.auto
 
     @gql.field
     def name(self: Product) -> str:
