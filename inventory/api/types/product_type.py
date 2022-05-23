@@ -7,6 +7,9 @@ from strawberry_django_plus import gql
 from inventory.models import Product, ModifyStockDocument
 
 
+# TODO Find a way to test all the custom fields isolated from the query, just testing the class.
+#     The problem I have is that in the custom field, the instance is passed as self, but i cannot find
+#     a way to replicate this behavior when instantiating the type by itself outside of a query request.
 @gql.django.type(Product)
 class ProductType(gql.Node, ABC):
     id: gql.auto
