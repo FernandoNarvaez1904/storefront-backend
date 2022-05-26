@@ -18,13 +18,14 @@ class Mutation:
         if not errors:
             prod = await sync_to_async(Product.objects.create)(
                 sku=input.sku,
-                is_service=input.is_service
             )
             await sync_to_async(ProductDetail.objects.create)(
                 name=input.name,
                 barcode=input.barcode,
                 cost=input.cost,
                 markup=input.markup,
-                root_product=prod
+                root_product=prod,
+                is_service=input.is_service
+
             )
         return CreateProductPayload(product=prod, user_errors=errors)

@@ -7,7 +7,6 @@ class ProductModelTest(TestCase):
     def setUp(self):
         product = Product.objects.create(
             sku="45",
-            is_service=False
         )
 
         self.product = product

@@ -9,14 +9,14 @@ class ProductTypeTest(TestCase):
     def setUp(self):
         product = Product.objects.create(
             sku="45",
-            is_service=False
         )
         ProductDetail.objects.create(
             name="ProductDetail1",
             barcode="890432",
             cost=10,
             markup=50,
-            root_product=product
+            root_product=product,
+            is_service=False
         )
         self.product = product
 

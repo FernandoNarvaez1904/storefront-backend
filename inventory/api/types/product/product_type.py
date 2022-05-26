@@ -11,8 +11,14 @@ from inventory.models import Product, ModifyStockDocument
 class ProductType(gql.Node, ABC):
     id: gql.auto
     sku: gql.auto
-    is_service: gql.auto
     is_active: gql.auto
+
+    @gql.field
+    def is_service(self: Product) -> Optional[bool]:
+        try:
+            return self.current_detail.is_service
+        except AttributeError:
+            return None
 
     @gql.field
     def name(self: Product) -> Optional[str]:

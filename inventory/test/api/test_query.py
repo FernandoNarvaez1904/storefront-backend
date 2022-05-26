@@ -14,10 +14,10 @@ async def create_bulk_of_product(num: int) -> List[Product]:
     for i in range(num):
         product = await sync_to_async(Product.objects.create)(
             sku=i,
-            is_service=False
         )
 
         await sync_to_async(ProductDetail.objects.create)(
+            is_service=False,
             name=f"ProductDetail{i}",
             barcode="890432",
             cost=10,
