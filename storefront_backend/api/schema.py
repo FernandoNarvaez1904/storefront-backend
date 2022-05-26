@@ -1,7 +1,7 @@
 from strawberry import Schema
 
-from inventory.api.types.product.user_error_types import SKUNotUniqueError, BarcodeNotUniqueError
+from inventory.api.types.product import not_in_schema_types as inventory_not_in_schema_types
 from storefront_backend.api.mutation import Mutation
 from storefront_backend.api.query import Query
 
-schema = Schema(query=Query, mutation=Mutation, types=[SKUNotUniqueError, BarcodeNotUniqueError])
+schema = Schema(query=Query, mutation=Mutation, types=[*inventory_not_in_schema_types])
