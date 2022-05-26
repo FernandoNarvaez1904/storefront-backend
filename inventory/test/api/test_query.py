@@ -49,6 +49,7 @@ class InventoryQueryTest(TestCase):
             lastModifiedDate
             markup
             name
+            price
         """
         query_connection = f"""
        {{

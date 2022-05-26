@@ -40,6 +40,16 @@ class ProductTypeTest(TestCase):
         date = ProductType.last_modified_date(self.product)
         self.assertEqual(self.product.current_detail.date, date)
 
+    def test_price_field(self):
+        # Positive Markup
+        price = ProductType.price(self.product)
+        self.assertEqual(15, price)
+
+        # Negative Markup
+        self.product.current_detail.markup = -50
+        price = ProductType.price(self.product)
+        self.assertEqual(5, price)
+
     def test_current_stock(self):
         # Test for 0, no modification
         self.assertEqual(0, ProductType.current_stock(self.product))

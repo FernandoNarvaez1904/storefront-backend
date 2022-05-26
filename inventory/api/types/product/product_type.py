@@ -62,3 +62,13 @@ class ProductType(gql.Node, ABC):
         for i in stock_changes:
             stock += i.quantity_modified
         return stock
+
+    @gql.field
+    def price(self: Product) -> Optional[float]:
+        try:
+            cost = self.current_detail.cost
+            return cost + (cost * (self.current_detail.markup / 100))
+        except AttributeError:
+            return None
+
+

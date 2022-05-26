@@ -39,6 +39,7 @@ class InventoryMutationTest(TestCase):
             lastModifiedDate
             currentStock
             cost
+            price
             __typename
         """
         user_errors_fragment = """
