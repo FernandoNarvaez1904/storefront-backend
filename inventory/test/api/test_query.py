@@ -34,7 +34,6 @@ class InventoryQueryTest(TestCase):
 
     def test_can_introspect(self):
         self.assertIn("__schema", self.schema.introspect())
-        self.assertTrue(False)
 
     # I tested the product_connection and product in the same test, because
     # I needed the same database objects for the global id.
