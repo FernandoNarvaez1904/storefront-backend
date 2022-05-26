@@ -21,3 +21,23 @@ class BarcodeNotUniqueError(UserError):
     @gql.field
     async def field(self):
         return "barcode"
+
+
+@gql.type
+class ProductNotExistError(UserError):
+    message: str
+    field: str
+
+    @gql.field
+    async def field(self):
+        return "id"
+
+
+@gql.type
+class ProductIsNotActive(UserError):
+    message: str
+    field: str
+
+    @gql.field
+    async def field(self):
+        return "id"
