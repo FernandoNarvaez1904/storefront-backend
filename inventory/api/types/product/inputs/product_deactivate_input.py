@@ -15,7 +15,7 @@ class ProductDeactivateInput:
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []
         product_list = await sync_to_async(list)(Product.objects.filter(id=self.id))
-        
+
         if product_list:
             # As the filter was using id the resulting list will only have one result
             product = product_list[0]
