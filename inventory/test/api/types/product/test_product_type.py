@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from inventory.api.types.product_type import ProductType
+from inventory.api.types.product import ProductType
 from inventory.models import Product, ProductDetail, ModifyStockDocument
 
 

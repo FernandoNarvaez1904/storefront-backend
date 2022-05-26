@@ -3,7 +3,7 @@ from django.test import TestCase
 from inventory.models import Product, ProductDetail
 
 
-class ProductTestCase(TestCase):
+class ProductModelTest(TestCase):
     def setUp(self):
         product = Product.objects.create(
             sku="45",
