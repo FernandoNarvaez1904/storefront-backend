@@ -10,11 +10,11 @@ from storefront_backend.api.types import UserError
 
 @gql.django.input(Product)
 class ProductDeactivateInput:
-    id: gql.auto
+    id: gql.relay.GlobalID
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []
-        product_list = await sync_to_async(list)(Product.objects.filter(id=self.id))
+        product_list = await sync_to_async(list)(Product.objects.filter(id=self.id.node_id))
 
         if product_list:
             # As the filter was using id the resulting list will only have one result
