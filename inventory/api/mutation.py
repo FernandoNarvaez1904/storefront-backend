@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
@@ -14,7 +14,7 @@ class Mutation:
     @gql.field
     async def product_create(self, input: ProductCreateInput) -> CreateProductPayload:
         errors: List[UserError] = await input.validate_and_get_errors()
-        prod = None
+        prod: Optional[Product] = None
         if not errors:
             prod = await sync_to_async(Product.objects.create)(
                 sku=input.sku,
