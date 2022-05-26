@@ -10,3 +10,9 @@ from storefront_backend.api.types import Payload, UserError
 class CreateProductPayload(Payload):
     product: Optional[ProductType]
     user_errors: List[UserError]
+
+
+@gql.type
+class DeactivateProductPayload(Payload):
+    deactivated_product: Optional[ProductType]
+    user_errors: List[UserError]
