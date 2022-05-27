@@ -3,7 +3,7 @@ from typing import List
 from django.test import TestCase
 from strawberry_django_plus.relay import GlobalID
 
-from inventory.api.types.product import ProductNotExistError, ProductIsNotActive
+from inventory.api.types.product import ProductNotExistError, ProductIsNotActiveError
 from inventory.api.types.product.inputs.product_deactivate_input import ProductDeactivateInput
 from inventory.models import Product
 from storefront_backend.api.types import UserError
@@ -32,7 +32,7 @@ class ProductDeactivateInputTest(TestCase):
         inactive_product_type = ProductDeactivateInput(
             id=GlobalID(type_name='ProductType', node_id=f"{self.inactive_product.id}"))
         expected_is_not_active_error: List[UserError] = await inactive_product_type.validate_and_get_errors()
-        self.assertIsInstance(expected_is_not_active_error[0], ProductIsNotActive)
+        self.assertIsInstance(expected_is_not_active_error[0], ProductIsNotActiveError)
 
         # Test no errors
         product_type = ProductDeactivateInput(id=GlobalID(type_name='ProductType', node_id=f"{self.product.id}"))

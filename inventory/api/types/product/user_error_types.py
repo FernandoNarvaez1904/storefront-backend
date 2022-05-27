@@ -34,7 +34,17 @@ class ProductNotExistError(UserError):
 
 
 @gql.type
-class ProductIsNotActive(UserError):
+class ProductIsNotActiveError(UserError):
+    message: str
+    field: str
+
+    @gql.field
+    async def field(self):
+        return "id"
+
+
+@gql.type
+class ProductIsActiveError(UserError):
     message: str
     field: str
 

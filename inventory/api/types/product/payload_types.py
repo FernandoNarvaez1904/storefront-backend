@@ -16,3 +16,9 @@ class CreateProductPayload(Payload):
 class DeactivateProductPayload(Payload):
     deactivated_product: Optional[ProductType]
     user_errors: List[UserError]
+
+
+@gql.type
+class ActivateProductPayload(Payload):
+    activated_product: Optional[ProductType]
+    user_errors: List[UserError]
