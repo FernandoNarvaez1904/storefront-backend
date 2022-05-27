@@ -9,5 +9,5 @@ not_in_schema_types = [
     BarcodeNotUniqueError,
     ProductNotExistError,
     ProductIsNotActiveError,
-    ProductIsActiveError
+    ProductIsActiveError,
 ]
