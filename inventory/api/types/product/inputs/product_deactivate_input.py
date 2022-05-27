@@ -10,7 +10,7 @@ from storefront_backend.api.types import UserError
 
 @gql.django.input(Product)
 class ProductDeactivateInput:
-    id: gql.relay.GlobalID
+    id: gql.relay.GlobalID = gql.field(description="The id given must be of an existing and active Product.")
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []

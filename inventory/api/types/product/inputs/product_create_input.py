@@ -10,10 +10,10 @@ from storefront_backend.api.types import UserError
 
 @gql.django.input(Product)
 class ProductCreateInput:
-    sku: str
+    sku: str = gql.field(description="It must be unique")
     is_service: bool
     name: str
-    barcode: str
+    barcode: str = gql.field(description="It must be unique")
     cost: float
     markup: float
 

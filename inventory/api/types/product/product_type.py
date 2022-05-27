@@ -70,5 +70,3 @@ class ProductType(gql.Node, ABC):
             return cost + (cost * (self.current_detail.markup / 100))
         except AttributeError:
             return None
-
-
