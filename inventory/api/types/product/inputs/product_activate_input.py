@@ -23,7 +23,7 @@ class ProductActivateInput:
 
             if product.is_active:
                 errors.append(ProductIsActiveError(
-                    message=f"Product with id {self.id} is not active. Cannot deactivate inactive products"
+                    message=f"Product with id {self.id} is  active. Cannot activate inactive products"
                 ))
         else:
             errors.append(
