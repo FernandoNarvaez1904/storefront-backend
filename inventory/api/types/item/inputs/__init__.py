@@ -1,1 +1,1 @@
-from .product_create_input import ProductCreateInput
+from .item_create_input import ItemCreateInput

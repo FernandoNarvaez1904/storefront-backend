@@ -3,7 +3,7 @@ from typing import List, Optional
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
-from inventory.api.types.item import ProductCreateInput, CreateProductPayload
+from inventory.api.types.item import ItemCreateInput, CreateProductPayload
 from inventory.api.types.item.inputs.item_activate_input import ItemActivateInput
 from inventory.api.types.item.inputs.item_deactivate_input import ItemDeactivateInput
 from inventory.api.types.item.payload_types import DeactivateProductPayload, ActivateProductPayload
@@ -15,7 +15,7 @@ from storefront_backend.api.types import UserError
 class Mutation:
 
     @gql.field
-    async def product_create(self, input: ProductCreateInput) -> CreateProductPayload:
+    async def product_create(self, input: ItemCreateInput) -> CreateProductPayload:
         errors: List[UserError] = await input.validate_and_get_errors()
         prod: Optional[Item] = None
         if not errors:

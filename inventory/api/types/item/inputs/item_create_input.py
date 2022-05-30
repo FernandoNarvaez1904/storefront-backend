@@ -9,7 +9,7 @@ from storefront_backend.api.types import UserError
 
 
 @gql.django.input(Item)
-class ProductCreateInput:
+class ItemCreateInput:
     sku: str = gql.field(description="It must be unique")
     is_service: bool
     name: str
@@ -19,7 +19,7 @@ class ProductCreateInput:
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []
-        if await sync_to_async(Item.objects.filter(sku=self.sku).exists)():
+        if await sync_to_async(ItemDetail.objects.filter(sku=self.sku).exists)():
             errors.append(
                 SKUNotUniqueError(
                     message="SKU is no unique"
