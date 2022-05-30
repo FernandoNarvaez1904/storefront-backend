@@ -3,13 +3,11 @@ from django.test import TestCase
 from inventory.models import Item, ItemDetail
 
 
-class ProductModelTest(TestCase):
+class ItemModelTest(TestCase):
     def setUp(self):
-        product = Item.objects.create(
-            sku="45",
-        )
+        item = Item.objects.create()
 
-        self.product = product
+        self.item = item
 
     def test_make_new_detail_current_detail(self):
         # Test it will change if current is another None
@@ -18,15 +16,16 @@ class ProductModelTest(TestCase):
             barcode="890432",
             cost=10,
             markup=50,
-            root_product=self.product
+            root_item=self.item,
+            sku="d"
         )
-        self.assertEqual(self.product.current_detail.id, pr_dt_1.id)
+        self.assertEqual(self.item.current_detail.id, pr_dt_1.id)
         # Test it will change if current is another detail
         pr_dt_2 = ItemDetail.objects.create(
             name="ProductDetail1",
-            barcode="890432",
+            barcode="890432d",
             cost=10,
             markup=50,
-            root_product=self.product
+            root_item=self.item
         )
-        self.assertEqual(self.product.current_detail.id, pr_dt_2.id)
+        self.assertEqual(self.item.current_detail.id, pr_dt_2.id)

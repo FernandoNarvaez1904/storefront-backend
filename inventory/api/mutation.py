@@ -3,10 +3,10 @@ from typing import List, Optional
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
-from inventory.api.types.product import ProductCreateInput, CreateProductPayload
-from inventory.api.types.product.inputs.product_activate_input import ProductActivateInput
-from inventory.api.types.product.inputs.product_deactivate_input import ProductDeactivateInput
-from inventory.api.types.product.payload_types import DeactivateProductPayload, ActivateProductPayload
+from inventory.api.types.item import ProductCreateInput, CreateProductPayload
+from inventory.api.types.item.inputs.product_activate_input import ProductActivateInput
+from inventory.api.types.item.inputs.product_deactivate_input import ProductDeactivateInput
+from inventory.api.types.item.payload_types import DeactivateProductPayload, ActivateProductPayload
 from inventory.models import Item, ItemDetail
 from storefront_backend.api.types import UserError
 

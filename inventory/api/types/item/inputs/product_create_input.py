@@ -3,7 +3,7 @@ from typing import List
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
-from inventory.api.types.product.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError
+from inventory.api.types.item.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError
 from inventory.models import Item, ItemDetail
 from storefront_backend.api.types import UserError
 

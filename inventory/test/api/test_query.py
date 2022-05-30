@@ -35,7 +35,7 @@ class InventoryQueryTest(TestCase):
     def test_can_introspect(self):
         self.assertIn("__schema", self.schema.introspect())
 
-    # I tested the product_connection and product in the same test, because
+    # I tested the product_connection and item in the same test, because
     # I needed the same database objects for the global id.
     async def test_product_queries(self):
         product_node_query_fragment = """
@@ -92,17 +92,17 @@ class InventoryQueryTest(TestCase):
         # Using the len of the list to make sure ii matches the totalCount
         self.assertEqual(database_object_count, len(connection_nodes))
 
-        # Testing product node query
+        # Testing item node query
         first_node = connection_nodes[0].get("node")
         query_product = f"""
         {{
-            product(id:"{first_node.get('id')}")
+            item(id:"{first_node.get('id')}")
             {{
                 {product_node_query_fragment}
             }}
         }}
         """
         product_node_query_result: ExecutionResult = await self.schema.execute(query_product)
-        product_node = product_node_query_result.data.get("product")
-        # Testing if the object retrieved by the product node is the same of the connection
+        product_node = product_node_query_result.data.get("item")
+        # Testing if the object retrieved by the item node is the same of the connection
         self.assertDictEqual(first_node, product_node)

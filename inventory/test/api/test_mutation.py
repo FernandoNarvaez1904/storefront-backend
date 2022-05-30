@@ -8,7 +8,7 @@ from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.mutation import Mutation
 from inventory.api.query import Query
-from inventory.api.types.product import not_in_schema_types
+from inventory.api.types.item import not_in_schema_types
 from inventory.models import Item
 
 
@@ -54,7 +54,7 @@ class InventoryMutationTest(TestCase):
                     userErrors{{
                         {user_errors_fragment}
                     }}
-                    product{{
+                    item{{
                         {product_fragment}
                     }}
                 }}
@@ -81,14 +81,14 @@ class InventoryMutationTest(TestCase):
         # Test Mutation Result UserError is empty
         self.assertFalse(len(user_errors))
 
-        # Test if product is returned
-        product: dict = product_create_mutation_result.get("product")
+        # Test if item is returned
+        product: dict = product_create_mutation_result.get("item")
         self.assertIsNotNone(product)
 
         # Test if all fields return
         self.assertNotIn(None, product.values())
 
-        # Test if product was actually created
+        # Test if item was actually created
         pr_query_set = await sync_to_async(list)(Item.objects.filter(sku=product.get("sku")))
         self.assertTrue(pr_query_set)
 
@@ -133,14 +133,14 @@ class InventoryMutationTest(TestCase):
         # Test Mutation Result UserError is empty
         self.assertFalse(len(user_errors))
 
-        # Test if product is returned
+        # Test if item is returned
         product_type_result: dict = product_deactivate_mutation_result.get("deactivatedProduct")
         self.assertIsNotNone(product_type_result)
 
         # Test if all fields return
         self.assertNotIn(None, product_type_result.values())
 
-        # Test if product was changed
+        # Test if item was changed
         product_changed: Item = await sync_to_async(Item.objects.get)(id=product_global_id.node_id)
         self.assertFalse(product_changed.is_active)
 
@@ -186,13 +186,13 @@ class InventoryMutationTest(TestCase):
         # Test Mutation Result UserError is empty
         self.assertFalse(len(user_errors))
 
-        # Test if product is returned
+        # Test if item is returned
         product_type_result: dict = product_deactivate_mutation_result.get("activatedProduct")
         self.assertIsNotNone(product_type_result)
 
         # Test if all fields return
         self.assertNotIn(None, product_type_result.values())
 
-        # Test if product was changed
+        # Test if item was changed
         product_changed: Item = await sync_to_async(Item.objects.get)(id=product_global_id.node_id)
         self.assertTrue(product_changed.is_active)

@@ -2,8 +2,8 @@ from typing import List
 
 from django.test import TestCase
 
-from inventory.api.types.product import ProductCreateInput
-from inventory.api.types.product.user_error_types import SKUNotUniqueError, BarcodeNotUniqueError
+from inventory.api.types.item import ProductCreateInput
+from inventory.api.types.item.user_error_types import SKUNotUniqueError, BarcodeNotUniqueError
 from inventory.models import Item, ItemDetail
 from storefront_backend.api.types import UserError
 
