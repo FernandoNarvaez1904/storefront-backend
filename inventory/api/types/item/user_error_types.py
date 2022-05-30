@@ -34,7 +34,7 @@ class ItemNotExistError(UserError):
 
 
 @gql.type
-class ProductIsNotActiveError(UserError):
+class ItemIsNotActiveError(UserError):
     message: str
     field: str
 

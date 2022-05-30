@@ -5,7 +5,7 @@ from strawberry_django_plus import gql
 
 from inventory.api.types.item import ProductCreateInput, CreateProductPayload
 from inventory.api.types.item.inputs.item_activate_input import ItemActivateInput
-from inventory.api.types.item.inputs.product_deactivate_input import ProductDeactivateInput
+from inventory.api.types.item.inputs.item_deactivate_input import ItemDeactivateInput
 from inventory.api.types.item.payload_types import DeactivateProductPayload, ActivateProductPayload
 from inventory.models import Item, ItemDetail
 from storefront_backend.api.types import UserError
@@ -34,7 +34,7 @@ class Mutation:
         return CreateProductPayload(product=prod, user_errors=errors)
 
     @gql.field
-    async def product_deactivate(self, input: ProductDeactivateInput) -> DeactivateProductPayload:
+    async def product_deactivate(self, input: ItemDeactivateInput) -> DeactivateProductPayload:
         errors: List[UserError] = await input.validate_and_get_errors()
         prod: Optional[Item] = None
         if not errors:
