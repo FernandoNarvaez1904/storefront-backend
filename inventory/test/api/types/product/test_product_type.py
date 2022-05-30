@@ -1,16 +1,16 @@
 from django.test import TestCase
 
 from inventory.api.types.product import ProductType
-from inventory.models import Product, ProductDetail, ModifyStockDocument
+from inventory.models import Item, ItemDetail, ModifyStockOrder
 
 
 class ProductTypeTest(TestCase):
 
     def setUp(self):
-        product = Product.objects.create(
+        product = Item.objects.create(
             sku="45",
         )
-        ProductDetail.objects.create(
+        ItemDetail.objects.create(
             name="ProductDetail1",
             barcode="890432",
             cost=10,
@@ -55,17 +55,17 @@ class ProductTypeTest(TestCase):
         self.assertEqual(0, ProductType.current_stock(self.product))
 
         # Test Adding Positive
-        ModifyStockDocument.objects.create(product_id=self.product, quantity_modified=5)
+        ModifyStockOrder.objects.create(product_id=self.product, quantity_modified=5)
         self.assertEqual(5, ProductType.current_stock(self.product))
 
         # Test going negative from positive
-        ModifyStockDocument.objects.create(product_id=self.product, quantity_modified=-20)
+        ModifyStockOrder.objects.create(product_id=self.product, quantity_modified=-20)
         self.assertEqual(-15, ProductType.current_stock(self.product))
 
         # Test subtracting when negative
-        ModifyStockDocument.objects.create(product_id=self.product, quantity_modified=-5)
+        ModifyStockOrder.objects.create(product_id=self.product, quantity_modified=-5)
         self.assertEqual(-20, ProductType.current_stock(self.product))
 
         # Test going positive from negative
-        ModifyStockDocument.objects.create(product_id=self.product, quantity_modified=50)
+        ModifyStockOrder.objects.create(product_id=self.product, quantity_modified=50)
         self.assertEqual(30, ProductType.current_stock(self.product))

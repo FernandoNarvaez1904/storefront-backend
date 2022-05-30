@@ -5,17 +5,17 @@ from strawberry_django_plus import gql
 
 from inventory.api.types.product import ProductNotExistError
 from inventory.api.types.product.user_error_types import ProductIsActiveError
-from inventory.models import Product
+from inventory.models import Item
 from storefront_backend.api.types import UserError
 
 
-@gql.django.input(Product)
+@gql.django.input(Item)
 class ProductActivateInput:
     id: gql.relay.GlobalID = gql.field(description="The id given must be of an existing and inactive Product.")
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []
-        product_list = await sync_to_async(list)(Product.objects.filter(id=self.id.node_id))
+        product_list = await sync_to_async(list)(Item.objects.filter(id=self.id.node_id))
 
         if product_list:
             # As the filter was using id the resulting list will only have one result

@@ -6,17 +6,17 @@ from strawberry import Schema
 from strawberry.types import ExecutionResult
 
 from inventory.api.query import Query
-from inventory.models import Product, ProductDetail
+from inventory.models import Item, ItemDetail
 
 
-async def create_bulk_of_product(num: int) -> List[Product]:
+async def create_bulk_of_product(num: int) -> List[Item]:
     product_list = []
     for i in range(num):
-        product = await sync_to_async(Product.objects.create)(
+        product = await sync_to_async(Item.objects.create)(
             sku=i,
         )
 
-        await sync_to_async(ProductDetail.objects.create)(
+        await sync_to_async(ItemDetail.objects.create)(
             is_service=False,
             name=f"ProductDetail{i}",
             barcode="890432",
@@ -86,7 +86,7 @@ class InventoryQueryTest(TestCase):
         connection_nodes = connection.get("edges")
 
         # Test if product_list len is connection edges len
-        database_object_count = await sync_to_async(Product.objects.count)()
+        database_object_count = await sync_to_async(Item.objects.count)()
         total_count_connection_nodes = connection.get("totalCount")
         self.assertEqual(database_object_count, total_count_connection_nodes)
         # Using the len of the list to make sure ii matches the totalCount

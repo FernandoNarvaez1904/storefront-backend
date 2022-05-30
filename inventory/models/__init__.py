@@ -1,2 +1,4 @@
-from .product_model import Product, ProductDetail
-from .inventory_documents_model import ModifyStockDocument, InventoryDocument, LostAndDamagedDocument
+from .document_models import *
+from .interfaces import *
+from .item_model import Item, ItemDetail, ItemGroup
+from .person_models import *

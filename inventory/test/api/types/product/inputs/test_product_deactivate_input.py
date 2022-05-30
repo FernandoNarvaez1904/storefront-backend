@@ -5,18 +5,18 @@ from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.types.product import ProductNotExistError, ProductIsNotActiveError
 from inventory.api.types.product.inputs.product_deactivate_input import ProductDeactivateInput
-from inventory.models import Product
+from inventory.models import Item
 from storefront_backend.api.types import UserError
 
 
 class ProductDeactivateInputTest(TestCase):
     def setUp(self):
-        product = Product.objects.create(
+        product = Item.objects.create(
             sku="1",
         )
         self.product = product
 
-        inactive_product = Product.objects.create(
+        inactive_product = Item.objects.create(
             sku="2",
             is_active=False
         )

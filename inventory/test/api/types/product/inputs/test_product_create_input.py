@@ -4,16 +4,16 @@ from django.test import TestCase
 
 from inventory.api.types.product import ProductCreateInput
 from inventory.api.types.product.user_error_types import SKUNotUniqueError, BarcodeNotUniqueError
-from inventory.models import Product, ProductDetail
+from inventory.models import Item, ItemDetail
 from storefront_backend.api.types import UserError
 
 
 class ProductCreateInputTest(TestCase):
     def setUp(self):
-        product = Product.objects.create(
+        product = Item.objects.create(
             sku="1",
         )
-        ProductDetail.objects.create(
+        ItemDetail.objects.create(
             name="ProductDetail1",
             barcode="barcode",
             cost=10,

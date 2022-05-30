@@ -9,7 +9,7 @@ from strawberry_django_plus.relay import GlobalID
 from inventory.api.mutation import Mutation
 from inventory.api.query import Query
 from inventory.api.types.product import not_in_schema_types
-from inventory.models import Product
+from inventory.models import Item
 
 
 class InventoryMutationTest(TestCase):
@@ -89,11 +89,11 @@ class InventoryMutationTest(TestCase):
         self.assertNotIn(None, product.values())
 
         # Test if product was actually created
-        pr_query_set = await sync_to_async(list)(Product.objects.filter(sku=product.get("sku")))
+        pr_query_set = await sync_to_async(list)(Item.objects.filter(sku=product.get("sku")))
         self.assertTrue(pr_query_set)
 
     async def test_product_deactivate(self):
-        product = await sync_to_async(Product.objects.create)(
+        product = await sync_to_async(Item.objects.create)(
             sku="1",
         )
         product_global_id = GlobalID(type_name='ProductType', node_id=f"{product.id}")
@@ -141,11 +141,11 @@ class InventoryMutationTest(TestCase):
         self.assertNotIn(None, product_type_result.values())
 
         # Test if product was changed
-        product_changed: Product = await sync_to_async(Product.objects.get)(id=product_global_id.node_id)
+        product_changed: Item = await sync_to_async(Item.objects.get)(id=product_global_id.node_id)
         self.assertFalse(product_changed.is_active)
 
     async def test_product_activate(self):
-        product = await sync_to_async(Product.objects.create)(
+        product = await sync_to_async(Item.objects.create)(
             sku="1",
             is_active=False
         )
@@ -194,5 +194,5 @@ class InventoryMutationTest(TestCase):
         self.assertNotIn(None, product_type_result.values())
 
         # Test if product was changed
-        product_changed: Product = await sync_to_async(Product.objects.get)(id=product_global_id.node_id)
+        product_changed: Item = await sync_to_async(Item.objects.get)(id=product_global_id.node_id)
         self.assertTrue(product_changed.is_active)
