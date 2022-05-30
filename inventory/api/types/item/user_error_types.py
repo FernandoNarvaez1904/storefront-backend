@@ -24,7 +24,7 @@ class BarcodeNotUniqueError(UserError):
 
 
 @gql.type
-class ProductNotExistError(UserError):
+class ItemNotExistError(UserError):
     message: str
     field: str
 
@@ -44,7 +44,7 @@ class ProductIsNotActiveError(UserError):
 
 
 @gql.type
-class ProductIsActiveError(UserError):
+class ItemIsActiveError(UserError):
     message: str
     field: str
 

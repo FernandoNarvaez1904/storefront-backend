@@ -4,7 +4,7 @@ from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
 from inventory.api.types.item import ProductCreateInput, CreateProductPayload
-from inventory.api.types.item.inputs.product_activate_input import ProductActivateInput
+from inventory.api.types.item.inputs.item_activate_input import ItemActivateInput
 from inventory.api.types.item.inputs.product_deactivate_input import ProductDeactivateInput
 from inventory.api.types.item.payload_types import DeactivateProductPayload, ActivateProductPayload
 from inventory.models import Item, ItemDetail
@@ -44,7 +44,7 @@ class Mutation:
         return DeactivateProductPayload(deactivated_product=prod, user_errors=errors)
 
     @gql.field
-    async def product_activate(self, input: ProductActivateInput) -> ActivateProductPayload:
+    async def product_activate(self, input: ItemActivateInput) -> ActivateProductPayload:
         errors: List[UserError] = await input.validate_and_get_errors()
         prod: Optional[Item] = None
         if not errors:
