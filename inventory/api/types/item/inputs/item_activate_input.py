@@ -23,7 +23,7 @@ class ItemActivateInput:
 
             if item.is_active:
                 errors.append(ItemIsActiveError(
-                    message=f"Item with id {self.id} is  active. Cannot activate inactive items"
+                    message=f"Item with id {self.id} is  active. Cannot activate active items"
                 ))
         else:
             errors.append(
