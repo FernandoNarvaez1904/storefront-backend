@@ -3,13 +3,13 @@ from typing import List
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
-from inventory.api.types.product.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError
-from inventory.models import Product, ProductDetail
+from inventory.api.types.item.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError
+from inventory.models import Item, ItemDetail
 from storefront_backend.api.types import UserError
 
 
-@gql.django.input(Product)
-class ProductCreateInput:
+@gql.django.input(Item)
+class ItemCreateInput:
     sku: str = gql.field(description="It must be unique")
     is_service: bool
     name: str
@@ -19,13 +19,13 @@ class ProductCreateInput:
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []
-        if await sync_to_async(Product.objects.filter(sku=self.sku).exists)():
+        if await sync_to_async(ItemDetail.objects.filter(sku=self.sku).exists)():
             errors.append(
                 SKUNotUniqueError(
                     message="SKU is no unique"
                 )
             )
-        if await sync_to_async(ProductDetail.objects.filter(barcode=self.barcode).exists)():
+        if await sync_to_async(ItemDetail.objects.filter(barcode=self.barcode).exists)():
             errors.append(
                 BarcodeNotUniqueError(
                     message="Barcode is no unique"

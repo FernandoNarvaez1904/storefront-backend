@@ -1,9 +1,9 @@
 from strawberry_django_plus import gql
 
-from inventory.api.types.product import ProductType
+from .types.item import ItemType
 
 
 @gql.type
 class Query:
-    product: ProductType = gql.relay.node()
-    product_connection: gql.relay.Connection[ProductType] = gql.relay.connection()
+    item: ItemType = gql.relay.node()
+    item_connection: gql.relay.Connection[ItemType] = gql.relay.connection()
