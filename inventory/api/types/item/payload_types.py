@@ -19,6 +19,6 @@ class DeactivateItemPayload(Payload):
 
 
 @gql.type
-class ActivateProductPayload(Payload):
-    activated_product: Optional[ItemType]
+class ActivateItemPayload(Payload):
+    activated_item: Optional[ItemType]
     user_errors: List[UserError]
