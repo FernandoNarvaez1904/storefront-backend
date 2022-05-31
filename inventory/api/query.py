@@ -5,5 +5,5 @@ from .types.item import ItemType
 
 @gql.type
 class Query:
-    product: ItemType = gql.relay.node()
-    product_connection: gql.relay.Connection[ItemType] = gql.relay.connection()
+    item: ItemType = gql.relay.node()
+    item_connection: gql.relay.Connection[ItemType] = gql.relay.connection()

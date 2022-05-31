@@ -10,22 +10,20 @@ from inventory.models import Item, ItemDetail
 
 
 async def create_bulk_of_product(num: int) -> List[Item]:
-    product_list = []
+    item_list = []
     for i in range(num):
-        product = await sync_to_async(Item.objects.create)(
-            sku=i,
-        )
+        item = await sync_to_async(Item.objects.create)()
 
         await sync_to_async(ItemDetail.objects.create)(
-            is_service=False,
             name=f"ProductDetail{i}",
             barcode="890432",
             cost=10,
             markup=50,
-            root_product=product
+            root_item=item,
+            sku=i
         )
-        product_list.append(product)
-    return product_list
+        item_list.append(item)
+    return item_list
 
 
 class InventoryQueryTest(TestCase):
@@ -35,10 +33,10 @@ class InventoryQueryTest(TestCase):
     def test_can_introspect(self):
         self.assertIn("__schema", self.schema.introspect())
 
-    # I tested the product_connection and item in the same test, because
+    # I tested the item_connection and item in the same test, because
     # I needed the same database objects for the global id.
-    async def test_product_queries(self):
-        product_node_query_fragment = """
+    async def test_item_queries(self):
+        item_node_query_fragment = """
             id
             sku
             isService
@@ -53,7 +51,7 @@ class InventoryQueryTest(TestCase):
         """
         query_connection = f"""
        {{
-          productConnection(
+          itemConnection(
             # Args were included to test if they exist
             before: null
             after: null
@@ -63,7 +61,7 @@ class InventoryQueryTest(TestCase):
             edges{{
               cursor
               node{{
-                {product_node_query_fragment}
+                {item_node_query_fragment}
               }}
             }}
             totalCount
@@ -75,17 +73,17 @@ class InventoryQueryTest(TestCase):
         # Testing for empty connection
         connection_query_result: ExecutionResult = await self.schema.execute(query_connection)
         expected_empty_result = {
-            'data': {'productConnection': {'edges': [], 'totalCount': 0, '__typename': 'ProductTypeConnection'}},
+            'data': {'itemConnection': {'edges': [], 'totalCount': 0, '__typename': 'ItemTypeConnection'}},
             'errors': None, 'extensions': {}}
         self.assertDictEqual(expected_empty_result, connection_query_result.__dict__)
 
-        # Creating Products for testing not-empty connection
+        # Creating Items for testing not-empty connection
         await create_bulk_of_product(10)
         connection_query_result: ExecutionResult = await self.schema.execute(query_connection)
-        connection: dict = connection_query_result.data.get("productConnection")
+        connection: dict = connection_query_result.data.get("itemConnection")
         connection_nodes = connection.get("edges")
 
-        # Test if product_list len is connection edges len
+        # Test if item_list len is connection edges len
         database_object_count = await sync_to_async(Item.objects.count)()
         total_count_connection_nodes = connection.get("totalCount")
         self.assertEqual(database_object_count, total_count_connection_nodes)
@@ -98,11 +96,11 @@ class InventoryQueryTest(TestCase):
         {{
             item(id:"{first_node.get('id')}")
             {{
-                {product_node_query_fragment}
+                {item_node_query_fragment}
             }}
         }}
         """
-        product_node_query_result: ExecutionResult = await self.schema.execute(query_product)
-        product_node = product_node_query_result.data.get("item")
+        item_node_query_result: ExecutionResult = await self.schema.execute(query_product)
+        item_node = item_node_query_result.data.get("item")
         # Testing if the object retrieved by the item node is the same of the connection
-        self.assertDictEqual(first_node, product_node)
+        self.assertDictEqual(first_node, item_node)
