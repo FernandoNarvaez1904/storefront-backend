@@ -94,21 +94,18 @@ class InventoryMutationTest(TestCase):
         pr_query_set = await sync_to_async(list)(Item.objects.filter(id=global_id.node_id))
         self.assertTrue(pr_query_set)
 
-    async def test_product_deactivate(self):
-        product = await sync_to_async(Item.objects.create)(
-            sku="1",
-        )
-        product_global_id = GlobalID(type_name='ProductType', node_id=f"{product.id}")
+    async def test_item_deactivate(self):
+        item = await sync_to_async(Item.objects.create)()
+        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
         mutation_query = f"""
-            mutation deactivateProduct{{
-                productDeactivate(input:{{id:"{product_global_id}"}}){{
+            mutation deactivateItem{{
+                itemDeactivate(input:{{id:"{item_global_id}"}}){{
                     userErrors{{
                         field
                         message
                     }}
-                    deactivatedProduct{{
+                    deactivatedItem{{
                         id
-                        sku
                         isActive
                     }}
                 }}
@@ -125,26 +122,26 @@ class InventoryMutationTest(TestCase):
         self.assertIsNotNone(exec_result_data)
 
         # Test Mutation Result Exist
-        product_deactivate_mutation_result: dict = exec_result_data.get("productDeactivate")
-        self.assertIsNotNone(product_deactivate_mutation_result)
+        item_deactivate_mutation_result: dict = exec_result_data.get("itemDeactivate")
+        self.assertIsNotNone(item_deactivate_mutation_result)
 
         # Test if UserError is returned
-        user_errors: List = product_deactivate_mutation_result.get("userErrors")
+        user_errors: List = item_deactivate_mutation_result.get("userErrors")
         self.assertIsNotNone(user_errors)
 
         # Test Mutation Result UserError is empty
         self.assertFalse(len(user_errors))
 
         # Test if item is returned
-        product_type_result: dict = product_deactivate_mutation_result.get("deactivatedProduct")
-        self.assertIsNotNone(product_type_result)
+        item_type_result: dict = item_deactivate_mutation_result.get("deactivatedItem")
+        self.assertIsNotNone(item_type_result)
 
         # Test if all fields return
-        self.assertNotIn(None, product_type_result.values())
+        self.assertNotIn(None, item_type_result.values())
 
         # Test if item was changed
-        product_changed: Item = await sync_to_async(Item.objects.get)(id=product_global_id.node_id)
-        self.assertFalse(product_changed.is_active)
+        item_changed: Item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
+        self.assertFalse(item_changed.is_active)
 
     async def test_product_activate(self):
         product = await sync_to_async(Item.objects.create)(
