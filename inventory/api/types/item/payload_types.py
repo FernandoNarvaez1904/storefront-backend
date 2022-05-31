@@ -7,8 +7,8 @@ from .item_type import ItemType
 
 
 @gql.type
-class CreateProductPayload(Payload):
-    product: Optional[ItemType]
+class CreateItemPayload(Payload):
+    item: Optional[ItemType]
     user_errors: List[UserError]
 
 

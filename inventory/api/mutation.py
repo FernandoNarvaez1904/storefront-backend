@@ -3,7 +3,7 @@ from typing import List, Optional
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
-from inventory.api.types.item import ItemCreateInput, CreateProductPayload
+from inventory.api.types.item import ItemCreateInput, CreateItemPayload
 from inventory.api.types.item.inputs.item_activate_input import ItemActivateInput
 from inventory.api.types.item.inputs.item_deactivate_input import ItemDeactivateInput
 from inventory.api.types.item.payload_types import DeactivateProductPayload, ActivateProductPayload
@@ -15,23 +15,23 @@ from storefront_backend.api.types import UserError
 class Mutation:
 
     @gql.field
-    async def product_create(self, input: ItemCreateInput) -> CreateProductPayload:
+    async def item_create(self, input: ItemCreateInput) -> CreateItemPayload:
         errors: List[UserError] = await input.validate_and_get_errors()
-        prod: Optional[Item] = None
+        item: Optional[Item] = None
         if not errors:
-            prod = await sync_to_async(Item.objects.create)(
-                sku=input.sku,
+            item = await sync_to_async(Item.objects.create)(
+                is_service=input.is_service
             )
             await sync_to_async(ItemDetail.objects.create)(
                 name=input.name,
+                sku=input.sku,
                 barcode=input.barcode,
                 cost=input.cost,
                 markup=input.markup,
-                root_product=prod,
-                is_service=input.is_service
+                root_item=item,
 
             )
-        return CreateProductPayload(product=prod, user_errors=errors)
+        return CreateItemPayload(item=item, user_errors=errors)
 
     @gql.field
     async def product_deactivate(self, input: ItemDeactivateInput) -> DeactivateProductPayload:

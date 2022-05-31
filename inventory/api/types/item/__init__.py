@@ -1,6 +1,6 @@
 from .inputs import *
 from .item_type import ItemType
-from .payload_types import CreateProductPayload
+from .payload_types import CreateItemPayload
 from .user_error_types import SKUNotUniqueError, BarcodeNotUniqueError, ItemNotExistError, ItemIsNotActiveError, \
     ItemIsActiveError
 
