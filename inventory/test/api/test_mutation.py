@@ -173,18 +173,18 @@ class InventoryMutationTest(TestCase):
         self.assertIsNotNone(exec_result_data)
 
         # Test Mutation Result Exist
-        product_item_mutation_result: dict = exec_result_data.get("itemActivate")
-        self.assertIsNotNone(product_item_mutation_result)
+        item_item_mutation_result: dict = exec_result_data.get("itemActivate")
+        self.assertIsNotNone(item_item_mutation_result)
 
         # Test if UserError is returned
-        user_errors: List = product_item_mutation_result.get("userErrors")
+        user_errors: List = item_item_mutation_result.get("userErrors")
         self.assertIsNotNone(user_errors)
 
         # Test Mutation Result UserError is empty
         self.assertFalse(len(user_errors))
 
         # Test if item is returned
-        item_type_result: dict = product_item_mutation_result.get("activatedItem")
+        item_type_result: dict = item_item_mutation_result.get("activatedItem")
         self.assertIsNotNone(item_type_result)
 
         # Test if all fields return

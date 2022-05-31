@@ -14,7 +14,7 @@ class ItemTypeTest(TestCase):
         )
         ItemDetail.objects.create(
             sku="45",
-            name="ProductDetail1",
+            name="itemDetail1",
             barcode="890432",
             cost=10,
             markup=50,

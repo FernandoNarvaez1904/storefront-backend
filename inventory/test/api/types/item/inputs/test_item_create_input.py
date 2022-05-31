@@ -12,7 +12,7 @@ class ItemCreateInputTest(TestCase):
     def setUp(self):
         item = Item.objects.create()
         ItemDetail.objects.create(
-            name="ProductDetail1",
+            name="itemDetail1",
             barcode="barcode",
             cost=10,
             markup=50,

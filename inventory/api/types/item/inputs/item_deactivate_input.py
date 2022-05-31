@@ -26,7 +26,7 @@ class ItemDeactivateInput:
                 ))
         else:
             errors.append(
-                ItemNotExistError(message=f"Product with id {self.id} does not exist in database")
+                ItemNotExistError(message=f"item with id {self.id} does not exist in database")
             )
 
         return errors

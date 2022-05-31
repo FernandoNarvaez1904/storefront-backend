@@ -32,6 +32,6 @@ class ItemActivateInputTest(TestCase):
         self.assertIsInstance(expected_is_not_active_error[0], ItemIsActiveError)
 
         # Test no errors
-        product_type = ItemActivateInput(id=GlobalID(type_name='ItemType', node_id=f"{self.inactive_item.id}"))
-        expected_no_error: List[UserError] = await product_type.validate_and_get_errors()
+        item_type = ItemActivateInput(id=GlobalID(type_name='ItemType', node_id=f"{self.inactive_item.id}"))
+        expected_no_error: List[UserError] = await item_type.validate_and_get_errors()
         self.assertFalse(len(expected_no_error))

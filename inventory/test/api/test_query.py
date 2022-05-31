@@ -9,13 +9,13 @@ from inventory.api.query import Query
 from inventory.models import Item, ItemDetail
 
 
-async def create_bulk_of_product(num: int) -> List[Item]:
+async def create_bulk_of_item(num: int) -> List[Item]:
     item_list = []
     for i in range(num):
         item = await sync_to_async(Item.objects.create)()
 
         await sync_to_async(ItemDetail.objects.create)(
-            name=f"ProductDetail{i}",
+            name=f"itemDetail{i}",
             barcode="890432",
             cost=10,
             markup=50,
@@ -78,7 +78,7 @@ class InventoryQueryTest(TestCase):
         self.assertDictEqual(expected_empty_result, connection_query_result.__dict__)
 
         # Creating Items for testing not-empty connection
-        await create_bulk_of_product(10)
+        await create_bulk_of_item(10)
         connection_query_result: ExecutionResult = await self.schema.execute(query_connection)
         connection: dict = connection_query_result.data.get("itemConnection")
         connection_nodes = connection.get("edges")
@@ -92,7 +92,7 @@ class InventoryQueryTest(TestCase):
 
         # Testing item node query
         first_node = connection_nodes[0].get("node")
-        query_product = f"""
+        query_item = f"""
         {{
             item(id:"{first_node.get('id')}")
             {{
@@ -100,7 +100,7 @@ class InventoryQueryTest(TestCase):
             }}
         }}
         """
-        item_node_query_result: ExecutionResult = await self.schema.execute(query_product)
+        item_node_query_result: ExecutionResult = await self.schema.execute(query_item)
         item_node = item_node_query_result.data.get("item")
         # Testing if the object retrieved by the item node is the same of the connection
         self.assertDictEqual(first_node, item_node)

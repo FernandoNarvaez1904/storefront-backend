@@ -15,11 +15,11 @@ class ItemActivateInput:
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []
-        product_list = await sync_to_async(list)(Item.objects.filter(id=self.id.node_id))
+        item_list = await sync_to_async(list)(Item.objects.filter(id=self.id.node_id))
 
-        if product_list:
+        if item_list:
             # As the filter was using id the resulting list will only have one result
-            item = product_list[0]
+            item = item_list[0]
 
             if item.is_active:
                 errors.append(ItemIsActiveError(
