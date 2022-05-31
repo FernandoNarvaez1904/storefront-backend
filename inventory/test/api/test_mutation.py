@@ -143,7 +143,7 @@ class InventoryMutationTest(TestCase):
         item_changed: Item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
         self.assertFalse(item_changed.is_active)
 
-    async def test_product_activate(self):
+    async def test_item_activate(self):
         item = await sync_to_async(Item.objects.create)(
             is_active=False
         )
