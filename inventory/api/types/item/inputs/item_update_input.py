@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
@@ -10,11 +10,11 @@ from storefront_backend.api.types import UserError
 
 @gql.django.input(ItemDetail)
 class ItemUpdateDataInput:
-    barcode: gql.auto
-    name: gql.auto
-    sku: gql.auto
-    cost: gql.auto
-    markup: gql.auto
+    barcode: Optional[str]
+    name: Optional[str]
+    sku: Optional[str]
+    cost: Optional[float]
+    markup: Optional[float]
 
 
 @gql.django.input(Item)
@@ -38,5 +38,5 @@ class ItemUpdateInput:
             errors.append(
                 ItemNotExistError(message=f"item with id {self.id} does not exist in database")
             )
-            
+
         return errors
