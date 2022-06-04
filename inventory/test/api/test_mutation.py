@@ -262,6 +262,7 @@ class InventoryMutationTest(TestCase):
         self.assertNotIn(None, item_type_result.values())
 
         # Test if item was changed
+        item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
         item_detail_changed: ItemDetail = await sync_to_async(ItemDetail.objects.get)(id=item.current_detail_id)
         self.assertEqual(43, item_detail_changed.cost)
         self.assertEqual("Updated", item_detail_changed.name)
