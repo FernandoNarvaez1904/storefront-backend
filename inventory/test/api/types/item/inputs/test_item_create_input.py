@@ -10,14 +10,13 @@ from storefront_backend.api.types import UserError
 
 class ItemCreateInputTest(TestCase):
     def setUp(self):
-        item = Item.objects.create()
+        item = Item.objects.create(sku="1")
         ItemDetail.objects.create(
             name="itemDetail1",
             barcode="barcode",
             cost=10,
             markup=50,
             root_item=item,
-            sku="1"
         )
         self.item = item
 

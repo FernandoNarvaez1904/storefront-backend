@@ -9,7 +9,7 @@ from strawberry_django_plus.relay import GlobalID
 from inventory.api.mutation import Mutation
 from inventory.api.query import Query
 from inventory.api.types.item import not_in_schema_types
-from inventory.models import Item
+from inventory.models import Item, ItemDetail
 
 
 class InventoryMutationTest(TestCase):
@@ -193,3 +193,75 @@ class InventoryMutationTest(TestCase):
         # Test if item was changed
         item_changed: Item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
         self.assertTrue(item_changed.is_active)
+
+    async def test_item_update(self):
+        item = await sync_to_async(Item.objects.create)()
+        await sync_to_async(ItemDetail.objects.create)(
+            name="Product",
+            cost=10,
+            markup=20,
+            root_item=item
+        )
+        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
+
+        mutation_query = f"""
+            mutation updateItem
+            {{
+                itemUpdate(
+                    input: {{ id: "{item_global_id}", data: {{ cost: 43, name: "Updated" }} }}
+                ) {{
+                    __typename
+                    userErrors {{
+                        field
+                        message
+                        __typename
+                    }}
+                    updateItem {{
+                        id
+                        isActive
+                        currentStock
+                        isService
+                        barcode
+                        cost
+                        lastModifiedDate
+                        markup
+                        name
+                        price
+                        sku
+                        __typename
+                    }}
+                }}
+            }}
+        """
+
+        execution_result: ExecutionResult = await self.schema.execute(mutation_query)
+
+        # Test has no execution error
+        self.assertIsNone(execution_result.errors)
+
+        # Test data is not null
+        exec_result_data: dict = execution_result.data
+        self.assertIsNotNone(exec_result_data)
+
+        # Test Mutation Result Exist
+        item_item_mutation_result: dict = exec_result_data.get("itemUpdate")
+        self.assertIsNotNone(item_item_mutation_result)
+
+        # Test if UserError is returned
+        user_errors: List = item_item_mutation_result.get("userErrors")
+        self.assertIsNotNone(user_errors)
+
+        # Test Mutation Result UserError is empty
+        self.assertFalse(len(user_errors))
+
+        # Test if item is returned
+        item_type_result: dict = item_item_mutation_result.get("updateItem")
+        self.assertIsNotNone(item_type_result)
+
+        # Test if all fields return
+        self.assertNotIn(None, item_type_result.values())
+
+        # Test if item was changed
+        item_detail_changed: ItemDetail = await sync_to_async(ItemDetail.objects.get)(id=item.current_detail_id)
+        self.assertEqual(43, item_detail_changed.cost)
+        self.assertEqual("Updated", item_detail_changed.name)

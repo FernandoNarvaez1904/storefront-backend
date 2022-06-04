@@ -11,7 +11,7 @@ from storefront_backend.api.types import UserError
 
 class ItemUpdateInputTest(TestCase):
     def setUp(self):
-        item = Item.objects.create()
+        item = Item.objects.create(sku="45")
         self.item = item
 
         inactive_item = Item.objects.create(

@@ -12,7 +12,6 @@ from storefront_backend.api.types import UserError
 class ItemUpdateDataInput:
     barcode: Optional[str]
     name: Optional[str]
-    sku: Optional[str]
     cost: Optional[float]
     markup: Optional[float]
 
