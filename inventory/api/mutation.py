@@ -3,11 +3,12 @@ from typing import List, Optional
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
-from inventory.api.types.item import ItemCreateInput, CreateItemPayload
+from inventory.api.types.item import ItemCreateInput
 from inventory.api.types.item.inputs.item_activate_input import ItemActivateInput
 from inventory.api.types.item.inputs.item_deactivate_input import ItemDeactivateInput
 from inventory.api.types.item.inputs.item_update_input import ItemUpdateInput
-from inventory.api.types.item.payload_types import DeactivateItemPayload, ActivateItemPayload, UpdateItemPayload
+from inventory.api.types.item.payload_types import ItemActivatePayload, ItemDeactivatePayload, ItemCreatePayload, \
+    ItemUpdatePayload
 from inventory.models import Item, ItemDetail
 from storefront_backend.api.types import UserError
 
@@ -16,7 +17,7 @@ from storefront_backend.api.types import UserError
 class Mutation:
 
     @gql.field
-    async def item_create(self, input: ItemCreateInput) -> CreateItemPayload:
+    async def item_create(self, input: ItemCreateInput) -> ItemCreatePayload:
         errors: List[UserError] = await input.validate_and_get_errors()
         item: Optional[Item] = None
         if not errors:
@@ -32,30 +33,30 @@ class Mutation:
                 root_item=item,
 
             )
-        return CreateItemPayload(item=item, user_errors=errors)
+        return ItemCreatePayload(item=item, user_errors=errors)
 
     @gql.field
-    async def item_deactivate(self, input: ItemDeactivateInput) -> DeactivateItemPayload:
+    async def item_deactivate(self, input: ItemDeactivateInput) -> ItemDeactivatePayload:
         errors: List[UserError] = await input.validate_and_get_errors()
         item: Optional[Item] = None
         if not errors:
             item: Item = await sync_to_async(Item.objects.get)(id=input.id.node_id)
             item.is_active = False
             await sync_to_async(item.save)()
-        return DeactivateItemPayload(deactivated_item=item, user_errors=errors)
+        return ItemDeactivatePayload(deactivated_item=item, user_errors=errors)
 
     @gql.field
-    async def item_activate(self, input: ItemActivateInput) -> ActivateItemPayload:
+    async def item_activate(self, input: ItemActivateInput) -> ItemActivatePayload:
         errors: List[UserError] = await input.validate_and_get_errors()
         item: Optional[Item] = None
         if not errors:
             item: Item = await sync_to_async(Item.objects.get)(id=input.id.node_id)
             item.is_active = True
             await sync_to_async(item.save)()
-        return ActivateItemPayload(activated_item=item, user_errors=errors)
+        return ItemActivatePayload(activated_item=item, user_errors=errors)
 
     @gql.field
-    async def item_update(self, input: ItemUpdateInput) -> UpdateItemPayload:
+    async def item_update(self, input: ItemUpdateInput) -> ItemUpdatePayload:
         errors: List[UserError] = await input.validate_and_get_errors()
         item: Optional[Item] = None
         if not errors:
@@ -80,4 +81,4 @@ class Mutation:
                 # this is needed because the signal is not fast enough
                 item.current_detail = detail
 
-        return UpdateItemPayload(update_item=item, user_errors=errors)
+        return ItemUpdatePayload(update_item=item, user_errors=errors)
