@@ -204,35 +204,43 @@ class InventoryMutationTest(TestCase):
         )
         item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
 
+        item_fragment = """
+            id
+            sku
+            isService
+            isActive
+            barcode
+            name
+            markup
+            lastModifiedDate
+            currentStock
+            cost
+            price
+            __typename
+        """
+        user_errors_fragment = """
+            field
+            message
+        """
+        input_data = '{cost: 43, name: "Updated"}'
         mutation_query = f"""
             mutation updateItem
             {{
                 itemUpdate(
-                    input: {{ id: "{item_global_id}", data: {{ cost: 43, name: "Updated" }} }}
+                    input: {{ id: "{item_global_id}", data: {input_data} }}
                 ) {{
                     __typename
                     userErrors {{
-                        field
-                        message
-                        __typename
+                        {user_errors_fragment}
                     }}
                     updateItem {{
-                        id
-                        isActive
-                        currentStock
-                        isService
-                        barcode
-                        cost
-                        lastModifiedDate
-                        markup
-                        name
-                        price
-                        sku
-                        __typename
+                        {item_fragment}
                     }}
                 }}
             }}
         """
+
+        print(mutation_query)
 
         execution_result: ExecutionResult = await self.schema.execute(mutation_query)
 
