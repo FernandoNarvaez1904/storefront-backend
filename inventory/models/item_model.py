@@ -9,15 +9,15 @@ class ItemGroup(models.Model):
 
 
 class Item(models.Model):
-    current_detail = models.ForeignKey("ItemDetail", on_delete=models.SET_NULL, null=True)
     is_active = models.BooleanField(default=True)
     is_service = models.BooleanField(default=False)
+    sku = models.CharField(max_length=255, unique=True)
     current_stock = models.FloatField(default=0)
     group = models.ForeignKey(ItemGroup, on_delete=models.SET_NULL, null=True)
+    current_detail = models.ForeignKey("ItemDetail", on_delete=models.SET_NULL, null=True)
 
 
 class ItemDetail(models.Model):
-    sku = models.CharField(max_length=255, unique=True)
     date = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255)
     barcode = models.CharField(max_length=48)

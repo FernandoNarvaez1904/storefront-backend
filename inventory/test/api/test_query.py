@@ -12,7 +12,7 @@ from inventory.models import Item, ItemDetail
 async def create_bulk_of_item(num: int) -> List[Item]:
     item_list = []
     for i in range(num):
-        item = await sync_to_async(Item.objects.create)()
+        item = await sync_to_async(Item.objects.create)(sku=i)
 
         await sync_to_async(ItemDetail.objects.create)(
             name=f"itemDetail{i}",
@@ -20,7 +20,6 @@ async def create_bulk_of_item(num: int) -> List[Item]:
             cost=10,
             markup=50,
             root_item=item,
-            sku=i
         )
         item_list.append(item)
     return item_list

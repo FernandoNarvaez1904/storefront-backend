@@ -9,11 +9,11 @@ class ItemTypeTest(TestCase):
     def setUp(self):
         item = Item.objects.create(
             current_stock=9,
-            is_service=False
+            is_service=False,
+            sku="45",
 
         )
         ItemDetail.objects.create(
-            sku="45",
             name="itemDetail1",
             barcode="890432",
             cost=10,

@@ -5,7 +5,7 @@ from inventory.models import Item, ItemDetail
 
 class ItemModelTest(TestCase):
     def setUp(self):
-        item = Item.objects.create()
+        item = Item.objects.create(sku="sku")
 
         self.item = item
 
@@ -17,7 +17,6 @@ class ItemModelTest(TestCase):
             cost=10,
             markup=50,
             root_item=self.item,
-            sku="d"
         )
         self.assertEqual(self.item.current_detail.id, pr_dt_1.id)
         # Test it will change if current is another detail
@@ -27,5 +26,6 @@ class ItemModelTest(TestCase):
             cost=10,
             markup=50,
             root_item=self.item
+        
         )
         self.assertEqual(self.item.current_detail.id, pr_dt_2.id)

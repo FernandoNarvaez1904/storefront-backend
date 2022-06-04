@@ -13,6 +13,7 @@ class ItemType(gql.Node, ABC):
     is_active: gql.auto
     current_stock: gql.auto
     is_service: gql.auto
+    sku: gql.auto
 
     @gql.field
     def name(self: Item) -> Optional[str]:
@@ -46,13 +47,6 @@ class ItemType(gql.Node, ABC):
     def last_modified_date(self: Item) -> Optional[datetime]:
         try:
             return self.current_detail.date
-        except AttributeError:
-            return None
-
-    @gql.field
-    def sku(self: Item) -> Optional[str]:
-        try:
-            return self.current_detail.sku
         except AttributeError:
             return None
 

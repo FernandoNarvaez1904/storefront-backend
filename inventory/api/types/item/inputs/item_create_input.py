@@ -19,7 +19,7 @@ class ItemCreateInput:
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []
-        if await sync_to_async(ItemDetail.objects.filter(sku=self.sku).exists)():
+        if await sync_to_async(Item.objects.filter(sku=self.sku).exists)():
             errors.append(
                 SKUNotUniqueError(
                     message="SKU is no unique"
