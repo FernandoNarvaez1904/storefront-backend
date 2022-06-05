@@ -8,7 +8,6 @@ from inventory.models import Item
 from storefront_backend.api.types import UserError, InputTypeInterface
 
 
-# TODO TEST
 @gql.django.input(Item)
 class ItemDeleteInput(InputTypeInterface):
     id: gql.relay.GlobalID = gql.field(description="The id given must be of an existing Item.")
