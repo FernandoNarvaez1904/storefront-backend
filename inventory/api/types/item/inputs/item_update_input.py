@@ -5,7 +5,7 @@ from strawberry_django_plus import gql
 
 from inventory.api.types.item import ItemIsNotActiveError, ItemNotExistError
 from inventory.models import Item, ItemDetail
-from storefront_backend.api.types import UserError
+from storefront_backend.api.types import UserError, InputTypeInterface
 
 
 @gql.django.input(ItemDetail)
@@ -17,7 +17,7 @@ class ItemUpdateDataInput:
 
 
 @gql.django.input(Item)
-class ItemUpdateInput:
+class ItemUpdateInput(InputTypeInterface):
     id: gql.relay.GlobalID = gql.field(description="The id given must be of an existing and active Item.")
     data: ItemUpdateDataInput
 

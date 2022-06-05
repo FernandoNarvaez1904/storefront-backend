@@ -2,29 +2,29 @@ from typing import List, Optional
 
 from strawberry_django_plus import gql
 
-from storefront_backend.api.types import Payload, UserError
+from storefront_backend.api.types import PayloadTypeInterface, UserError
 from .item_type import ItemType
 
 
 @gql.type
-class ItemCreatePayload(Payload):
-    item: Optional[ItemType]
+class ItemCreatePayload(PayloadTypeInterface):
+    node: Optional[ItemType]
     user_errors: List[UserError]
 
 
 @gql.type
-class ItemDeactivatePayload(Payload):
-    deactivated_item: Optional[ItemType]
+class ItemDeactivatePayload(PayloadTypeInterface):
+    node: Optional[ItemType]
     user_errors: List[UserError]
 
 
 @gql.type
-class ItemActivatePayload(Payload):
-    activated_item: Optional[ItemType]
+class ItemActivatePayload(PayloadTypeInterface):
+    node: Optional[ItemType]
     user_errors: List[UserError]
 
 
 @gql.type
-class ItemUpdatePayload(Payload):
-    update_item: Optional[ItemType]
+class ItemUpdatePayload(PayloadTypeInterface):
+    node: Optional[ItemType]
     user_errors: List[UserError]
