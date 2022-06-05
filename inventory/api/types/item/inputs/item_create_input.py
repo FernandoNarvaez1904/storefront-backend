@@ -5,11 +5,11 @@ from strawberry_django_plus import gql
 
 from inventory.api.types.item.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError
 from inventory.models import Item, ItemDetail
-from storefront_backend.api.types import UserError
+from storefront_backend.api.types import UserError, InputTypeInterface
 
 
 @gql.django.input(Item)
-class ItemCreateInput:
+class ItemCreateInput(InputTypeInterface):
     sku: str = gql.field(description="It must be unique")
     is_service: bool
     name: str

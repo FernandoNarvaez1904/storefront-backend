@@ -6,11 +6,11 @@ from strawberry_django_plus import gql
 from inventory.api.types.item import ItemNotExistError
 from inventory.api.types.item.user_error_types import ItemIsActiveError
 from inventory.models import Item
-from storefront_backend.api.types import UserError
+from storefront_backend.api.types import UserError, InputTypeInterface
 
 
 @gql.django.input(Item)
-class ItemActivateInput:
+class ItemActivateInput(InputTypeInterface):
     id: gql.relay.GlobalID = gql.field(description="The id given must be of an existing and inactive Item.")
 
     async def validate_and_get_errors(self) -> List[UserError]:

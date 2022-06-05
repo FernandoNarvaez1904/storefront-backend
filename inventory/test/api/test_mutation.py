@@ -54,7 +54,7 @@ class InventoryMutationTest(TestCase):
                     userErrors{{
                         {user_errors_fragment}
                     }}
-                    item{{
+                    node{{
                         {item_fragment}
                     }}
                 }}
@@ -82,7 +82,7 @@ class InventoryMutationTest(TestCase):
         self.assertFalse(len(user_errors))
 
         # Test if item is returned
-        item: dict = item_create_mutation_result.get("item")
+        item: dict = item_create_mutation_result.get("node")
         self.assertIsNotNone(item)
 
         # Test if all fields return
@@ -104,7 +104,7 @@ class InventoryMutationTest(TestCase):
                         field
                         message
                     }}
-                    deactivatedItem{{
+                    node{{
                         id
                         isActive
                     }}
@@ -133,7 +133,7 @@ class InventoryMutationTest(TestCase):
         self.assertFalse(len(user_errors))
 
         # Test if item is returned
-        item_type_result: dict = item_deactivate_mutation_result.get("deactivatedItem")
+        item_type_result: dict = item_deactivate_mutation_result.get("node")
         self.assertIsNotNone(item_type_result)
 
         # Test if all fields return
@@ -155,7 +155,7 @@ class InventoryMutationTest(TestCase):
                         field
                         message
                     }}
-                    activatedItem{{
+                    node{{
                         id
                         isActive
                     }}
@@ -184,7 +184,7 @@ class InventoryMutationTest(TestCase):
         self.assertFalse(len(user_errors))
 
         # Test if item is returned
-        item_type_result: dict = item_item_mutation_result.get("activatedItem")
+        item_type_result: dict = item_item_mutation_result.get("node")
         self.assertIsNotNone(item_type_result)
 
         # Test if all fields return
@@ -233,7 +233,7 @@ class InventoryMutationTest(TestCase):
                     userErrors {{
                         {user_errors_fragment}
                     }}
-                    updateItem {{
+                    node {{
                         {item_fragment}
                     }}
                 }}
@@ -263,7 +263,7 @@ class InventoryMutationTest(TestCase):
         self.assertFalse(len(user_errors))
 
         # Test if item is returned
-        item_type_result: dict = item_item_mutation_result.get("updateItem")
+        item_type_result: dict = item_item_mutation_result.get("node")
         self.assertIsNotNone(item_type_result)
 
         # Test if all fields return

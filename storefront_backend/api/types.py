@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from strawberry_django_plus import gql
 
@@ -10,5 +10,13 @@ class UserError:
 
 
 @gql.interface
-class Payload:
+class PayloadTypeInterface:
     user_errors: List[UserError]
+    node: Optional[gql.Node]
+
+
+@gql.interface
+class InputTypeInterface:
+
+    async def validate_and_get_errors(self) -> List[UserError]:
+        pass
