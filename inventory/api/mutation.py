@@ -1,7 +1,9 @@
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
-from inventory.api.types.item import ItemCreateInput, ItemType, ItemDeactivateInput, ItemActivateInput, ItemUpdateInput, \
+from inventory.api.types.item import ItemType
+from inventory.api.types.item.inputs import ItemCreateInput, ItemDeactivateInput, ItemActivateInput, \
+    ItemUpdateInput, \
     ItemDeleteInput
 from inventory.api.types.item.payload_types import ItemActivatePayload, ItemDeactivatePayload, ItemCreatePayload, \
     ItemUpdatePayload, ItemDeletePayload

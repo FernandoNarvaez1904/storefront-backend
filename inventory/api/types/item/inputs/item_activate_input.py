@@ -3,8 +3,8 @@ from typing import List
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
+from inventory.api.types.item import ItemIsActiveError
 from inventory.api.types.item import ItemNotExistError
-from inventory.api.types.item.user_error_types import ItemIsActiveError
 from inventory.models import Item
 from storefront_backend.api.types import UserError, InputTypeInterface
 

@@ -5,7 +5,7 @@ from django.test import TestCase
 from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.types.item import ItemNotExistError, ItemAlreadyHasDocument
-from inventory.api.types.item.inputs.item_delete_input import ItemDeleteInput
+from inventory.api.types.item.inputs import ItemDeleteInput
 from inventory.models import Item, ModifyStockOrder
 from storefront_backend.api.types import UserError
 

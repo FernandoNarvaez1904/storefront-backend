@@ -4,7 +4,7 @@ from django.test import TestCase
 from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.types.item import ItemNotExistError, ItemIsActiveError
-from inventory.api.types.item.inputs.item_activate_input import ItemActivateInput
+from inventory.api.types.item.inputs import ItemActivateInput
 from inventory.models import Item
 from storefront_backend.api.types import UserError
 
