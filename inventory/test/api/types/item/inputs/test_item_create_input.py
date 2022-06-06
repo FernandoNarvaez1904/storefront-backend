@@ -2,7 +2,7 @@ from typing import List
 
 from django.test import TestCase
 
-from inventory.api.types.item import ItemCreateInput
+from inventory.api.types.item.inputs import ItemCreateInput
 from inventory.api.types.item.user_error_types import SKUNotUniqueError, BarcodeNotUniqueError
 from inventory.models import Item, ItemDetail
 from storefront_backend.api.types import UserError

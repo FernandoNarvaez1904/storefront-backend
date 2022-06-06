@@ -18,7 +18,7 @@ class Item(models.Model):
 
 
 class ItemDetail(models.Model):
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=255)
     barcode = models.CharField(max_length=48)
     cost = models.FloatField()

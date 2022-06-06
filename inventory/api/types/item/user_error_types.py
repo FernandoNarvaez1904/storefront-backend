@@ -51,3 +51,13 @@ class ItemIsActiveError(UserError):
     @gql.field
     async def field(self):
         return "id"
+
+
+@gql.type
+class ItemAlreadyHasDocument(UserError):
+    message: str
+    field: str
+
+    @gql.field
+    async def field(self):
+        return "id"
