@@ -1,11 +1,8 @@
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
-from inventory.api.types.item import ItemCreateInput, ItemType
-from inventory.api.types.item.inputs.item_activate_input import ItemActivateInput
-from inventory.api.types.item.inputs.item_deactivate_input import ItemDeactivateInput
-from inventory.api.types.item.inputs.item_delete_input import ItemDeleteInput
-from inventory.api.types.item.inputs.item_update_input import ItemUpdateInput
+from inventory.api.types.item import ItemCreateInput, ItemType, ItemDeactivateInput, ItemActivateInput, ItemUpdateInput, \
+    ItemDeleteInput
 from inventory.api.types.item.payload_types import ItemActivatePayload, ItemDeactivatePayload, ItemCreatePayload, \
     ItemUpdatePayload, ItemDeletePayload
 from inventory.models import Item, ItemDetail
@@ -92,7 +89,6 @@ class Mutation:
         returned_type=ItemType
     )
     async def item_delete(self, input) -> gql.Node:
-        # TODO TEST
         item: Item = await sync_to_async(Item.objects.get)(id=input.id.node_id)
         await sync_to_async(item.delete)()
         return item
