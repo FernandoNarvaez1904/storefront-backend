@@ -4,9 +4,10 @@ from strawberry_django_plus import gql
 from inventory.api.types.item import ItemCreateInput, ItemType
 from inventory.api.types.item.inputs.item_activate_input import ItemActivateInput
 from inventory.api.types.item.inputs.item_deactivate_input import ItemDeactivateInput
+from inventory.api.types.item.inputs.item_delete_input import ItemDeleteInput
 from inventory.api.types.item.inputs.item_update_input import ItemUpdateInput
 from inventory.api.types.item.payload_types import ItemActivatePayload, ItemDeactivatePayload, ItemCreatePayload, \
-    ItemUpdatePayload
+    ItemUpdatePayload, ItemDeletePayload
 from inventory.models import Item, ItemDetail
 from storefront_backend.api.utils import gql_mutation_payload
 
@@ -83,4 +84,15 @@ class Mutation:
             # this is needed because the signal is not fast enough
             item.current_detail = detail
 
+        return item
+
+    @gql_mutation_payload(
+        input_type=ItemDeleteInput,
+        payload_type=ItemDeletePayload,
+        returned_type=ItemType
+    )
+    async def item_delete(self, input) -> gql.Node:
+        # TODO TEST
+        item: Item = await sync_to_async(Item.objects.get)(id=input.id.node_id)
+        await sync_to_async(item.delete)()
         return item
