@@ -240,8 +240,6 @@ class InventoryMutationTest(TestCase):
             }}
         """
 
-        print(mutation_query)
-
         execution_result: ExecutionResult = await self.schema.execute(mutation_query)
 
         # Test has no execution error
@@ -274,3 +272,70 @@ class InventoryMutationTest(TestCase):
         item_detail_changed: ItemDetail = await sync_to_async(ItemDetail.objects.get)(id=item.current_detail_id)
         self.assertEqual(43, item_detail_changed.cost)
         self.assertEqual("Updated", item_detail_changed.name)
+
+    async def test_item_delete(self):
+        item = await sync_to_async(Item.objects.create)()
+        await sync_to_async(ItemDetail.objects.create)(
+            name="Product",
+            cost=10,
+            markup=20,
+            root_item=item
+        )
+        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
+
+        item_fragment = """
+                    id
+                    __typename
+                """
+        user_errors_fragment = """
+                    field
+                    message
+                """
+        mutation_query = f"""
+                    mutation deleteItem
+                    {{
+                        itemDelete(
+                            input: {{ id: "{item_global_id}" }}
+                        ) {{
+                            __typename
+                            userErrors {{
+                                {user_errors_fragment}
+                            }}
+                            node {{
+                                {item_fragment}
+                            }}
+                        }}
+                    }}
+                """
+
+        execution_result: ExecutionResult = await self.schema.execute(mutation_query)
+
+        # Test has no execution error
+        self.assertIsNone(execution_result.errors)
+
+        # Test data is not null
+        exec_result_data: dict = execution_result.data
+        self.assertIsNotNone(exec_result_data)
+
+        # Test Mutation Result Exist
+        item_item_mutation_result: dict = exec_result_data.get("itemDelete")
+        self.assertIsNotNone(item_item_mutation_result)
+
+        # Test if UserError is returned
+        user_errors: List = item_item_mutation_result.get("userErrors")
+        self.assertIsNotNone(user_errors)
+
+        # Test Mutation Result UserError is empty
+        self.assertFalse(len(user_errors))
+
+        # Test if item is returned
+        item_type_result: dict = item_item_mutation_result.get("node")
+        self.assertIsNotNone(item_type_result)
+
+        # Test if all fields return
+        self.assertNotIn(None, item_type_result.values())
+
+        # Test if item was deleted
+        item = await sync_to_async(Item.objects.filter)(id=item_global_id.node_id)
+        item_count = await sync_to_async(item.count)()
+        self.assertEqual(0, item_count)
