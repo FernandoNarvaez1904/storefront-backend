@@ -338,4 +338,4 @@ class InventoryMutationTest(TestCase):
         # Test if item was deleted
         item = await sync_to_async(Item.objects.filter)(id=item_global_id.node_id)
         item_count = await sync_to_async(item.count)()
-        self.assertEqual(0, item_count)
+        self.assertEqual(item_count, 0)
