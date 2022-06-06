@@ -28,3 +28,9 @@ class ItemActivatePayload(PayloadTypeInterface):
 class ItemUpdatePayload(PayloadTypeInterface):
     node: Optional[ItemType]
     user_errors: List[UserError]
+
+
+@gql.type
+class ItemDeletePayload(PayloadTypeInterface):
+    node: Optional[gql.Node]
+    user_errors: List[UserError]
