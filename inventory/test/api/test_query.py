@@ -47,6 +47,28 @@ class InventoryQueryTest(TestCase):
             markup
             name
             price
+            versionId
+            itemVersions(
+            before: null, 
+            after:null, 
+            first: null, 
+            last:null
+            ) {
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+              startCursor
+              endCursor
+            }
+            edges {
+              cursor
+              node {
+                id
+                name
+              }
+            }
+            totalCount
+            }
         """
         query_connection = f"""
        {{

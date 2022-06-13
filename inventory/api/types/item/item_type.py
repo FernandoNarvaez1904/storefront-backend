@@ -3,8 +3,19 @@ from datetime import datetime
 from typing import Optional
 
 from strawberry_django_plus import gql
+from strawberry_django_plus.relay import GlobalID
 
-from inventory.models import Item
+from inventory.models import Item, ItemDetail
+
+
+# Todo TEST
+@gql.django.type(ItemDetail)
+class ItemVersionType(gql.Node, ABC):
+    id: gql.auto
+    name: gql.auto
+    barcode: gql.auto
+    cost: gql.auto
+    markup: gql.auto
 
 
 @gql.django.type(Item)
@@ -14,6 +25,7 @@ class ItemType(gql.Node, ABC):
     current_stock: gql.auto
     is_service: gql.auto
     sku: gql.auto
+    item_versions: gql.relay.Connection["ItemVersionType"] = gql.relay.connection()
 
     @gql.field
     def name(self: Item) -> Optional[str]:
@@ -55,5 +67,12 @@ class ItemType(gql.Node, ABC):
         try:
             cost = self.current_detail.cost
             return cost + (cost * (self.current_detail.markup / 100))
+        except AttributeError:
+            return None
+
+    @gql.field
+    def version_id(self: Item) -> Optional[GlobalID]:
+        try:
+            return GlobalID(node_id=f"{self.current_detail.id}", type_name="ItemVersionType")
         except AttributeError:
             return None

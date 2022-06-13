@@ -1,4 +1,5 @@
 from django.test import TestCase
+from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.types.item import ItemType
 from inventory.models import Item, ItemDetail
@@ -51,3 +52,7 @@ class ItemTypeTest(TestCase):
         self.item.current_detail.markup = -50
         price = ItemType.price(self.item)
         self.assertEqual(5, price)
+
+    def test_version_id(self):
+        id: GlobalID = ItemType.version_id(self.item)
+        self.assertEqual(f"{self.item.current_detail.id}", f"{id.node_id}")
