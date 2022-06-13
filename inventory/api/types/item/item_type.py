@@ -3,8 +3,19 @@ from datetime import datetime
 from typing import Optional
 
 from strawberry_django_plus import gql
+from strawberry_django_plus.relay import GlobalID
 
-from inventory.models import Item
+from inventory.models import Item, ItemDetail
+
+
+# Todo TEST
+@gql.django.type(ItemDetail)
+class ItemVersionType(gql.Node, ABC):
+    id: gql.auto
+    name: gql.auto
+    barcode: gql.auto
+    cost: gql.auto
+    markup: gql.auto
 
 
 @gql.django.type(Item)
