@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn -k uvicorn.workers.UvicornWorker social_media_backend.asgi:application
+web: gunicorn -k uvicorn.workers.UvicornWorker storefront_backend.asgi:application
