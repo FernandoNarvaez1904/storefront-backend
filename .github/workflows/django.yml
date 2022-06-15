@@ -30,6 +30,8 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
           DEBUG: ${{ secrets.DEBUG }}
-          CORS_ALLOWED_ORIGINS: ${{ secrets. CORS_ALLOWED_ORIGINS }}
+          CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL  }}
+          IS_REVIEW_APP: ${{ secrets.IS_REVIEW_APP  }}
         run: |
           python manage.py test

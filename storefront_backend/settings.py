@@ -2,6 +2,7 @@ from pathlib import Path
 
 # The package name is named different from the imported name
 # noinspection PyPackageRequirements
+import dj_database_url
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -13,7 +14,12 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG") == "DEBUG"
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
+if config("IS_REVIEW_APP") == "True":
+    ALLOWED_HOSTS = [f"{config('HEROKU_APP_NAME')}.com"]
+    CORS_ALLOWED_ORIGINS = [f"https://{config('HEROKU_APP_NAME')}.com"]
+else:
+    ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
+    CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(",")
 
 # Application definition
 
@@ -65,12 +71,15 @@ WSGI_APPLICATION = 'storefront_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+try:
+    DATABASES = {"default": dj_database_url.parse(config("DATABASE_URL"))}
+except:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -113,5 +122,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User Model
 AUTH_USER_MODEL = "users.User"
-
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(",")
