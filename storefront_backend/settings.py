@@ -14,7 +14,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG") == "DEBUG"
 
-if config("IS_REVIEW_APP") == "True":
+if str(config("IS_REVIEW_APP")).strip() == "True":
     ALLOWED_HOSTS = [f"{config('HEROKU_APP_NAME')}.com"]
     CORS_ALLOWED_ORIGINS = [f"https://{config('HEROKU_APP_NAME')}.com/"]
 else:
