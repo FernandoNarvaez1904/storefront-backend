@@ -8,7 +8,6 @@ from strawberry_django_plus.relay import GlobalID
 from inventory.models import Item, ItemDetail
 
 
-# Todo TEST
 @gql.django.type(ItemDetail)
 class ItemVersionType(gql.Node, ABC):
     id: gql.auto
