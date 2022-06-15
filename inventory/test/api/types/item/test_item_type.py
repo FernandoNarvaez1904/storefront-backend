@@ -66,7 +66,7 @@ class ItemTypeTest(TestCase):
             markup=50,
             root_item=self.item,
         )
-        
-        item_type_result = set(ItemType.item_versions(root=self.item))
+
+        item_type_result_1 = set(ItemType.item_versions(root=self.item))
         expected_result = set(ItemDetail.objects.filter(root_item=self.item))
-        self.assertEqual(item_type_result, expected_result)
+        self.assertEqual(item_type_result_1, expected_result)
