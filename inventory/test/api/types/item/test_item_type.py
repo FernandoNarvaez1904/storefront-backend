@@ -56,3 +56,17 @@ class ItemTypeTest(TestCase):
     def test_version_id(self):
         id: GlobalID = ItemType.version_id(self.item)
         self.assertEqual(f"{self.item.current_detail.id}", f"{id.node_id}")
+
+    def test_item_versions(self):
+        # Creating a new ItemVersion
+        ItemDetail.objects.create(
+            name="itemDetail2",
+            barcode="89043",
+            cost=10,
+            markup=50,
+            root_item=self.item,
+        )
+        
+        item_type_result = set(ItemType.item_versions(root=self.item))
+        expected_result = set(ItemDetail.objects.filter(root_item=self.item))
+        self.assertEqual(item_type_result, expected_result)
