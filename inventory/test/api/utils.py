@@ -73,10 +73,10 @@ async def test_mutation(test_case: TestCase, execution_result: ExecutionResult,
     test_case.assertNotIn(None, node.values())
 
 
-async def create_bulk_of_item(num: int, active: bool = True) -> List[Item]:
+async def create_bulk_of_item(num: int, active: bool = True, seed: str = "") -> List[Item]:
     item_list = []
     for i in range(num):
-        item = await sync_to_async(Item.objects.create)(sku=i, is_active=active)
+        item = await sync_to_async(Item.objects.create)(sku=f"{seed}{i}", is_active=active)
 
         await sync_to_async(ItemDetail.objects.create)(
             name=f"itemDetail{i}",

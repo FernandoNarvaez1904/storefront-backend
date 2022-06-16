@@ -1,23 +1,22 @@
 from typing import List
 
+from asgiref.sync import async_to_sync
 from django.test import TestCase
 from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.types.item import ItemNotExistError, ItemIsNotActiveError
 from inventory.api.types.item.inputs import ItemDeactivateInput
-from inventory.models import Item
+from inventory.test.api.utils import create_bulk_of_item
 from storefront_backend.api.types import UserError
 
 
 class ItemDeactivateInputTest(TestCase):
     def setUp(self):
-        item = Item.objects.create(sku="sku")
-        self.item = item
+        items = async_to_sync(create_bulk_of_item)(1)
+        self.item = items[0]
 
-        inactive_item = Item.objects.create(
-            is_active=False
-        )
-        self.inactive_item = inactive_item
+        inactive_items = async_to_sync(create_bulk_of_item)(1, active=False, seed="not")
+        self.inactive_item = inactive_items[0]
 
     async def test_validate_and_get_errors(self):
         # Test not existing id

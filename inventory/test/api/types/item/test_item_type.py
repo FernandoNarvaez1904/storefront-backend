@@ -1,27 +1,17 @@
+from asgiref.sync import async_to_sync
 from django.test import TestCase
 from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.types.item import ItemType
-from inventory.models import Item, ItemDetail
+from inventory.models import ItemDetail
+from inventory.test.api.utils import create_bulk_of_item
 
 
 class ItemTypeTest(TestCase):
 
     def setUp(self):
-        item = Item.objects.create(
-            current_stock=9,
-            is_service=False,
-            sku="45",
-
-        )
-        ItemDetail.objects.create(
-            name="itemDetail1",
-            barcode="890432",
-            cost=10,
-            markup=50,
-            root_item=item,
-        )
-        self.item = item
+        items = async_to_sync(create_bulk_of_item)(1)
+        self.item = items[0]
 
     def test_name_field(self):
         name = ItemType.name(self.item)
