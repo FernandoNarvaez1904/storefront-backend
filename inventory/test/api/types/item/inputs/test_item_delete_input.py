@@ -6,7 +6,8 @@ from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.types.item import ItemNotExistError, ItemAlreadyHasDocument
 from inventory.api.types.item.inputs import ItemDeleteInput
-from inventory.models import Item, ModifyStockOrder
+from inventory.models import ModifyStockOrder
+from inventory.test.api.utils import create_bulk_of_item
 from storefront_backend.api.types import UserError
 
 
@@ -14,7 +15,8 @@ class ItemDeleteInputTest(TestCase):
 
     async def test_validate_and_get_errors(self):
         # Test no errors
-        item = await sync_to_async(Item.objects.create)(sku="45")
+        items = await create_bulk_of_item(1)
+        item = items[0]
         item_type = ItemDeleteInput(id=GlobalID(type_name='ItemType', node_id=f"{item.id}"))
         expected_no_error: List[UserError] = await item_type.validate_and_get_errors()
         self.assertFalse(len(expected_no_error))

@@ -1,5 +1,10 @@
+from typing import List
+
+from asgiref.sync import sync_to_async
 from django.test import TestCase
 from graphql import ExecutionResult
+
+from inventory.models import Item, ItemDetail
 
 
 async def test_execution_result(test_case: TestCase, execution_result: ExecutionResult,
@@ -46,6 +51,42 @@ async def test_relay_connection(test_case: TestCase,
     test_case.assertNotIn(None, edges)
 
     return execution_result
+
+
+async def test_mutation(test_case: TestCase, execution_result: ExecutionResult,
+                        operation_name: str):
+    execution_result = await test_execution_result(test_case, execution_result, operation_name)
+
+    result_data = execution_result.data.get(operation_name)
+    # Test if UserError is returned
+    user_errors: List = result_data.get("userErrors")
+    test_case.assertIsNotNone(user_errors)
+
+    # Test Mutation Result UserError is empty
+    test_case.assertFalse(len(user_errors))
+
+    # Test if node is returned
+    node: dict = result_data.get("node")
+    test_case.assertIsNotNone(node)
+
+    # Test if all fields return
+    test_case.assertNotIn(None, node.values())
+
+
+async def create_bulk_of_item(num: int, active: bool = True, seed: str = "") -> List[Item]:
+    item_list = []
+    for i in range(num):
+        item = await sync_to_async(Item.objects.create)(sku=f"{seed}{i}", is_active=active)
+
+        await sync_to_async(ItemDetail.objects.create)(
+            name=f"itemDetail{i}",
+            barcode="890432",
+            cost=10,
+            markup=50,
+            root_item=item,
+        )
+        item_list.append(item)
+    return item_list
 
 
 def get_connection_query(node_fragment: str, field_name: str = "") -> str:
