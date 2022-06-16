@@ -9,6 +9,7 @@ from inventory.api.query import Query
 from inventory.api.types.item import not_in_schema_types
 from inventory.models import Item, ItemDetail
 from inventory.test.api.fragments import item_node_query_fragment
+from inventory.test.api.utils import test_mutation, create_bulk_of_item
 
 
 class InventoryMutationTest(TestCase):
@@ -29,20 +30,6 @@ class InventoryMutationTest(TestCase):
                 markup:10
             }
         """
-        item_fragment = """
-            id
-            sku
-            isService
-            isActive
-            barcode
-            name
-            markup
-            lastModifiedDate
-            currentStock
-            cost
-            price
-            __typename
-        """
         user_errors_fragment = """
             field
             message
@@ -62,30 +49,10 @@ class InventoryMutationTest(TestCase):
 
         item_create_execution_result: ExecutionResult = await self.schema.execute(mutation_query)
 
-        # Test has no execution errors
-        self.assertIsNone(item_create_execution_result.errors)
+        operation_name = "itemCreate"
+        await test_mutation(self, item_create_execution_result, operation_name)
 
-        # Test data is not null
-        exec_result_data: dict = item_create_execution_result.data
-        self.assertIsNotNone(exec_result_data)
-
-        # Test Mutation Result Exist
-        item_create_mutation_result: dict = exec_result_data.get("itemCreate")
-        self.assertIsNotNone(item_create_mutation_result)
-
-        # Test if UserError is returned
-        user_errors: List = item_create_mutation_result.get("userErrors")
-        self.assertIsNotNone(user_errors)
-
-        # Test Mutation Result UserError is empty
-        self.assertFalse(len(user_errors))
-
-        # Test if item is returned
-        item: dict = item_create_mutation_result.get("node")
-        self.assertIsNotNone(item)
-
-        # Test if all fields return
-        self.assertNotIn(None, item.values())
+        item = item_create_execution_result.data.get(operation_name).get("node")
 
         # Test if item was actually created
         item_id = item.get("id")
@@ -94,8 +61,8 @@ class InventoryMutationTest(TestCase):
         self.assertTrue(pr_query_set)
 
     async def test_item_deactivate(self):
-        item = await sync_to_async(Item.objects.create)()
-        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
+        item = await create_bulk_of_item(1)
+        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item[0].id}")
         mutation_query = f"""
             mutation deactivateItem{{
                 itemDeactivate(input:{{id:"{item_global_id}"}}){{
@@ -112,40 +79,16 @@ class InventoryMutationTest(TestCase):
 
         execution_result: ExecutionResult = await self.schema.execute(mutation_query)
 
-        # Test has no execution error
-        self.assertIsNone(execution_result.errors)
-
-        # Test data is not null
-        exec_result_data: dict = execution_result.data
-        self.assertIsNotNone(exec_result_data)
-
-        # Test Mutation Result Exist
-        item_deactivate_mutation_result: dict = exec_result_data.get("itemDeactivate")
-        self.assertIsNotNone(item_deactivate_mutation_result)
-
-        # Test if UserError is returned
-        user_errors: List = item_deactivate_mutation_result.get("userErrors")
-        self.assertIsNotNone(user_errors)
-
-        # Test Mutation Result UserError is empty
-        self.assertFalse(len(user_errors))
-
-        # Test if item is returned
-        item_type_result: dict = item_deactivate_mutation_result.get("node")
-        self.assertIsNotNone(item_type_result)
-
-        # Test if all fields return
-        self.assertNotIn(None, item_type_result.values())
+        operation_name = "itemDeactivate"
+        await test_mutation(self, execution_result, operation_name)
 
         # Test if item was changed
         item_changed: Item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
         self.assertFalse(item_changed.is_active)
 
     async def test_item_activate(self):
-        item = await sync_to_async(Item.objects.create)(
-            is_active=False
-        )
-        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
+        item = await create_bulk_of_item(1, active=False)
+        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item[0].id}")
         mutation_query = f"""
             mutation activateItem{{
                 itemActivate(input:{{id:"{item_global_id}"}}){{
@@ -162,30 +105,8 @@ class InventoryMutationTest(TestCase):
 
         execution_result: ExecutionResult = await self.schema.execute(mutation_query)
 
-        # Test has no execution error
-        self.assertIsNone(execution_result.errors)
-
-        # Test data is not null
-        exec_result_data: dict = execution_result.data
-        self.assertIsNotNone(exec_result_data)
-
-        # Test Mutation Result Exist
-        item_item_mutation_result: dict = exec_result_data.get("itemActivate")
-        self.assertIsNotNone(item_item_mutation_result)
-
-        # Test if UserError is returned
-        user_errors: List = item_item_mutation_result.get("userErrors")
-        self.assertIsNotNone(user_errors)
-
-        # Test Mutation Result UserError is empty
-        self.assertFalse(len(user_errors))
-
-        # Test if item is returned
-        item_type_result: dict = item_item_mutation_result.get("node")
-        self.assertIsNotNone(item_type_result)
-
-        # Test if all fields return
-        self.assertNotIn(None, item_type_result.values())
+        operation_name = "itemActivate"
+        await test_mutation(self, execution_result, operation_name)
 
         # Test if item was changed
         item_changed: Item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
@@ -201,20 +122,6 @@ class InventoryMutationTest(TestCase):
         )
         item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
 
-        item_fragment = """
-            id
-            sku
-            isService
-            isActive
-            barcode
-            name
-            markup
-            lastModifiedDate
-            currentStock
-            cost
-            price
-            __typename
-        """
         user_errors_fragment = """
             field
             message
@@ -239,30 +146,8 @@ class InventoryMutationTest(TestCase):
 
         execution_result: ExecutionResult = await self.schema.execute(mutation_query)
 
-        # Test has no execution error
-        self.assertIsNone(execution_result.errors)
-
-        # Test data is not null
-        exec_result_data: dict = execution_result.data
-        self.assertIsNotNone(exec_result_data)
-
-        # Test Mutation Result Exist
-        item_item_mutation_result: dict = exec_result_data.get("itemUpdate")
-        self.assertIsNotNone(item_item_mutation_result)
-
-        # Test if UserError is returned
-        user_errors: List = item_item_mutation_result.get("userErrors")
-        self.assertIsNotNone(user_errors)
-
-        # Test Mutation Result UserError is empty
-        self.assertFalse(len(user_errors))
-
-        # Test if item is returned
-        item_type_result: dict = item_item_mutation_result.get("node")
-        self.assertIsNotNone(item_type_result)
-
-        # Test if all fields return
-        self.assertNotIn(None, item_type_result.values())
+        operation_name = "itemUpdate"
+        await test_mutation(self, execution_result, operation_name)
 
         # Test if item was changed
         item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
@@ -271,19 +156,9 @@ class InventoryMutationTest(TestCase):
         self.assertEqual("Updated", item_detail_changed.name)
 
     async def test_item_delete(self):
-        item = await sync_to_async(Item.objects.create)()
-        await sync_to_async(ItemDetail.objects.create)(
-            name="Product",
-            cost=10,
-            markup=20,
-            root_item=item
-        )
-        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
+        item = await create_bulk_of_item(1)
+        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item[0].id}")
 
-        item_fragment = """
-                    id
-                    __typename
-                """
         user_errors_fragment = """
                     field
                     message
@@ -299,38 +174,15 @@ class InventoryMutationTest(TestCase):
                                 {user_errors_fragment}
                             }}
                             node {{
-                                {item_fragment}
+                                id
                             }}
                         }}
                     }}
                 """
-
         execution_result: ExecutionResult = await self.schema.execute(mutation_query)
 
-        # Test has no execution error
-        self.assertIsNone(execution_result.errors)
-
-        # Test data is not null
-        exec_result_data: dict = execution_result.data
-        self.assertIsNotNone(exec_result_data)
-
-        # Test Mutation Result Exist
-        item_item_mutation_result: dict = exec_result_data.get("itemDelete")
-        self.assertIsNotNone(item_item_mutation_result)
-
-        # Test if UserError is returned
-        user_errors: List = item_item_mutation_result.get("userErrors")
-        self.assertIsNotNone(user_errors)
-
-        # Test Mutation Result UserError is empty
-        self.assertFalse(len(user_errors))
-
-        # Test if item is returned
-        item_type_result: dict = item_item_mutation_result.get("node")
-        self.assertIsNotNone(item_type_result)
-
-        # Test if all fields return
-        self.assertNotIn(None, item_type_result.values())
+        operation_name = "itemDelete"
+        await test_mutation(self, execution_result, operation_name)
 
         # Test if item was deleted
         item = await sync_to_async(Item.objects.filter)(id=item_global_id.node_id)
