@@ -4,9 +4,28 @@ from asgiref.sync import sync_to_async
 from django.test import TestCase
 from strawberry import Schema
 from strawberry.types import ExecutionResult
+from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.query import Query
+from inventory.api.types.item import ItemType
 from inventory.models import Item, ItemDetail
+from inventory.test.api.utils import test_relay_connection, get_connection_query
+
+item_node_query_fragment = f"""
+    id
+    sku
+    isService
+    isActive
+    barcode
+    cost
+    currentStock
+    lastModifiedDate
+    markup
+    name
+    price
+    versionId
+    {get_connection_query("id", "itemVersions")}
+"""
 
 
 async def create_bulk_of_item(num: int) -> List[Item]:
@@ -32,90 +51,32 @@ class InventoryQueryTest(TestCase):
     def test_can_introspect(self):
         self.assertIn("__schema", self.schema.introspect())
 
-    # I tested the item_connection and item in the same test, because
-    # I needed the same database objects for the global id.
     async def test_item_queries(self):
-        item_node_query_fragment = """
-            id
-            sku
-            isService
-            isActive
-            barcode
-            cost
-            currentStock
-            lastModifiedDate
-            markup
-            name
-            price
-            versionId
-            itemVersions(
-            before: null, 
-            after:null, 
-            first: null, 
-            last:null
-            ) {
-            pageInfo {
-              hasNextPage
-              hasPreviousPage
-              startCursor
-              endCursor
-            }
-            edges {
-              cursor
-              node {
-                id
-                name
-              }
-            }
-            totalCount
-            }
-        """
-        query_connection = f"""
-       {{
-          itemConnection(
-            # Args were included to test if they exist
-            before: null
-            after: null
-            first: null
-            last: null
-          ){{
-            edges{{
-              cursor
-              node{{
-                {item_node_query_fragment}
-              }}
-            }}
-            totalCount
-            __typename
-          }}
-        }}
-        """
-
-        # Testing for empty connection
-        connection_query_result: ExecutionResult = await self.schema.execute(query_connection)
-        expected_empty_result = {
-            'data': {'itemConnection': {'edges': [], 'totalCount': 0, '__typename': 'ItemTypeConnection'}},
-            'errors': None, 'extensions': {}}
-        self.assertDictEqual(expected_empty_result, connection_query_result.__dict__)
+        operation_name = "itemConnection"
+        query_connection = f"{{ {await sync_to_async(get_connection_query)(item_node_query_fragment, operation_name)} }}"
 
         # Creating Items for testing not-empty connection
         await create_bulk_of_item(10)
-        connection_query_result: ExecutionResult = await self.schema.execute(query_connection)
-        connection: dict = connection_query_result.data.get("itemConnection")
-        connection_nodes = connection.get("edges")
+        execution_result: ExecutionResult = await self.schema.execute(query_connection)
+        execution_result = await test_relay_connection(self, execution_result=execution_result,
+                                                       operation_name=operation_name)
+        connection = execution_result.data.get(operation_name)
 
         # Test if item_list len is connection edges len
+        total_count = connection.get("totalCount")
         database_object_count = await sync_to_async(Item.objects.count)()
-        total_count_connection_nodes = connection.get("totalCount")
-        self.assertEqual(database_object_count, total_count_connection_nodes)
-        # Using the len of the list to make sure ii matches the totalCount
-        self.assertEqual(database_object_count, len(connection_nodes))
+        self.assertEqual(database_object_count, total_count)
 
+        # Using the len of the list to make sure ii matches the totalCount
+        self.assertEqual(database_object_count, len(connection.get("edges")))
+
+    async def test_item_node(self):
+        item = await create_bulk_of_item(1)
+        item_global_id = GlobalID(node_id=f"{item[0].id}", type_name=ItemType.__name__)
         # Testing item node query
-        first_node = connection_nodes[0].get("node")
         query_item = f"""
         {{
-            item(id:"{first_node.get('id')}")
+            item(id:"{item_global_id}")
             {{
                 {item_node_query_fragment}
             }}
@@ -123,5 +84,10 @@ class InventoryQueryTest(TestCase):
         """
         item_node_query_result: ExecutionResult = await self.schema.execute(query_item)
         item_node = item_node_query_result.data.get("item")
-        # Testing if the object retrieved by the item node is the same of the connection
-        self.assertDictEqual(first_node, item_node)
+
+        self.assertIsNotNone(item_node)
+        # Testing if the object retrieved by the item node is the same
+        self.assertEqual(str(item_global_id), item_node.get("id"))
+
+        # Testing a connection inside the query
+        await test_relay_connection(test_case=self, exec_result_data=item_node.get("itemVersions"))
