@@ -57,6 +57,8 @@ class ItemTypeTest(TestCase):
             root_item=self.item,
         )
 
+        # It is callable but pycharm does not know it
+        # noinspection PyCallingNonCallable
         item_type_result_1 = set(ItemType.item_versions(root=self.item))
         expected_result = set(ItemDetail.objects.filter(root_item=self.item))
         self.assertEqual(item_type_result_1, expected_result)
