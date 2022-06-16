@@ -1,5 +1,3 @@
-from typing import List
-
 from asgiref.sync import sync_to_async
 from django.test import TestCase
 from strawberry import Schema
@@ -8,40 +6,9 @@ from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.query import Query
 from inventory.api.types.item import ItemType
-from inventory.models import Item, ItemDetail
-from inventory.test.api.utils import test_relay_connection, get_connection_query
-
-item_node_query_fragment = f"""
-    id
-    sku
-    isService
-    isActive
-    barcode
-    cost
-    currentStock
-    lastModifiedDate
-    markup
-    name
-    price
-    versionId
-    {get_connection_query("id", "itemVersions")}
-"""
-
-
-async def create_bulk_of_item(num: int) -> List[Item]:
-    item_list = []
-    for i in range(num):
-        item = await sync_to_async(Item.objects.create)(sku=i)
-
-        await sync_to_async(ItemDetail.objects.create)(
-            name=f"itemDetail{i}",
-            barcode="890432",
-            cost=10,
-            markup=50,
-            root_item=item,
-        )
-        item_list.append(item)
-    return item_list
+from inventory.models import Item
+from inventory.test.api.fragments import item_node_query_fragment
+from inventory.test.api.utils import test_relay_connection, get_connection_query, create_bulk_of_item
 
 
 class InventoryQueryTest(TestCase):

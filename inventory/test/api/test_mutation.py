@@ -1,5 +1,3 @@
-from typing import List
-
 from asgiref.sync import sync_to_async
 from django.test import TestCase
 from graphql import ExecutionResult
@@ -10,6 +8,7 @@ from inventory.api.mutation import Mutation
 from inventory.api.query import Query
 from inventory.api.types.item import not_in_schema_types
 from inventory.models import Item, ItemDetail
+from inventory.test.api.fragments import item_node_query_fragment
 
 
 class InventoryMutationTest(TestCase):
@@ -55,7 +54,7 @@ class InventoryMutationTest(TestCase):
                         {user_errors_fragment}
                     }}
                     node{{
-                        {item_fragment}
+                        {item_node_query_fragment}
                     }}
                 }}
             }}
@@ -105,8 +104,7 @@ class InventoryMutationTest(TestCase):
                         message
                     }}
                     node{{
-                        id
-                        isActive
+                        {item_node_query_fragment}
                     }}
                 }}
             }}
@@ -156,8 +154,7 @@ class InventoryMutationTest(TestCase):
                         message
                     }}
                     node{{
-                        id
-                        isActive
+                        {item_node_query_fragment}
                     }}
                 }}
             }}
@@ -234,7 +231,7 @@ class InventoryMutationTest(TestCase):
                         {user_errors_fragment}
                     }}
                     node {{
-                        {item_fragment}
+                        {item_node_query_fragment}
                     }}
                 }}
             }}
