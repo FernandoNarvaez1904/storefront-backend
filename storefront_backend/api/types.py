@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from strawberry_django.filters import FilterLookup
 from strawberry_django_plus import gql
 
 
@@ -20,3 +21,8 @@ class InputTypeInterface:
 
     async def validate_and_get_errors(self) -> List[UserError]:
         pass
+
+
+@gql.input
+class Filter:
+    id: Optional[FilterLookup[gql.ID]]
