@@ -89,7 +89,7 @@ async def create_bulk_of_item(num: int, active: bool = True, seed: str = "") -> 
     return item_list
 
 
-def get_connection_query(node_fragment: str, field_name: str = "") -> str:
+def get_connection_query(node_fragment: str, field_name: str = "", extra_args: str = "") -> str:
     return f"""
       {field_name}(
         # Args were included to test if they exist
@@ -97,6 +97,7 @@ def get_connection_query(node_fragment: str, field_name: str = "") -> str:
         after: null
         first: null
         last: null
+        {extra_args}
       ){{
         edges{{
           cursor
