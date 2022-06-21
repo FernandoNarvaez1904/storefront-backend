@@ -37,6 +37,37 @@ class InventoryQueryTest(TestCase):
         # Using the len of the list to make sure ii matches the totalCount
         self.assertEqual(database_object_count, len(connection.get("edges")))
 
+    async def test_item_filter_query(self):
+        seed = "seed"
+        operation_name = "itemConnection"
+
+        await create_bulk_of_item(10)
+        await create_bulk_of_item(5, seed=seed)
+
+        filter_query = f"""
+            filter: {{
+                sku:{{
+                    contains: "{seed}"
+                }}
+                currentDetail : {{
+                    name : {{
+                        contains: "{seed}"
+                    }}
+                }}
+            }}
+        """
+        query_connection = f"{{ {await sync_to_async(get_connection_query)(item_node_query_fragment, operation_name, filter_query)} }}"
+        execution_result: ExecutionResult = await self.schema.execute(query_connection)
+        execution_result = await test_relay_connection(self, execution_result=execution_result,
+                                                       operation_name=operation_name)
+
+        connection = execution_result.data.get(operation_name)
+
+        # Test if item_list len is connection edges len
+        total_count = connection.get("totalCount")
+        filtered_database_qs = await sync_to_async(list)(Item.objects.filter(sku__contains=seed))
+        self.assertEqual(len(filtered_database_qs), total_count)
+
     async def test_item_node(self):
         item = await create_bulk_of_item(1)
         item_global_id = GlobalID(node_id=f"{item[0].id}", type_name=ItemType.__name__)
