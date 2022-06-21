@@ -8,7 +8,7 @@ item_node_query_fragment = f"""
     barcode
     cost
     currentStock
-    lastModifiedDate
+    creationDate
     markup
     name
     price

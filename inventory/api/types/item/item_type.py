@@ -55,7 +55,7 @@ class ItemType(gql.Node, ABC):
             return 0
 
     @gql.field
-    def last_modified_date(self: Item) -> Optional[datetime]:
+    def creation_date(self: Item) -> Optional[datetime]:
         try:
             return self.current_detail.date
         except AttributeError:

@@ -29,8 +29,8 @@ class ItemTypeTest(TestCase):
         markup = ItemType.markup(self.item)
         self.assertEqual(self.item.current_detail.markup, markup)
 
-    def test_last_modified_date_field(self):
-        date = ItemType.last_modified_date(self.item)
+    def test_creation_date_field(self):
+        date = ItemType.creation_date(self.item)
         self.assertEqual(self.item.current_detail.date, date)
 
     def test_price_field(self):
