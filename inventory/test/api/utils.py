@@ -79,8 +79,8 @@ async def create_bulk_of_item(num: int, active: bool = True, seed: str = "") -> 
         item = await sync_to_async(Item.objects.create)(sku=f"{seed}{i}", is_active=active)
 
         await sync_to_async(ItemDetail.objects.create)(
-            name=f"itemDetail{i}",
-            barcode="890432",
+            name=f"{seed}itemDetail{i}",
+            barcode=f"{seed}890432",
             cost=10,
             markup=50,
             root_item=item,
