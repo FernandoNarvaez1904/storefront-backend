@@ -9,3 +9,4 @@ from users.models import User
 @gql.django.type(User)
 class UserType(gql.Node, ABC):
     username: auto
+    first_name: auto

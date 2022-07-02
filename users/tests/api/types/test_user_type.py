@@ -3,21 +3,14 @@ from strawberry_django.utils import is_strawberry_type, is_django_type
 from strawberry_django_plus import gql
 
 from users.api.types.user_type import UserType
-from users.models import User
 
 
 class UserTypeTest(TestCase):
     def setUp(self):
-        user = User.objects.create_user(
-            username="username",
-            is_superuser=False,
-            first_name="FirstName",
-            last_name="LastName",
-            email="email@email.com",
-            is_staff=False,
-            password="password"
-        )
-        self.user = user
+        self.default_values = {
+            "username": "username",
+            "first_name": "FirstName",
+        }
 
     def test_is_gql_type(self):
         self.assertTrue(is_strawberry_type(UserType))
@@ -29,6 +22,11 @@ class UserTypeTest(TestCase):
         self.assertTrue(is_django_type(UserType))
 
     def test_username(self):
-        expected: str = "username"
-        user_type_username = UserType(username=expected).username
+        expected: str = self.default_values.get("username")
+        user_type_username = UserType(**self.default_values).username
         self.assertEqual(user_type_username, expected)
+
+    def test_first_name(self):
+        expected: str = self.default_values.get("first_name")
+        user_type_first_name = UserType(**self.default_values).first_name
+        self.assertEqual(user_type_first_name, expected)
