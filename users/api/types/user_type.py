@@ -10,3 +10,5 @@ from users.models import User
 class UserType(gql.Node, ABC):
     username: auto
     first_name: auto
+    last_name: auto
+    email: auto

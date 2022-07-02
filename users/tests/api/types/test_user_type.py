@@ -10,6 +10,8 @@ class UserTypeTest(TestCase):
         self.default_values = {
             "username": "username",
             "first_name": "FirstName",
+            "last_name": "LastName",
+            "email": "email@email.com"
         }
 
     def test_is_gql_type(self):
@@ -30,3 +32,13 @@ class UserTypeTest(TestCase):
         expected: str = self.default_values.get("first_name")
         user_type_first_name = UserType(**self.default_values).first_name
         self.assertEqual(user_type_first_name, expected)
+
+    def test_last_name(self):
+        expected: str = self.default_values.get("last_name")
+        user_type_last_name = UserType(**self.default_values).last_name
+        self.assertEqual(user_type_last_name, expected)
+
+    def test_email(self):
+        expected: str = self.default_values.get("email")
+        user_type_email = UserType(**self.default_values).email
+        self.assertEqual(user_type_email, expected)
