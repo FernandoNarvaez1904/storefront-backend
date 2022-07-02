@@ -27,3 +27,8 @@ class UserTypeTest(TestCase):
 
     def test_is_django_strawberry_type(self):
         self.assertTrue(is_django_type(UserType))
+
+    def test_username(self):
+        expected: str = "username"
+        user_type_username = UserType(username=expected).username
+        self.assertEqual(user_type_username, expected)
