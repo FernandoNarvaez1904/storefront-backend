@@ -13,3 +13,4 @@ class UserType(gql.Node, ABC):
     last_name: auto
     email: auto
     is_superuser: auto
+    is_staff: auto

@@ -12,7 +12,8 @@ class UserTypeTest(TestCase):
             "first_name": "FirstName",
             "last_name": "LastName",
             "email": "email@email.com",
-            "is_superuser": False
+            "is_superuser": False,
+            "is_staff": True
         }
 
     def test_is_gql_type(self):
@@ -48,3 +49,8 @@ class UserTypeTest(TestCase):
         expected: str = self.default_values.get("is_superuser")
         user_type_is_superuser = UserType(**self.default_values).is_superuser
         self.assertEqual(user_type_is_superuser, expected)
+
+    def test_is_staff(self):
+        expected: str = self.default_values.get("is_staff")
+        user_type_is_staff = UserType(**self.default_values).is_staff
+        self.assertEqual(user_type_is_staff, expected)
