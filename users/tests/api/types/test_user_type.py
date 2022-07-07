@@ -16,7 +16,8 @@ class UserTypeTest(TestCase):
             "email": "email@email.com",
             "is_superuser": False,
             "is_staff": True,
-            "last_login": datetime.datetime.now()
+            "last_login": datetime.datetime.now(),
+            "date_joined": datetime.datetime.now()
         }
 
     def test_is_gql_type(self):
@@ -62,3 +63,8 @@ class UserTypeTest(TestCase):
         expected: str = self.default_values.get("last_login")
         user_type_last_login = UserType(**self.default_values).last_login
         self.assertEqual(user_type_last_login, expected)
+
+    def test_date_joined(self):
+        expected: str = self.default_values.get("date_joined")
+        user_type_date_joined = UserType(**self.default_values).date_joined
+        self.assertEqual(user_type_date_joined, expected)

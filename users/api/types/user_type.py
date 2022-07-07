@@ -15,3 +15,4 @@ class UserType(gql.Node, ABC):
     is_superuser: auto
     is_staff: auto
     last_login: auto
+    date_joined: auto
