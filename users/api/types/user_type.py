@@ -16,3 +16,4 @@ class UserType(gql.Node, ABC):
     is_staff: auto
     last_login: auto
     date_joined: auto
+    is_active: auto
