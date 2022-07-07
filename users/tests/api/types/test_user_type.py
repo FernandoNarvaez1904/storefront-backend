@@ -1,3 +1,5 @@
+import datetime
+
 from django.test import TestCase
 from strawberry_django.utils import is_strawberry_type, is_django_type
 from strawberry_django_plus import gql
@@ -13,7 +15,8 @@ class UserTypeTest(TestCase):
             "last_name": "LastName",
             "email": "email@email.com",
             "is_superuser": False,
-            "is_staff": True
+            "is_staff": True,
+            "last_login": datetime.datetime.now()
         }
 
     def test_is_gql_type(self):
@@ -54,3 +57,8 @@ class UserTypeTest(TestCase):
         expected: str = self.default_values.get("is_staff")
         user_type_is_staff = UserType(**self.default_values).is_staff
         self.assertEqual(user_type_is_staff, expected)
+
+    def test_last_login(self):
+        expected: str = self.default_values.get("last_login")
+        user_type_last_login = UserType(**self.default_values).last_login
+        self.assertEqual(user_type_last_login, expected)
