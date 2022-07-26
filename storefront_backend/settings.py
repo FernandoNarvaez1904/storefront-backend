@@ -123,3 +123,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User Model
 AUTH_USER_MODEL = "users.User"
+
+STRAWBERRY_DJANGO_RELAY_MAX_RESULTS = None
