@@ -1,7 +1,8 @@
-from typing import Optional, Iterable, TypeVar
+from typing import Optional, TypeVar, List
 
+from asgiref.sync import sync_to_async
+from django.db.models import QuerySet
 from strawberry_django.filters import FilterLookup
-from strawberry_django_plus import gql
 
 from storefront_backend.api.types import Filter
 
@@ -58,11 +59,6 @@ async def get_filter_arg_from_filter_input(filter: Optional[FilterInput], prefix
     return filter_result
 
 
-def filter_connection(return_type, filter_input: FilterInput = None):
-    @gql.connection
-    async def wrapper(self, filter: Optional[filter_input] = None) -> Iterable[return_type]:
-        filter_result = await get_filter_arg_from_filter_input(filter)
-        result = return_type._django_type.model.objects.filter(**filter_result)
-        return result
-
-    return wrapper
+async def get_lazy_query_set_as_list(query_set: QuerySet) -> List:
+    list_coroutine = sync_to_async(len)
+    return await list_coroutine(query_set)
