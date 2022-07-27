@@ -2,7 +2,6 @@ from abc import ABC
 from datetime import datetime
 from typing import Optional
 
-from asgiref.sync import sync_to_async
 from strawberry import auto
 from strawberry_django_plus import gql
 from strawberry_django_plus.relay import GlobalID
@@ -29,65 +28,51 @@ class ItemType(gql.relay.Node, ABC):
     item_versions: gql.relay.Connection["ItemVersionType"] = gql.relay.connection()
 
     @gql.django.field
-    async def name(self: Item) -> Optional[str]:
+    def name(self: Item) -> Optional[str]:
         try:
-            pk = self.current_detail_id
-            detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(pk=pk)
-            return detail.name
+            return self.current_detail.name
         except AttributeError:
             return None
 
     @gql.django.field
-    async def barcode(self: Item) -> Optional[str]:
+    def barcode(self: Item) -> Optional[str]:
         try:
-            pk = self.current_detail_id
-            detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(pk=pk)
-            return detail.barcode
+            return self.current_detail.barcode
         except AttributeError:
             return None
 
     @gql.django.field
-    async def cost(self: Item) -> float:
+    def cost(self: Item) -> float:
         try:
-            pk = self.current_detail_id
-            detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(pk=pk)
-            return detail.cost
+            return self.current_detail.cost
         except AttributeError:
             return 0
 
     @gql.django.field
-    async def markup(self: Item) -> float:
+    def markup(self: Item) -> float:
         try:
-            pk = self.current_detail_id
-            detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(pk=pk)
-            return detail.markup
+            return self.current_detail.markup
         except AttributeError:
             return 0
 
     @gql.django.field
-    async def creation_date(self: Item) -> Optional[datetime]:
+    def creation_date(self: Item) -> Optional[datetime]:
         try:
-            pk = self.current_detail_id
-            detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(pk=pk)
-            return detail.date
+            return self.current_detail.date
         except AttributeError:
             return None
 
     @gql.django.field
-    async def price(self: Item) -> Optional[float]:
+    def price(self: Item) -> Optional[float]:
         try:
-            pk = self.current_detail_id
-            detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(pk=pk)
-            cost = detail.cost
-            return cost + (cost * (detail.markup / 100))
+            cost = self.current_detail.cost
+            return cost + (cost * (self.current_detail.markup / 100))
         except AttributeError:
             return None
 
     @gql.django.field
-    async def version_id(self: Item) -> Optional[GlobalID]:
+    def version_id(self: Item) -> Optional[GlobalID]:
         try:
-            pk = self.current_detail_id
-            detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(pk=pk)
-            return GlobalID(node_id=f"{detail.id}", type_name="ItemVersionType")
+            return GlobalID(node_id=f"{self.current_detail.id}", type_name="ItemVersionType")
         except AttributeError:
             return None
