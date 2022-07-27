@@ -8,7 +8,7 @@ class SKUNotUniqueError(UserError):
     message: str
     field: str
 
-    @gql.field
+    @gql.django.field
     async def field(self):
         return "sku"
 
@@ -18,7 +18,7 @@ class BarcodeNotUniqueError(UserError):
     message: str
     field: str
 
-    @gql.field
+    @gql.django.field
     async def field(self):
         return "barcode"
 
@@ -28,7 +28,7 @@ class ItemNotExistError(UserError):
     message: str
     field: str
 
-    @gql.field
+    @gql.django.field
     async def field(self):
         return "id"
 
@@ -38,7 +38,7 @@ class ItemIsNotActiveError(UserError):
     message: str
     field: str
 
-    @gql.field
+    @gql.django.field
     async def field(self):
         return "id"
 
@@ -48,7 +48,7 @@ class ItemIsActiveError(UserError):
     message: str
     field: str
 
-    @gql.field
+    @gql.django.field
     async def field(self):
         return "id"
 
@@ -58,6 +58,6 @@ class ItemAlreadyHasDocument(UserError):
     message: str
     field: str
 
-    @gql.field
+    @gql.django.field
     async def field(self):
         return "id"

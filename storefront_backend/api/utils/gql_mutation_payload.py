@@ -13,11 +13,14 @@ async def check_if_type_vars_are_correct_instance(input_type: InputType,
                                                   payload_type: PayloadType,
                                                   returned_type: ReturnedType) -> bool:
     if not issubclass(input_type, InputTypeInterface):
-        raise TypeError("input_type must be a subclass or instance of InputTypeInterface ")
+        raise TypeError(
+            "input_type must be a subclass or instance of InputTypeInterface ")
     if not issubclass(payload_type, PayloadTypeInterface):
-        raise TypeError("payload_type must be a subclass or instance of PayloadTypeInterface ")
+        raise TypeError(
+            "payload_type must be a subclass or instance of PayloadTypeInterface ")
     if not issubclass(returned_type, gql.Node):
-        raise TypeError("returned_type must be a subclass or instance of gql.Node ")
+        raise TypeError(
+            "returned_type must be a subclass or instance of gql.Node ")
 
     return True
 
@@ -32,7 +35,7 @@ def gql_mutation_payload(
     """
 
     def inner(func):
-        @gql.field
+        @gql.django.field()
         async def wrapper(self, input: input_type) -> payload_type:
             await check_if_type_vars_are_correct_instance(
                 input_type=input_type,

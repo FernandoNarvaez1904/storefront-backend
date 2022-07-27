@@ -21,19 +21,19 @@ class ItemTypeTest(TestCase):
         barcode = ItemType.barcode(self.item)
         self.assertEqual(self.item.current_detail.barcode, barcode)
 
-    def test_cost_field(self):
+    def test_cost_gql(self):
         cost = ItemType.cost(self.item)
         self.assertEqual(self.item.current_detail.cost, cost)
 
-    def test_markup_field(self):
+    def test_markup_gql(self):
         markup = ItemType.markup(self.item)
         self.assertEqual(self.item.current_detail.markup, markup)
 
-    def test_creation_date_field(self):
+    def test_creation_date_gql(self):
         date = ItemType.creation_date(self.item)
         self.assertEqual(self.item.current_detail.date, date)
 
-    def test_price_field(self):
+    def test_price_gql(self):
         # Positive Markup
         price = ItemType.price(self.item)
         self.assertEqual(15, price)
