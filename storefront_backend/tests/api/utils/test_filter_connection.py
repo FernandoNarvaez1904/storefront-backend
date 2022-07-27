@@ -1,15 +1,10 @@
-from typing import Iterable, Optional
-
 from django.test import TestCase
 from strawberry import UNSET
 from strawberry_django.filters import FilterLookup
 from strawberry_django_plus import gql
 
-from inventory.api.types.item import ItemType
-from inventory.api.types.item.filters import ItemFilter
 from storefront_backend.api.types import Filter
-from storefront_backend.api.utils.filter_connection import get_filter_arg_from_lookup, get_filter_arg_from_filter_input, \
-    filter_connection
+from storefront_backend.api.utils.filter_connection import get_filter_arg_from_lookup, get_filter_arg_from_filter_input
 
 
 class FilterConnectionTest(TestCase):
@@ -151,16 +146,3 @@ class FilterConnectionTest(TestCase):
             f"{prefix}__test_lookup_str__exact": "45",
             f"{prefix}__test_float": 34
         })
-
-    async def test_filter_connection(self):
-        connection = filter_connection(return_type=ItemType, filter_input=ItemFilter)
-
-        # Test has_correct_annotations
-        expected_result = {
-            "return": Iterable[ItemType],
-            "filter": Optional[ItemFilter]
-        }
-        self.assertDictEqual(connection.base_resolver.annotations, expected_result)
-
-        # Assert args in resolver
-        self.assertSetEqual(connection.resolver_args, {"filter", "self"})
