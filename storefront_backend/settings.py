@@ -1,5 +1,13 @@
 from pathlib import Path
 
+try:
+    import psycopg2
+except ImportError:
+    # Fall back to psycopg2cffi
+    from psycopg2cffi import compat
+
+    compat.register()
+
 # The package name is named different from the imported name
 # noinspection PyPackageRequirements
 import dj_database_url
