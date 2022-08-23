@@ -1,6 +1,7 @@
 build:
   docker:
     web: Dockerfile
-  run:
-    release: pypy manage.py migrate
-    web: gunicorn -k uvicorn.workers.UvicornWorker storefront_backend.asgi:application
+    
+run:
+  release: pypy manage.py migrate
+  web: gunicorn -k uvicorn.workers.UvicornWorker storefront_backend.asgi:application
