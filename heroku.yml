@@ -4,4 +4,3 @@ build:
 
 run:
   web: gunicorn -k uvicorn.workers.UvicornWorker storefront_backend.asgi:application
-release: pypy manage.py migrate
