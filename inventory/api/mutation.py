@@ -7,7 +7,11 @@ from inventory.api.types.item.inputs import ItemCreateInput, ItemDeactivateInput
     ItemDeleteInput
 from inventory.api.types.item.payload_types import ItemActivatePayload, ItemDeactivatePayload, ItemCreatePayload, \
     ItemUpdatePayload, ItemDeletePayload
+from inventory.api.types.item_group.inputs.item_group_create_input import ItemGroupCreateInput
+from inventory.api.types.item_group.item_group_type import ItemGroupType
+from inventory.api.types.item_group.payload_types import ItemGroupCreatePayload
 from inventory.models import Item, ItemDetail
+from inventory.models import ItemGroup
 from storefront_backend.api.utils import gql_mutation_payload
 
 
@@ -63,6 +67,9 @@ class Mutation:
     )
     async def item_update(self, input) -> ItemType:
         item: Item = await sync_to_async(Item.objects.get)(id=input.id.node_id)
+        if input.sku:
+            item.sku = input.sku
+            item.save(update_fields=['sku'])
 
         current_item_detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(id=item.current_detail_id)
         current_item_detail_data = current_item_detail.__dict__
@@ -94,3 +101,21 @@ class Mutation:
         item: Item = await sync_to_async(Item.objects.get)(id=input.id.node_id)
         await sync_to_async(item.delete)()
         return item
+
+    @gql_mutation_payload(
+        input_type=ItemGroupCreateInput,
+        payload_type=ItemGroupCreatePayload,
+        returned_type=ItemGroupType
+    )
+    async def item_group_create(self, input: ItemGroupCreateInput) -> ItemGroupType:
+
+        parent_node_id = None
+        if parent_global_id := input.parent_id:
+            parent_node_id = parent_global_id.node_id
+
+        item_group: ItemGroupType = await sync_to_async(ItemGroup.objects.create)(
+            name=input.name,
+            group_parent_id=parent_node_id
+        )
+        
+        return item_group
