@@ -16,6 +16,6 @@ class Query:
     @gql.connection
     async def item_connection(self, filter: Optional[ItemFilter] = None) -> gql.Connection[ItemType]:
         filt = await get_filter_arg_from_filter_input(filter)
-        qs = Item.objects.filter(**filt).select_related("current_detail")
+        qs = Item.objects.filter(**filt)
         await sync_to_async(len)(qs)
         return qs

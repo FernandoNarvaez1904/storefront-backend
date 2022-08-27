@@ -7,7 +7,7 @@ from inventory.api.types.item.inputs import ItemCreateInput, ItemDeactivateInput
     ItemDeleteInput
 from inventory.api.types.item.payload_types import ItemActivatePayload, ItemDeactivatePayload, ItemCreatePayload, \
     ItemUpdatePayload, ItemDeletePayload
-from inventory.models import Item, ItemDetail
+from inventory.models import Item
 from storefront_backend.api.utils import gql_mutation_payload
 
 
@@ -23,14 +23,10 @@ class Mutation:
         item = await sync_to_async(Item.objects.create)(
             is_service=input.is_service,
             sku=input.sku,
-        )
-        await sync_to_async(ItemDetail.objects.create)(
             name=input.name,
             barcode=input.barcode,
             cost=input.cost,
             markup=input.markup,
-            root_item=item,
-
         )
         return item
 
@@ -64,24 +60,15 @@ class Mutation:
     async def item_update(self, input) -> ItemType:
         item: Item = await sync_to_async(Item.objects.get)(id=input.id.node_id)
 
-        current_item_detail: ItemDetail = await sync_to_async(ItemDetail.objects.get)(id=item.current_detail_id)
-        current_item_detail_data = current_item_detail.__dict__
+        current_item_data = item.__dict__
         # _state is not a field in the ItemDetail model
-        current_item_detail_data.pop("_state")
+        current_item_data.pop("_state")
 
         # Cleaning input data from None Fields
         input_data = {k: v for k, v in input.data.__dict__.items() if v}
 
         if input_data:
-            new_detail_data = {
-                **current_item_detail_data,
-                "id": None,
-                "date": None,
-                **input_data,
-            }
-            detail = await sync_to_async(ItemDetail.objects.create)(**new_detail_data)
-            # this is needed because the signal is not fast enough
-            item.current_detail = detail
+            await sync_to_async(Item.objects.update)(**input_data)
 
         return item
 
