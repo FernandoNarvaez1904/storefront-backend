@@ -22,15 +22,6 @@ class Item(models.Model):
     group = models.ForeignKey(ItemGroup, on_delete=models.SET_NULL, null=True)
     current_detail = models.ForeignKey("ItemDetail", on_delete=models.SET_NULL, null=True)
 
-    def save(self, *args, **kwargs):
-        if self.current_detail:
-            self.name = self.current_detail.name
-            self.barcode = self.current_detail.barcode
-            self.cost = self.current_detail.cost
-            self.markup = self.current_detail.markup
-            self.creation_date = self.current_detail.date
-        super(Item, self).save(*args, **kwargs)
-
 
 class ItemDetail(models.Model):
     date = models.DateTimeField(auto_now_add=True)
