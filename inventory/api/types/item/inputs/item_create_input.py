@@ -1,12 +1,12 @@
 from typing import List
 
 from asgiref.sync import sync_to_async
+from strawberry import field
 from strawberry_django_plus import gql
 
 from inventory.api.types.item.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError
-from inventory.models import Item, ItemDetail
+from inventory.models import Item
 from storefront_backend.api.types import UserError, InputTypeInterface
-from strawberry import field
 
 
 @gql.django.input(Item)
@@ -26,7 +26,7 @@ class ItemCreateInput(InputTypeInterface):
                     message="SKU is no unique"
                 )
             )
-        if await sync_to_async(ItemDetail.objects.filter(barcode=self.barcode).exists)():
+        if await sync_to_async(Item.objects.filter(barcode=self.barcode).exists)():
             errors.append(
                 BarcodeNotUniqueError(
                     message="Barcode is no unique"

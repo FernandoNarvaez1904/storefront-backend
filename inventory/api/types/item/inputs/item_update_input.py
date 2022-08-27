@@ -4,12 +4,12 @@ from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
 from inventory.api.types.item import ItemIsNotActiveError, ItemNotExistError
-from inventory.models import Item, ItemDetail
+from inventory.models import Item
 from storefront_backend.api.types import UserError, InputTypeInterface
 
 
-@gql.django.input(ItemDetail)
-class ItemUpdateDataInput:
+@gql.django.input(Item)
+class ItemUpdateDataInput(InputTypeInterface):
     barcode: Optional[str]
     name: Optional[str]
     cost: Optional[float]

@@ -4,7 +4,7 @@ from asgiref.sync import sync_to_async
 from django.test import TestCase
 from graphql import ExecutionResult
 
-from inventory.models import Item, ItemDetail
+from inventory.models import Item
 
 
 async def test_execution_result(test_case: TestCase, execution_result: ExecutionResult,
@@ -76,14 +76,11 @@ async def test_mutation(test_case: TestCase, execution_result: ExecutionResult,
 async def create_bulk_of_item(num: int, active: bool = True, seed: str = "") -> List[Item]:
     item_list = []
     for i in range(num):
-        item = await sync_to_async(Item.objects.create)(sku=f"{seed}{i}", is_active=active)
-
-        await sync_to_async(ItemDetail.objects.create)(
-            name=f"{seed}itemDetail{i}",
+        item = await sync_to_async(Item.objects.create)(
+            sku=f"{seed}{i}", is_active=active, name=f"{seed}item{i}",
             barcode=f"{seed}barcode{i}",
             cost=10,
             markup=50,
-            root_item=item,
         )
         item_list.append(item)
     return item_list

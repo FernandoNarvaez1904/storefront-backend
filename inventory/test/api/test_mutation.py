@@ -7,7 +7,7 @@ from strawberry_django_plus.relay import GlobalID
 from inventory.api.mutation import Mutation
 from inventory.api.query import Query
 from inventory.api.types.item import not_in_schema_types
-from inventory.models import Item, ItemDetail
+from inventory.models import Item
 from inventory.test.api.fragments import item_node_query_fragment
 from inventory.test.api.utils import test_mutation, create_bulk_of_item
 
@@ -113,13 +113,12 @@ class InventoryMutationTest(TestCase):
         self.assertTrue(item_changed.is_active)
 
     async def test_item_update(self):
-        item = await sync_to_async(Item.objects.create)()
-        await sync_to_async(ItemDetail.objects.create)(
+        item = await sync_to_async(Item.objects.create)(
             name="Product",
             cost=10,
             markup=20,
-            root_item=item
         )
+
         item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
 
         user_errors_fragment = """
@@ -151,9 +150,8 @@ class InventoryMutationTest(TestCase):
 
         # Test if item was changed
         item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
-        item_detail_changed: ItemDetail = await sync_to_async(ItemDetail.objects.get)(id=item.current_detail_id)
-        self.assertEqual(43, item_detail_changed.cost)
-        self.assertEqual("Updated", item_detail_changed.name)
+        self.assertEqual(43, item.cost)
+        self.assertEqual("Updated", item.name)
 
     async def test_item_delete(self):
         item = await create_bulk_of_item(1)

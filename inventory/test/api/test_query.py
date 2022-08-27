@@ -49,11 +49,9 @@ class InventoryQueryTest(TestCase):
                 sku:{{
                     contains: "{seed}"
                 }}
-                currentDetail : {{
-                    name : {{
+                 name : {{
                         contains: "{seed}"
                     }}
-                }}
             }}
         """
         query_connection = f"{{ {await sync_to_async(get_connection_query)(item_node_query_fragment, operation_name, filter_query)} }}"
@@ -86,6 +84,3 @@ class InventoryQueryTest(TestCase):
         self.assertIsNotNone(item_node)
         # Testing if the object retrieved by the item node is the same
         self.assertEqual(str(item_global_id), item_node.get("id"))
-
-        # Testing a connection inside the query
-        await test_relay_connection(test_case=self, exec_result_data=item_node.get("itemVersions"))
