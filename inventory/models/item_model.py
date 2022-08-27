@@ -7,9 +7,9 @@ class ItemGroup(models.Model):
 
 
 class Item(models.Model):
-    name = models.CharField(max_length=255, default="")
-    barcode = models.CharField(max_length=48, default="")
-    creation_date = models.DateTimeField(auto_now_add=True, null=True)
+    name = models.CharField(max_length=255, unique=True)
+    barcode = models.CharField(max_length=48, unique=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
     cost = models.FloatField(default=0)
     markup = models.FloatField(default=0)
 
