@@ -58,17 +58,18 @@ class Mutation:
         returned_type=ItemType
     )
     async def item_update(self, input) -> ItemType:
-        item: Item = await sync_to_async(Item.objects.get)(id=input.id.node_id)
+        item: Item = await Item.objects.aget(id=input.id.node_id)
 
         current_item_data = item.__dict__
         # _state is not a field in the ItemDetail model
         current_item_data.pop("_state")
 
         # Cleaning input data from None Fields
-        input_data = {k: v for k, v in input.data.__dict__.items() if v}
+        input_data = {k: v for k, v in input.data.__dict__.items() if v and v != item.__getattribute__(k)}
 
         if input_data:
-            await sync_to_async(Item.objects.update)(**input_data)
+            item_as_qs = Item.objects.filter(pk=item.id)
+            await item_as_qs.aupdate(**input_data)
 
         return item
 
