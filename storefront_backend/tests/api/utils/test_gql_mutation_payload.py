@@ -1,33 +1,34 @@
-from abc import ABC
 from typing import List, Optional
 
+import strawberry
 from django.test import TestCase
 from strawberry_django_plus import gql
 
-from storefront_backend.api.types import InputTypeInterface, PayloadTypeInterface, UserError
+from storefront_backend.api.payload_interface import PayloadTypeInterface
+from storefront_backend.api.relay.node import Node
+from storefront_backend.api.types import InputTypeInterface, UserError
 from storefront_backend.api.utils.gql_mutation_payload import check_if_type_vars_are_correct_instance
-from users.models import User
 
 
 class GqlMutationPayloadTest(TestCase):
     def setUp(self):
-        @gql.type
+        @strawberry.type
         class InputType(InputTypeInterface):
             pass
 
         self.input_type = InputType
 
-        @gql.type
+        @strawberry.type
         class PayloadType(PayloadTypeInterface):
             user_errors: List[UserError]
             node: Optional[gql.Node]
 
-        @gql.django.type(User)
-        class NodeIns(gql.Node, ABC):
-            id: gql.relay.GlobalID
+        @strawberry.type
+        class NodeIns(Node):
+            id: strawberry.ID
 
         self.payload_type = PayloadType
-        self.payload_type_ins = PayloadType(user_errors=[], node=NodeIns())
+        self.payload_type_ins = PayloadType(user_errors=[], node=NodeIns(id=1))
 
         self.node = NodeIns
 
@@ -81,4 +82,3 @@ class GqlMutationPayloadTest(TestCase):
 
         # Leaving this function here JIC
         pass
-

@@ -22,13 +22,9 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG") == "DEBUG"
 
-if config("IS_REVIEW_APP") == "True":
-    ALLOWED_HOSTS = [f"{config('HEROKU_APP_NAME')}.herokuapp.com"]
-    CORS_ALLOWED_ORIGINS = [
-        f"https://{config('HEROKU_APP_NAME')}.herokuapp.com"]
-else:
-    ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
-    CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(",")
+
+ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(",")
 
 # Application definition
 
@@ -86,8 +82,12 @@ try:
 except:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'HOST': '172.17.0.1',
+            'USER': 'dev',
+            'PASSWORD': 'yolos',
+            'NAME': 'storefront_back',
+            'PORT': '5432'
         }
     }
 

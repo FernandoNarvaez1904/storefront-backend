@@ -1,27 +1,28 @@
-from abc import ABC
+from datetime import datetime
 from typing import Optional
 
-from strawberry import auto
-from strawberry_django_plus import gql
+import strawberry
 
 from inventory.models import Item
+from storefront_backend.api.relay.node import Node
 
 
-@gql.django.type(model=Item)
-class ItemType(gql.relay.Node, ABC):
-    id: auto
-    name: auto
-    barcode: auto
-    cost: auto
-    markup: auto
-    creation_date: auto
-    is_active: auto
-    current_stock: auto
-    is_service: auto
-    sku: auto
+@strawberry.type
+class ItemType(Node):
+    _model_ = Item
+    id: strawberry.ID
+    name: str
+    barcode: str
+    cost: float
+    markup: float
+    creation_date: datetime
+    is_active: bool
+    current_stock: int
+    is_service: bool
+    sku: str
 
-    @gql.django.field
-    def price(self: Item) -> Optional[float]:
+    @strawberry.field
+    def price(self) -> Optional[float]:
         try:
             cost = self.cost
             return cost + (cost * (self.markup / 100))

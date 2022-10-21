@@ -15,23 +15,29 @@ class ItemCreateInputTest(TestCase):
         self.item = items[0]
 
     async def test_validate_and_get_errors(self):
+        default_args = {
+            'is_service': False,
+            'name': "itemName",
+            'cost': 0.00,
+            'markup': 0.00
+        }
         # Test sku error
-        sku_error_item_type = ItemCreateInput(sku=self.item.sku, barcode="hello")
+        sku_error_item_type = ItemCreateInput(sku=self.item.sku, barcode="hello", **default_args)
         expected_sku_error: List[UserError] = await sku_error_item_type.validate_and_get_errors()
         self.assertIsInstance(expected_sku_error[0], SKUNotUniqueError)
 
         # Test barcode error
-        barcode_error_item_type = ItemCreateInput(sku="10", barcode=self.item.barcode)
+        barcode_error_item_type = ItemCreateInput(sku="10", barcode=self.item.barcode, **default_args)
         expected_barcode_error: List[UserError] = await barcode_error_item_type.validate_and_get_errors()
         self.assertIsInstance(expected_barcode_error[0], BarcodeNotUniqueError)
 
         # Test sku and barcode error
-        errors_item_type = ItemCreateInput(sku=f"{self.item.sku}", barcode=f"{self.item.barcode}")
+        errors_item_type = ItemCreateInput(sku=f"{self.item.sku}", barcode=f"{self.item.barcode}", **default_args)
         expected_errors: List[UserError] = await errors_item_type.validate_and_get_errors()
         self.assertIsInstance(expected_errors[0], SKUNotUniqueError)
         self.assertIsInstance(expected_errors[1], BarcodeNotUniqueError)
 
         # Test should have no problem
-        passing_item_type = ItemCreateInput(sku=f"{self.item.sku}1", barcode=f"{self.item.barcode}1")
+        passing_item_type = ItemCreateInput(sku=f"{self.item.sku}1", barcode=f"{self.item.barcode}1", **default_args)
         expected_no_error: List[UserError] = await passing_item_type.validate_and_get_errors()
         self.assertFalse(len(expected_no_error))

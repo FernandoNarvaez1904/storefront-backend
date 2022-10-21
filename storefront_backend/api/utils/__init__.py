@@ -1,1 +1,1 @@
-from .gql_mutation_payload import gql_mutation_payload
+from .gql_mutation_payload import strawberry_mutation_payload

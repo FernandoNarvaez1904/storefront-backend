@@ -1,9 +1,9 @@
-from typing import Optional
+import strawberry
 
-from strawberry_django_plus import gql
 from inventory.api.query import Query as InventoryQuery
+from storefront_backend.api.relay.node import node_resolver, Node
 
 
-@gql.type
+@strawberry.type
 class Query(InventoryQuery):
-    node: Optional[gql.Node] = gql.django.node()
+    node: Node = strawberry.field(node_resolver)

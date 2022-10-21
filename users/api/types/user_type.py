@@ -1,19 +1,22 @@
 from abc import ABC
+from datetime import datetime
 
+import strawberry
 from strawberry import auto
-from strawberry_django_plus import gql
 
+from storefront_backend.api.relay.node import Node
 from users.models import User
 
 
-@gql.django.type(User)
-class UserType(gql.Node, ABC):
-    username: auto
-    first_name: auto
-    last_name: auto
-    email: auto
-    is_superuser: auto
-    is_staff: auto
-    last_login: auto
-    date_joined: auto
-    is_active: auto
+@strawberry.type
+class UserType(Node):
+    _model_ = User
+    username: str
+    first_name: str
+    last_name: str
+    email: str
+    is_superuser: bool
+    is_staff: bool
+    last_login: datetime
+    date_joined: datetime
+    is_active: bool

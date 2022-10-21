@@ -1,63 +1,63 @@
-from strawberry_django_plus import gql
+import strawberry
 
 from storefront_backend.api.types import UserError
 
 
-@gql.type
+@strawberry.type
 class SKUNotUniqueError(UserError):
     message: str
     field: str
 
-    @gql.django.field
+    @strawberry.field
     async def field(self):
         return "sku"
 
 
-@gql.type
+@strawberry.type
 class BarcodeNotUniqueError(UserError):
     message: str
     field: str
 
-    @gql.django.field
+    @strawberry.field
     async def field(self):
         return "barcode"
 
 
-@gql.type
+@strawberry.type
 class ItemNotExistError(UserError):
     message: str
     field: str
 
-    @gql.django.field
+    @strawberry.field
     async def field(self):
         return "id"
 
 
-@gql.type
+@strawberry.type
 class ItemIsNotActiveError(UserError):
     message: str
     field: str
 
-    @gql.django.field
+    @strawberry.field
     async def field(self):
         return "id"
 
 
-@gql.type
+@strawberry.type
 class ItemIsActiveError(UserError):
     message: str
     field: str
 
-    @gql.django.field
+    @strawberry.field
     async def field(self):
         return "id"
 
 
-@gql.type
+@strawberry.type
 class ItemAlreadyHasDocument(UserError):
     message: str
     field: str
 
-    @gql.django.field
+    @strawberry.field
     async def field(self):
         return "id"

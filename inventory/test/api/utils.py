@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from typing import List
 
-from asgiref.sync import sync_to_async
 from django.test import TestCase
 from graphql import ExecutionResult
 
@@ -76,7 +77,7 @@ async def test_mutation(test_case: TestCase, execution_result: ExecutionResult,
 async def create_bulk_of_item(num: int, active: bool = True, seed: str = "") -> List[Item]:
     item_list = []
     for i in range(num):
-        item = await sync_to_async(Item.objects.create)(
+        item = await Item.objects.acreate(
             sku=f"{seed}{i}", is_active=active, name=f"{seed}item{i}",
             barcode=f"{seed}barcode{i}",
             cost=10,
@@ -107,9 +108,10 @@ def get_connection_query(node_fragment: str, field_name: str = "", extra_args: s
             hasPreviousPage
             startCursor
             endCursor
+            totalCount
+            edgesCount
             __typename
         }}
-        totalCount
         __typename
       }}
         """

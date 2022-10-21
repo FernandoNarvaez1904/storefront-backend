@@ -1,15 +1,14 @@
 from typing import List
 
-from asgiref.sync import sync_to_async
+import strawberry
 from strawberry import field
-from strawberry_django_plus import gql
 
 from inventory.api.types.item.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError
 from inventory.models import Item
 from storefront_backend.api.types import UserError, InputTypeInterface
 
 
-@gql.django.input(Item)
+@strawberry.input
 class ItemCreateInput(InputTypeInterface):
     sku: str = field(description="It must be unique")
     is_service: bool
@@ -20,13 +19,13 @@ class ItemCreateInput(InputTypeInterface):
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors = []
-        if await sync_to_async(Item.objects.filter(sku=self.sku).exists)():
+        if await Item.objects.filter(sku=self.sku).aexists():
             errors.append(
                 SKUNotUniqueError(
                     message="SKU is no unique"
                 )
             )
-        if await sync_to_async(Item.objects.filter(barcode=self.barcode).exists)():
+        if await Item.objects.filter(barcode=self.barcode).aexists():
             errors.append(
                 BarcodeNotUniqueError(
                     message="Barcode is no unique"

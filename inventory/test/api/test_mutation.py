@@ -1,8 +1,8 @@
 from asgiref.sync import sync_to_async
+from django.db.models import QuerySet
 from django.test import TestCase
 from graphql import ExecutionResult
 from strawberry import Schema
-from strawberry_django_plus.relay import GlobalID
 
 from inventory.api.mutation import Mutation
 from inventory.api.query import Query
@@ -10,6 +10,7 @@ from inventory.api.types.item import not_in_schema_types
 from inventory.models import Item
 from inventory.test.api.fragments import item_node_query_fragment
 from inventory.test.api.utils import test_mutation, create_bulk_of_item
+from storefront_backend.api.query import Node
 
 
 class InventoryMutationTest(TestCase):
@@ -56,13 +57,13 @@ class InventoryMutationTest(TestCase):
 
         # Test if item was actually created
         item_id = item.get("id")
-        global_id = GlobalID.from_id(item_id)
-        pr_query_set = await sync_to_async(list)(Item.objects.filter(id=global_id.node_id))
+        decoded_id = Node.decode_id(item_id).get("instance_id")
+        pr_query_set = await sync_to_async(list)(Item.objects.filter(id=decoded_id))
         self.assertTrue(pr_query_set)
 
     async def test_item_deactivate(self):
         item = await create_bulk_of_item(1)
-        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item[0].id}")
+        item_global_id = Node.get_id_from_model_instance(item[0])
         mutation_query = f"""
             mutation deactivateItem{{
                 itemDeactivate(input:{{id:"{item_global_id}"}}){{
@@ -83,12 +84,13 @@ class InventoryMutationTest(TestCase):
         await test_mutation(self, execution_result, operation_name)
 
         # Test if item was changed
-        item_changed: Item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
+        instance_id = Node.decode_id(item_global_id).get("instance_id")
+        item_changed: Item = await Item.objects.aget(id=instance_id)
         self.assertFalse(item_changed.is_active)
 
     async def test_item_activate(self):
         item = await create_bulk_of_item(1, active=False)
-        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item[0].id}")
+        item_global_id = Node.get_id_from_model_instance(item[0])
         mutation_query = f"""
             mutation activateItem{{
                 itemActivate(input:{{id:"{item_global_id}"}}){{
@@ -109,17 +111,17 @@ class InventoryMutationTest(TestCase):
         await test_mutation(self, execution_result, operation_name)
 
         # Test if item was changed
-        item_changed: Item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
+        decoded_id = Node.decode_id(item_global_id).get("instance_id")
+        item_changed: Item = await Item.objects.aget(id=decoded_id)
         self.assertTrue(item_changed.is_active)
 
     async def test_item_update(self):
-        item = await sync_to_async(Item.objects.create)(
+        item = await Item.objects.acreate(
             name="Product",
             cost=10,
             markup=20,
         )
-
-        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item.id}")
+        item_global_id = Node.get_id_from_model_instance(item)
 
         user_errors_fragment = """
             field
@@ -149,13 +151,14 @@ class InventoryMutationTest(TestCase):
         await test_mutation(self, execution_result, operation_name)
 
         # Test if item was changed
-        item = await sync_to_async(Item.objects.get)(id=item_global_id.node_id)
+        instance_id = Node.decode_id(item_global_id).get("instance_id")
+        item = await Item.objects.aget(id=instance_id)
         self.assertEqual(43, item.cost)
         self.assertEqual("Updated", item.name)
 
     async def test_item_delete(self):
         item = await create_bulk_of_item(1)
-        item_global_id = GlobalID(type_name='ItemType', node_id=f"{item[0].id}")
+        item_global_id = Node.get_id_from_model_instance(item[0])
 
         user_errors_fragment = """
                     field
@@ -183,6 +186,7 @@ class InventoryMutationTest(TestCase):
         await test_mutation(self, execution_result, operation_name)
 
         # Test if item was deleted
-        item = await sync_to_async(Item.objects.filter)(id=item_global_id.node_id)
-        item_count = await sync_to_async(item.count)()
+        instance_id = Node.decode_id(item_global_id).get("instance_id")
+        item: QuerySet[Item] = Item.objects.filter(id=instance_id)
+        item_count = await item.acount()
         self.assertEqual(0, item_count)

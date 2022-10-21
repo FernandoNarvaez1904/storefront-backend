@@ -1,19 +1,17 @@
-# base image
-FROM pypy:3.9
+FROM pypy
 
-# setup environment variable
-ENV DockerHOME=/home/app/app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# set work directory
-RUN mkdir -p $DockerHOME
+WORKDIR /code
 
-# where your code lives
-WORKDIR $DockerHOME
+COPY requirements.txt /code/
 
-COPY requirements.txt .
-
+RUN pypy -m ensurepip
 RUN pypy -m pip install -r requirements.txt
 
-COPY . .
+COPY . /code/
 
-CMD ["pypy", "run_server.py"]
+EXPOSE 8080
+
+CMD gunicorn -k uvicorn.workers.UvicornWorker storefront_backend.asgi:application
