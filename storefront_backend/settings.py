@@ -22,7 +22,6 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG") == "DEBUG"
 
-
 ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(",")
 
@@ -85,7 +84,7 @@ except:
             'ENGINE': 'django.db.backends.postgresql',
             'HOST': '172.17.0.1',
             'USER': 'dev',
-            'PASSWORD': 'yolos',
+            'PASSWORD': 'dontletmedown',
             'NAME': 'storefront_back',
             'PORT': '5432'
         }

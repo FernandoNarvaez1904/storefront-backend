@@ -3,7 +3,7 @@ from typing import List
 import strawberry
 from strawberry import field
 
-from inventory.api.types.item.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError
+from inventory.api.types.item.user_error_types import BarcodeNotUniqueError, SKUNotUniqueError, NameNotUniqueError
 from inventory.models import Item
 from storefront_backend.api.types import UserError, InputTypeInterface
 
@@ -22,13 +22,20 @@ class ItemCreateInput(InputTypeInterface):
         if await Item.objects.filter(sku=self.sku).aexists():
             errors.append(
                 SKUNotUniqueError(
-                    message="SKU is no unique"
+                    message="SKU is not unique"
                 )
             )
         if await Item.objects.filter(barcode=self.barcode).aexists():
             errors.append(
                 BarcodeNotUniqueError(
-                    message="Barcode is no unique"
+                    message="Barcode is not unique"
+                )
+            )
+
+        if await Item.objects.filter(name=self.name).aexists():
+            errors.append(
+                NameNotUniqueError(
+                    message="Name is not unique"
                 )
             )
         return errors
