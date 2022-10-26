@@ -1,6 +1,6 @@
 from .item_type import ItemType
 from .user_error_types import SKUNotUniqueError, BarcodeNotUniqueError, ItemNotExistError, ItemIsNotActiveError, \
-    ItemIsActiveError, ItemAlreadyHasDocument
+    ItemIsActiveError, ItemAlreadyHasDocument, NameNotUniqueError
 
 not_in_schema_types = [
     SKUNotUniqueError,
@@ -9,4 +9,5 @@ not_in_schema_types = [
     ItemIsNotActiveError,
     ItemIsActiveError,
     ItemAlreadyHasDocument,
+    NameNotUniqueError,
 ]

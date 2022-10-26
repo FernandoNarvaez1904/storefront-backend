@@ -24,6 +24,16 @@ class BarcodeNotUniqueError(UserError):
 
 
 @strawberry.type
+class NameNotUniqueError(UserError):
+    message: str
+    field: str
+
+    @strawberry.field
+    async def field(self):
+        return "name"
+
+
+@strawberry.type
 class ItemNotExistError(UserError):
     message: str
     field: str
