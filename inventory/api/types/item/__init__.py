@@ -3,11 +3,11 @@ from .user_error_types import SKUNotUniqueError, BarcodeNotUniqueError, ItemNotE
     ItemIsActiveError, ItemAlreadyHasDocument, NameNotUniqueError
 
 not_in_schema_types = [
+    NameNotUniqueError,
     SKUNotUniqueError,
     BarcodeNotUniqueError,
     ItemNotExistError,
     ItemIsNotActiveError,
     ItemIsActiveError,
-    NameNotUniqueError,
     ItemAlreadyHasDocument,
 ]
