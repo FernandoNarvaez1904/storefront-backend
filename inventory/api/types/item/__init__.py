@@ -8,6 +8,6 @@ not_in_schema_types = [
     ItemNotExistError,
     ItemIsNotActiveError,
     ItemIsActiveError,
-    ItemAlreadyHasDocument,
     NameNotUniqueError,
+    ItemAlreadyHasDocument,
 ]
