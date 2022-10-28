@@ -17,7 +17,7 @@ class ItemType(Node):
     markup: float
     creation_date: datetime
     is_active: bool
-    current_stock: int
+    current_stock: float
     is_service: bool
     sku: str
 
