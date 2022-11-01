@@ -71,11 +71,14 @@ class Mutation:
         # Cleaning input data from None Fields
         input_data = {k: v for k, v in input.data.__dict__.items() if v and v != item.__getattribute__(k)}
 
+        new_item = None
         if input_data:
             item_as_qs = Item.objects.filter(pk=item.id)
             await item_as_qs.aupdate(**input_data)
-
-        return ItemType.from_model_instance(item)
+            l = await sync_to_async(list)(item_as_qs)
+            new_item = l[0]
+            
+        return ItemType.from_model_instance(new_item)
 
     @strawberry_mutation_payload(
         input_type=ItemDeleteInput,
