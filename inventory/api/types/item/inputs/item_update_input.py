@@ -3,7 +3,8 @@ from typing import List, Optional
 import strawberry
 from asgiref.sync import sync_to_async
 
-from inventory.api.types.item import ItemIsNotActiveError, ItemNotExistError
+from inventory.api.types.item import ItemIsNotActiveError, ItemNotExistError, SKUNotUniqueError, BarcodeNotUniqueError, \
+    NameNotUniqueError
 from inventory.models import Item
 from storefront_backend.api.relay.node import DecodedID, Node
 from storefront_backend.api.types import UserError, InputTypeInterface
@@ -15,6 +16,7 @@ class ItemUpdateDataInput(InputTypeInterface):
     name: Optional[str] = strawberry.UNSET
     cost: Optional[float] = strawberry.UNSET
     markup: Optional[float] = strawberry.UNSET
+    sku: Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -36,6 +38,29 @@ class ItemUpdateInput(InputTypeInterface):
                 errors.append(ItemIsNotActiveError(
                     message=f"Item with id {self.id} is not active. Cannot deactivate inactive items"
                 ))
+
+            if self.data.sku:
+                if await Item.objects.filter(sku=self.data.sku).aexists():
+                    errors.append(
+                        SKUNotUniqueError(
+                            message="SKU is not unique"
+                        )
+                    )
+
+            if self.data.barcode:
+                if await Item.objects.filter(barcode=self.data.barcode).aexists():
+                    errors.append(
+                        BarcodeNotUniqueError(
+                            message="Barcode is not unique"
+                        )
+                    )
+            if self.data.name:
+                if await Item.objects.filter(name=self.data.name).aexists():
+                    errors.append(
+                        NameNotUniqueError(
+                            message="Name is not unique"
+                        )
+                    )
         else:
             errors.append(
                 ItemNotExistError(message=f"item with id {self.id} does not exist in database")
