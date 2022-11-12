@@ -1,7 +1,5 @@
 from typing import TypeVar, List, Optional
 
-import strawberry
-
 InputType = TypeVar("InputType")
 PayloadType = TypeVar("PayloadType")
 ReturnedType = TypeVar("ReturnedType")
@@ -27,7 +25,7 @@ async def check_if_type_vars_are_correct_instance(input_type: InputType,
     return True
 
 
-def strawberry_mutation_payload(
+def strawberry_mutation_resolver_payload(
         input_type: InputType,
         payload_type: PayloadType,
         returned_type: ReturnedType
@@ -36,9 +34,8 @@ def strawberry_mutation_payload(
         It is used to automatically implement the payload and error logic of all mutations.
     """
 
-    def inner(func):
-        @strawberry.field
-        async def wrapper(self, input: input_type) -> payload_type:
+    def inner(func) -> payload_type:
+        async def wrapper(input: input_type) -> payload_type:
             await check_if_type_vars_are_correct_instance(
                 input_type=input_type,
                 payload_type=payload_type,
@@ -48,7 +45,7 @@ def strawberry_mutation_payload(
             errors: List[UserError] = await input.validate_and_get_errors()
             node: Optional[returned_type] = None
             if not errors:
-                node: returned_type = await func(self=self, input=input)
+                node: returned_type = await func(input=input)
             return payload_type(user_errors=errors, node=node)
 
         return wrapper
