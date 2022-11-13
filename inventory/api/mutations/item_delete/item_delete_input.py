@@ -5,7 +5,7 @@ from asgiref.sync import sync_to_async
 
 from inventory.api.mutations.item_delete.item_delete_errors import CannotDeleteNonExistentItem, \
     CannotDeleteItemHasDocuments
-from inventory.models import Item, ModifyStockOrder
+from inventory.models import Item
 from storefront_backend.api.relay.node import DecodedID, Node
 from storefront_backend.api.types import UserError, InputTypeInterface
 
@@ -25,7 +25,7 @@ class ItemDeleteInput(InputTypeInterface):
                 CannotDeleteNonExistentItem(message=f"item with id {self.id} does not exist in database")
             )
 
-        modify_stock_order_list = await sync_to_async(list)(ModifyStockOrder.objects.filter(item_id=node_id))
+        modify_stock_order_list = False
         if modify_stock_order_list:
             errors.append(
                 CannotDeleteItemHasDocuments(
