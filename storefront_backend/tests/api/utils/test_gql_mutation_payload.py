@@ -7,7 +7,7 @@ from strawberry_django_plus import gql
 from storefront_backend.api.payload_interface import PayloadTypeInterface
 from storefront_backend.api.relay.node import Node
 from storefront_backend.api.types import InputTypeInterface, UserError
-from storefront_backend.api.utils.gql_mutation_payload import check_if_type_vars_are_correct_instance
+from storefront_backend.api.utils.strawberry_mutation_resolver_payload import check_if_type_vars_are_correct_instance
 
 
 class GqlMutationPayloadTest(TestCase):
