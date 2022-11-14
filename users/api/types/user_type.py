@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 import strawberry
 
@@ -16,6 +17,6 @@ class UserType(Node):
     email: str
     is_superuser: bool
     is_staff: bool
-    last_login: datetime
+    last_login: Optional[datetime]
     date_joined: datetime
     is_active: bool

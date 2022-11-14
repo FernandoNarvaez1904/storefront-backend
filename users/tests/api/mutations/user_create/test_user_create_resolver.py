@@ -44,6 +44,9 @@ class UserCreateResolverTest(TransactionTestCase):
         self.assertAlmostEqual(result.node.date_joined, timezone.now(),
                                delta=datetime.timedelta(seconds=0.5))
 
+        # Test that no login happened
+        self.assertIsNone(result.node.last_login)
+
         self.input.pop("password")
         # Test if response has all input data
         for key, value in self.input.items():
