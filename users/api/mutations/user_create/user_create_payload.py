@@ -2,12 +2,12 @@ from typing import Optional, List
 
 import strawberry
 
-from inventory.api.types.item import ItemType
 from storefront_backend.api.payload_interface import PayloadTypeInterface
 from storefront_backend.api.types import UserError
+from users.api.types.user_type import UserType
 
 
 @strawberry.type
 class UserCreatePayload(PayloadTypeInterface):
-    node: Optional[ItemType]
+    node: Optional[UserType]
     user_errors: List[UserError]
