@@ -1,8 +1,6 @@
-from abc import ABC
 from datetime import datetime
 
 import strawberry
-from strawberry import auto
 
 from storefront_backend.api.relay.node import Node
 from users.models import User
@@ -11,6 +9,7 @@ from users.models import User
 @strawberry.type
 class UserType(Node):
     _model_ = User
+    id: strawberry.ID
     username: str
     first_name: str
     last_name: str
