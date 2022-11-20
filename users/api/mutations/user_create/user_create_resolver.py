@@ -13,6 +13,5 @@ from users.models import User
     returned_type=UserType
 )
 async def user_create_resolver(input: UserCreateInput) -> UserType:
-    print(input.__dict__)
     user = await sync_to_async(User.objects.create_user)(**input.__dict__)
     return UserType.from_model_instance(user)
