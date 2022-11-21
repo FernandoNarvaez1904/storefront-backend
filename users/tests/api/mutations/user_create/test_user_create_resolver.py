@@ -52,7 +52,7 @@ class UserCreateResolverTest(TransactionTestCase):
         for key, value in self.input.items():
             self.assertEqual(value, result.node.__getattribute__(key))
 
-    async def test_item_deactivate_resolver_side_effect(self):
+    async def test_item_create_resolver_side_effect(self):
         # Building input
         user_create_input = UserCreateInput(**self.input)
 
