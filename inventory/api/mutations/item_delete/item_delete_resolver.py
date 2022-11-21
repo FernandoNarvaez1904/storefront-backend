@@ -13,7 +13,7 @@ from storefront_backend.api.utils import strawberry_mutation_resolver_payload
     payload_type=ItemDeletePayload,
     returned_type=ItemType
 )
-async def item_delete_resolver(input) -> Node:
+async def item_delete_resolver(input, info) -> Node:
     instance_id = Node.decode_id(input.id).get("instance_id")
     item: Item = await Item.objects.aget(id=instance_id)
     await sync_to_async(item.delete)()

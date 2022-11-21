@@ -35,7 +35,7 @@ def strawberry_mutation_resolver_payload(
     """
 
     def inner(func) -> payload_type:
-        async def wrapper(input: input_type) -> payload_type:
+        async def wrapper(input: input_type, info=None) -> payload_type:
             await check_if_type_vars_are_correct_instance(
                 input_type=input_type,
                 payload_type=payload_type,
@@ -45,7 +45,7 @@ def strawberry_mutation_resolver_payload(
             errors: List[UserError] = await input.validate_and_get_errors()
             node: Optional[returned_type] = None
             if not errors:
-                node: returned_type = await func(input=input)
+                node: returned_type = await func(input=input, info=info)
             return payload_type(user_errors=errors, node=node)
 
         return wrapper
