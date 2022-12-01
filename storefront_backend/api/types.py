@@ -17,7 +17,7 @@ class UserError:
 class InputTypeInterface:
 
     async def validate_and_get_errors(self) -> List[UserError]:
-        pass
+        return []
 
 
 @strawberry.input
