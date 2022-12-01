@@ -29,4 +29,4 @@ class UserLoginInput(InputTypeInterface):
                     message="Password is not correct"
                 ))
 
-        return error
+        return errors

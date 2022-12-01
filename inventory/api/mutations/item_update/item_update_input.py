@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, cast
 
 import strawberry
 from asgiref.sync import sync_to_async
@@ -26,9 +26,9 @@ class ItemUpdateInput(InputTypeInterface):
     data: ItemUpdateDataInput
 
     async def validate_and_get_errors(self) -> List[UserError]:
-        errors = []
+        errors: List[UserError] = []
         decoded_id: DecodedID = Node.decode_id(self.id)
-        node_id = decoded_id.get("instance_id")
+        node_id: str = cast(str, decoded_id.get("instance_id"))
         item_list = await sync_to_async(list)(Item.objects.filter(id=node_id))
 
         if item_list:

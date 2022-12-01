@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, cast
 
 import strawberry
 from asgiref.sync import sync_to_async
@@ -15,9 +15,9 @@ class ItemDeleteInput(InputTypeInterface):
     id: strawberry.ID = strawberry.field(description="The id given must be of an existing Item.")
 
     async def validate_and_get_errors(self) -> List[UserError]:
-        errors = []
+        errors: List[UserError] = []
         decoded_id: DecodedID = Node.decode_id(self.id)
-        node_id = decoded_id.get("instance_id")
+        node_id = cast(str, decoded_id.get("instance_id"))
         item_list = await sync_to_async(list)(Item.objects.filter(id=node_id))
 
         if not item_list:

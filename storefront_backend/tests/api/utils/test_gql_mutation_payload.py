@@ -2,7 +2,6 @@ from typing import List, Optional
 
 import strawberry
 from django.test import TestCase
-from strawberry_django_plus import gql
 
 from storefront_backend.api.payload_interface import PayloadTypeInterface
 from storefront_backend.api.relay.node import Node
@@ -21,7 +20,7 @@ class GqlMutationPayloadTest(TestCase):
         @strawberry.type
         class PayloadType(PayloadTypeInterface):
             user_errors: List[UserError]
-            node: Optional[gql.Node]
+            node: Optional[Node]
 
         @strawberry.type
         class NodeIns(Node):

@@ -1,9 +1,10 @@
-from typing import TypeVar, Generic, Optional, List, Type
+from typing import TypeVar, Generic, Optional, List, Type, cast
 
 import strawberry
 from asgiref.sync import sync_to_async
 from cursor_pagination import CursorPaginator, CursorPage
 from django.db.models import QuerySet
+from strawberry import ID
 
 GenericType = TypeVar("GenericType")
 
@@ -48,7 +49,7 @@ from .node import Node
 T = TypeVar("T", bound=Node)
 
 
-async def get_cursor_page_from_queryset(qs: QuerySet, before: Optional[str] = None, after: Optional[str] = None,
+async def get_cursor_page_from_queryset(qs: QuerySet, before: Optional[ID] = None, after: Optional[ID] = None,
                                         first: Optional[int] = None, last: Optional[int] = None) -> CursorPage:
     paginator: CursorPaginator = CursorPaginator(qs, ordering=tuple())
     if after:
@@ -65,7 +66,7 @@ async def get_connection_from_cursor_page(page, node: Type[T]) -> Connection[T]:
     edges: List[Edge] = []
     edges_count = await sync_to_async(len)(page)
     for item in page:
-        node = node.from_model_instance(item)
+        node = cast(Type[T], node.from_model_instance(item))
         edges.append(Edge(node=node, cursor=node.id))
     page_info = PageInfo(
         has_next_page=page.has_next,

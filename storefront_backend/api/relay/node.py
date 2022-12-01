@@ -1,22 +1,28 @@
 from __future__ import annotations
 
 import base64
-from typing import ClassVar, Union, Optional, TypedDict
+from typing import ClassVar, Union, Optional, TypedDict, List, cast, TypeVar
 
 import strawberry
 from django.db.models import Model
+from strawberry import ID
 from strawberry.annotation import StrawberryAnnotation
+from strawberry.types.types import TypeDefinition
+from typing_extensions import Type
 
 
 class DecodedID(TypedDict):
     type_name: str
-    instance_id: str
+    instance_id: ID
+
+
+A = TypeVar("A", bound="Node")
 
 
 @strawberry.interface
 class Node:
     id: strawberry.ID
-    _model_: ClassVar[Model]
+    _model_: ClassVar[Type[Model]]
 
     @classmethod
     def encode_id(cls, type_name: str, node_id: str):
@@ -31,17 +37,17 @@ class Node:
 
     @classmethod
     def decode_id(cls, id: strawberry.ID) -> DecodedID:
-        bt = id.encode("utf-8")
-        global_id = base64.b64decode(bt).decode()  # format "typeName_id"
+        bt: bytes = id.encode("utf-8")
+        global_id: str = base64.b64decode(bt).decode()  # format "typeName_id"
 
-        data = global_id.split("_")
+        data: List[str | ID] = global_id.split("_")
         return {
             "type_name": data[0],
-            "instance_id": data[1]
+            "instance_id": cast(ID, data[1])
         }
 
     @classmethod
-    def from_model_instance(cls, model_instance: Model) -> Node:
+    def from_model_instance(cls: Type[A], model_instance: Model) -> A:
         # If model_instance is not correct raise error
         if not isinstance(model_instance, cls._model_):
             raise TypeError(f"Instance is not of type {cls._model_.__name__}")
@@ -65,12 +71,14 @@ class Node:
 
 
 async def node_resolver(self, id: strawberry.ID) -> Optional[Node]:
-    id_decoded = Node.decode_id(id)
+    id_decoded: DecodedID = Node.decode_id(id)
 
     # Import is done here to avoid circular import
     from storefront_backend.api.schema import schema
 
-    node_class: Node = schema.get_type_by_name(id_decoded.get("type_name")).origin
+    type_name = id_decoded.get("type_name")
+    schema_type: TypeDefinition = cast(TypeDefinition, schema.get_type_by_name(type_name))
+    node_class: Node = cast(Node, schema_type.origin)
     model = node_class._model_
 
     model_instance = await model.objects.aget(pk=id_decoded.get("instance_id"))

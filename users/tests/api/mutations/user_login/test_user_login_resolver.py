@@ -1,10 +1,12 @@
 import datetime
+from pathlib import Path
+from typing import cast
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.core.handlers.asgi import ASGIRequest
-from django.test import TransactionTestCase, AsyncRequestFactory
+from django.test import TransactionTestCase, AsyncRequestFactory  # type: ignore
 from django.utils import timezone
-from graphql import GraphQLResolveInfo
+from graphql import GraphQLResolveInfo, OperationDefinitionNode
 from strawberry.types import Info
 
 from users.api.mutations.user_login.user_login_input import UserLoginInput
@@ -15,7 +17,8 @@ from users.models import User
 
 class UserLoginResolverTest(TransactionTestCase):
 
-    def setUp(self) -> None:
+    # Do not type. MYPY will scream at you
+    def setUp(self):
         self.input = {
             "password": "pws",
             "username": "unleash"
@@ -27,27 +30,31 @@ class UserLoginResolverTest(TransactionTestCase):
         middleware = SessionMiddleware(lambda x: x)
         middleware.process_request(async_request)
 
+        def f() -> bool:
+            return False
+
         # Faking Info for resolver
         resolver_info = GraphQLResolveInfo(
             context={},
             root_value=None,
-            variable_values=None,
-            fragments=None,
-            operation=None,
-            field_name=None,
-            field_nodes=None,
-            is_awaitable=None,
+            variable_values={},
+            fragments={},
+            field_name="",
+            operation=OperationDefinitionNode(),
+            field_nodes=[],
+            is_awaitable=f,
             return_type=None,
             parent_type=None,
             schema=None,
-            path=None
+            path=Path()
         )
         resolver_info.context["request"] = async_request
-        self.info = Info(_raw_info=resolver_info, _field=None)
+        self.info: Info = Info(_raw_info=resolver_info, _field=None)
 
     async def test_user_login_resolver_response(self):
         user_login_input = UserLoginInput(**self.input)
-        result: UserLoginPayload = await user_login_resolver(input=user_login_input, info=self.info)
+        result: UserLoginPayload = cast(UserLoginPayload,
+                                        await user_login_resolver(input=user_login_input, info=self.info))
 
         # Test if resolver is returning the correct payload
         self.assertIsInstance(result, UserLoginPayload)

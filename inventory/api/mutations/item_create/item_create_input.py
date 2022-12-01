@@ -19,7 +19,7 @@ class ItemCreateInput(InputTypeInterface):
     markup: float
 
     async def validate_and_get_errors(self) -> List[UserError]:
-        errors = []
+        errors: List[UserError] = []
         if await Item.objects.filter(sku=self.sku).aexists():
             errors.append(
                 CannotCreateItemSkuIsNotUnique(

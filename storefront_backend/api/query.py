@@ -6,4 +6,4 @@ from storefront_backend.api.relay.node import node_resolver, Node
 
 @strawberry.type
 class Query(InventoryQuery):
-    node: Node = strawberry.field(node_resolver)
+    node: Node = strawberry.field(resolver=node_resolver)

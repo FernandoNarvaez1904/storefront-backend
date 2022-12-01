@@ -350,6 +350,7 @@ fabric.properties
 # mkdocs documentation
 
 # mypy
+.mypy_cache
 
 # Pyre type checker
 
