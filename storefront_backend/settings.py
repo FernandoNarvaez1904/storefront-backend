@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import decouple
+
 try:
     import psycopg2
 except ImportError:
@@ -35,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # my aops
+    # my apps
     "corsheaders",
     'users',
     'document_management',
@@ -77,7 +79,12 @@ WSGI_APPLICATION = 'storefront_backend.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 try:
-    DATABASES = {"default": dj_database_url.parse(config("DATABASE_URL"))}
+    if config("SQLiteDev") == "True":
+        DATABASES = {
+            "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "db.sqlite3"}
+        }
+    else:
+        DATABASES = {"default": dj_database_url.parse(config("DATABASE_URL"))}
 except:
     DATABASES = {
         'default': {
