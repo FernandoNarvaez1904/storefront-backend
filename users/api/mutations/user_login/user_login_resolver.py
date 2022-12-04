@@ -2,7 +2,7 @@ from asgiref.sync import sync_to_async
 from django.contrib.auth import authenticate, login
 from strawberry.types import Info
 
-from storefront_backend.api.utils import strawberry_mutation_resolver_payload
+from storefront_backend.api.utils.strawberry_mutation_resolver_payload import strawberry_mutation_resolver_payload
 from users.api.mutations.user_login.user_login_input import UserLoginInput
 from users.api.mutations.user_login.user_login_payload import UserLoginPayload
 from users.api.types.user_type import UserType
@@ -11,7 +11,6 @@ from users.api.types.user_type import UserType
 @strawberry_mutation_resolver_payload(
     input_type=UserLoginInput,
     payload_type=UserLoginPayload,
-    returned_type=UserType
 )
 async def user_login_resolver(input: UserLoginInput, info: Info) -> UserType:
     request = info.context.get("request")
