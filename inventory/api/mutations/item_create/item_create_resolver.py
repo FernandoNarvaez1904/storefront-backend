@@ -8,7 +8,6 @@ from storefront_backend.api.utils import strawberry_mutation_resolver_payload
 @strawberry_mutation_resolver_payload(
     input_type=ItemCreateInput,
     payload_type=ItemCreatePayload,
-    returned_type=ItemType
 )
 async def item_create_resolver(input, info) -> ItemType:
     item = await Item.objects.acreate(
