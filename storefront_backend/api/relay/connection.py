@@ -62,7 +62,8 @@ async def get_cursor_page_from_queryset(qs: QuerySet, before: Optional[ID] = Non
     return page
 
 
-async def get_connection_from_cursor_page(page, node: Type[T]) -> Connection[T]:
+async def get_connection_from_cursor_page(page: CursorPage, node: Type[T], total_count_from_query: bool = False) -> \
+        Connection[T]:
     edges: List[Edge] = []
     edges_count = await sync_to_async(len)(page)
     for item in page:
@@ -78,4 +79,8 @@ async def get_connection_from_cursor_page(page, node: Type[T]) -> Connection[T]:
     )
     connection = Connection(page_info=page_info, edges=edges, total_count=await node._model_.objects.acount()
                             )
+
+    if total_count_from_query:
+        connection.page_info.total_count = await page.paginator.queryset.acount()
+        connection.total_count = await page.paginator.queryset.acount()
     return connection
