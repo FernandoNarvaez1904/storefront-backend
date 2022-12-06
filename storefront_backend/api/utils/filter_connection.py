@@ -2,7 +2,7 @@ from typing import Optional, TypeVar, List
 
 from asgiref.sync import sync_to_async
 from django.db.models import QuerySet
-from strawberry_django.filters import FilterLookup
+from strawberry_django.filters import FilterLookup, lookup_name_conversion_map
 
 from storefront_backend.api.types import Filter
 
@@ -19,7 +19,7 @@ async def get_filter_arg_from_lookup(lookup: FilterLookup, prefix: str = "") -> 
         for name, val in lookup.__dict__.items():
             if val:
                 if prefix:
-                    name = f"__{name}"
+                    name = f"__{lookup_name_conversion_map[name]}"
                 result.update({f"{prefix}{name}": val})
 
     return result
