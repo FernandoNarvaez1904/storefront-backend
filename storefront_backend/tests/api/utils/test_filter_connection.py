@@ -32,7 +32,7 @@ class FilterConnectionTest(TestCase):
 
         # Test lookup with prefix
         expected_result = await get_filter_arg_from_lookup(lookup=exact_lookup, prefix="name")
-        self.assertDictEqual(expected_result, {"name__exact": "hey", "name__starts_with": "10"})
+        self.assertDictEqual(expected_result, {"name__exact": "hey", "name__startswith": "10"})
 
     async def test_get_arg_from_filter_input(self):
         # Test passing None as lookup returns empty dict

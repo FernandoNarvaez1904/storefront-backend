@@ -19,7 +19,10 @@ async def get_filter_arg_from_lookup(lookup: FilterLookup, prefix: str = "") -> 
         for name, val in lookup.__dict__.items():
             if val:
                 if prefix:
-                    name = f"__{lookup_name_conversion_map[name]}"
+                    if name in lookup_name_conversion_map.keys():
+                        name = f"__{lookup_name_conversion_map[name]}"
+                    else:
+                        name = f"__{name}"
                 result.update({f"{prefix}{name}": val})
 
     return result
