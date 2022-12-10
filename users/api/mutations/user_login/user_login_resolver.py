@@ -20,4 +20,4 @@ async def user_login_resolver(input: UserLoginInput, info: Info) -> UserType:
     # It logs the user in by setting a cookie with the sessionid
     await sync_to_async(login)(request, user)
 
-    return UserType.from_model_instance(user)
+    return await UserType.from_model_instance(user)

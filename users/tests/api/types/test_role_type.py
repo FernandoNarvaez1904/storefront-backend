@@ -40,7 +40,7 @@ class TestRoleType(TestCase):
         permissions: List[Permission] = await sync_to_async(list)(Permission.objects.filter()[:2])
         await sync_to_async(group.permissions.add)(*permissions)
 
-        role_type = RoleType.from_model_instance(group)
+        role_type = await RoleType.from_model_instance(group)
 
         role_type_permission: Connection[PermissionType] = await role_type.permissions()
 
@@ -62,7 +62,7 @@ class TestRoleType(TestCase):
         permissions: List[Permission] = await sync_to_async(list)(Permission.objects.filter()[:2])
         await sync_to_async(group.permissions.add)(*permissions)
 
-        role_type = RoleType.from_model_instance(group)
+        role_type = await RoleType.from_model_instance(group)
 
         # Test fields
         self.assertIsNotNone(role_type.id)

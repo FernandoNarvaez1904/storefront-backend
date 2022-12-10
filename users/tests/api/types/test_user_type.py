@@ -77,7 +77,7 @@ class TestUserType(TestCase):
 
     async def test_from_model_instance(self) -> None:
         user: User = await sync_to_async(User.objects.create_user)(**self.default_values, password="hello")
-        user_type: UserType = UserType.from_model_instance(user)
+        user_type: UserType = await UserType.from_model_instance(user)
 
         self.assertEqual(str(user.id), UserType.decode_id(user_type.id)["instance_id"])
         self.assertEqual(user.username, user_type.username)

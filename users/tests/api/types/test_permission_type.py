@@ -44,7 +44,7 @@ class TestPermissionType(TestCase):
         permissions_filtered: List[Permission] = await sync_to_async(list)(
             Permission.objects.filter(codename="add_permission"))
         permission: Permission = permissions_filtered[0]
-        permission_type = PermissionType.from_model_instance(permission)
+        permission_type = await PermissionType.from_model_instance(permission)
 
         self.assertIsNotNone(permission_type.id)
         self.assertEqual(permission_type.codename, "add_permission")

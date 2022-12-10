@@ -17,4 +17,4 @@ async def item_activate_resolver(input, info) -> ItemType:
     item: Item = await Item.objects.aget(id=instance_id)
     item.is_active = True
     await sync_to_async(item.save)()
-    return ItemType.from_model_instance(item)
+    return await ItemType.from_model_instance(item)

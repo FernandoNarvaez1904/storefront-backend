@@ -18,4 +18,4 @@ async def item_create_resolver(input, info) -> ItemType:
         cost=input.cost,
         markup=input.markup,
     )
-    return ItemType.from_model_instance(item)
+    return await ItemType.from_model_instance(item)

@@ -36,4 +36,4 @@ async def item_update_resolver(input, info) -> Optional[ItemType]:
     if not new_item:
         return None
 
-    return ItemType.from_model_instance(new_item)
+    return await ItemType.from_model_instance(new_item)

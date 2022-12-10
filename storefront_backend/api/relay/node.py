@@ -31,11 +31,6 @@ class Node:
         return calc_id
 
     @classmethod
-    def get_id_from_model_instance(cls, model_instance: Model) -> strawberry.ID:
-        id_ins = cls.encode_id(cls.__name__, model_instance.pk)  # format "typeName_id"
-        return id_ins
-
-    @classmethod
     def decode_id(cls, id: strawberry.ID) -> DecodedID:
         bt: bytes = id.encode("utf-8")
         global_id: str = base64.b64decode(bt).decode()  # format "typeName_id"
@@ -47,7 +42,12 @@ class Node:
         }
 
     @classmethod
-    def from_model_instance(cls: Type[A], model_instance: Model) -> A:
+    async def get_id_from_model_instance(cls, model_instance: Model) -> strawberry.ID:
+        id_ins = cls.encode_id(cls.__name__, model_instance.pk)  # format "typeName_id"
+        return id_ins
+
+    @classmethod
+    async def from_model_instance(cls: Type[A], model_instance: Model) -> A:
         # If model_instance is not correct raise error
         if not isinstance(model_instance, cls._model_):
             raise TypeError(f"Instance is not of type {cls._model_.__name__}")
@@ -61,7 +61,7 @@ class Node:
 
             # If fild is the id, get and set encoded unique id
             if name.lower() == "id":
-                attrs[name] = cls.get_id_from_model_instance(model_instance)
+                attrs[name] = await cls.get_id_from_model_instance(model_instance)
                 continue
 
             # Add field to dict of attrs
@@ -83,4 +83,4 @@ async def node_resolver(self, id: strawberry.ID) -> Optional[Node]:
 
     model_instance = await model.objects.aget(pk=id_decoded.get("instance_id"))
 
-    return node_class.from_model_instance(model_instance)
+    return await node_class.from_model_instance(model_instance)

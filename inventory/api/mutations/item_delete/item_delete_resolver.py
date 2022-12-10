@@ -17,6 +17,6 @@ async def item_delete_resolver(input, info) -> Node:
     item: Item = await Item.objects.aget(id=instance_id)
     await sync_to_async(item.delete)()
 
-    item_deleted = ItemType.from_model_instance(item)
+    item_deleted = await ItemType.from_model_instance(item)
     item_deleted.id = input.id
     return item_deleted

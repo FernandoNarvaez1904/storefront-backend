@@ -67,7 +67,7 @@ async def get_connection_from_cursor_page(page: CursorPage, node: Type[T], total
     edges: List[Edge] = []
     edges_count = await sync_to_async(len)(page)
     for item in page:
-        node = cast(Type[T], node.from_model_instance(item))
+        node = cast(Type[T], await node.from_model_instance(item))
         edges.append(Edge(node=node, cursor=node.id))
     page_info = PageInfo(
         has_next_page=page.has_next,
