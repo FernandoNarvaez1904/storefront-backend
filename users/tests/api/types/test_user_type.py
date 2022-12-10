@@ -7,7 +7,7 @@ from storefront_backend.api.relay.node import Node
 from users.api.types.user_type import UserType
 
 
-class UserTypeTest(TestCase):
+class TestUserType(TestCase):
     def setUp(self):
         self.default_values = {
             "id": "1",

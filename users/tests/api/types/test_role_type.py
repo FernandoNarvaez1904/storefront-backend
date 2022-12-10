@@ -11,7 +11,7 @@ from users.api.types.permission_type import PermissionType
 from users.api.types.role_type import RoleType
 
 
-class RoleTypeTest(TestCase):
+class TestRoleType(TestCase):
     def setUp(self) -> None:
         self.default_values = {
             "id": "1",
