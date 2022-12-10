@@ -1,10 +1,12 @@
 import datetime
 
+from asgiref.sync import sync_to_async
 from django.test import TestCase
 from strawberry_django.utils import is_strawberry_type
 
 from storefront_backend.api.relay.node import Node
 from users.api.types.user_type import UserType
+from users.models import User
 
 
 class TestUserType(TestCase):
@@ -72,3 +74,17 @@ class TestUserType(TestCase):
         expected: str = self.default_values.get("is_active")
         user_type_is_active = UserType(**self.default_values).is_active
         self.assertEqual(user_type_is_active, expected)
+
+    async def test_from_model_instance(self) -> None:
+        user: User = await sync_to_async(User.objects.create_user)(**self.default_values, password="hello")
+        user_type: UserType = UserType.from_model_instance(user)
+
+        self.assertEqual(str(user.id), UserType.decode_id(user_type.id)["instance_id"])
+        self.assertEqual(user.username, user_type.username)
+        self.assertEqual(user.first_name, user_type.first_name)
+        self.assertEqual(user.last_name, user_type.last_name)
+        self.assertEqual(user.email, user_type.email)
+        self.assertEqual(user.is_superuser, user_type.is_superuser)
+        self.assertEqual(user.is_staff, user_type.is_staff)
+        self.assertEqual(user.is_active, user_type.is_active)
+        self.assertEqual(user.date_joined, user_type.date_joined)
