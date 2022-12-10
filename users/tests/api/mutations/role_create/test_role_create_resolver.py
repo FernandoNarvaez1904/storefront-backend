@@ -14,7 +14,7 @@ from users.api.types.role_type import RoleType
 
 class RoleCreateInputData(TypedDict):
     name: str
-    permissions_ids: Optional[List[ID]]
+    permissions_ids: List[ID]
 
 
 class TestRoleCreateResolver(TransactionTestCase):
@@ -57,7 +57,8 @@ class TestRoleCreateResolver(TransactionTestCase):
                 continue
             self.assertEqual(value, result.node.__getattribute__(key))
 
-    async def test_role_create_resolver_side_effect(self):
+    async def test_role_create_resolver_side_effect(self) -> None:
+
         # Building input
         role_create_input = RoleCreateInput(**self.input)
 
