@@ -30,7 +30,7 @@ class TestRoleType(TestCase):
         self.assertEqual(user_type_name, expected)
 
     async def test_permissions(self) -> None:
-        group: Group = await sync_to_async(Group.objects.create)(name="Role1")
+        group: Group = await Group.objects.acreate(name="Role1")
         permissions: List[Permission] = await sync_to_async(list)(Permission.objects.filter()[:2])
         await sync_to_async(group.permissions.add)(*permissions)
 
@@ -50,3 +50,21 @@ class TestRoleType(TestCase):
         ids_of_perm_in_type = [RoleType.decode_id(i.node.id)["instance_id"] for i in role_type_permission.edges]
         for perm in permissions:
             self.assertIn(str(perm.id), ids_of_perm_in_type)
+
+    async def test_from_model_instance(self) -> None:
+        group: Group = await Group.objects.acreate(name="Role156")
+        permissions: List[Permission] = await sync_to_async(list)(Permission.objects.filter()[:2])
+        await sync_to_async(group.permissions.add)(*permissions)
+
+        role_type = RoleType.from_model_instance(group)
+
+        # Test fields
+        self.assertIsNotNone(role_type.id)
+        self.assertEqual(role_type.name, group.name)
+
+        # Test permission connection
+        permission_connection: Connection[PermissionType] = await role_type.permissions()
+        self.assertIsNotNone(permission_connection)
+        self.assertGreater(len(permission_connection.edges), 0)
+        self.assertGreater(permission_connection.total_count, 0)
+        self.assertGreater(permission_connection.page_info.total_count, 0)
