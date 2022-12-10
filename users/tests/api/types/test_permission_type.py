@@ -1,18 +1,25 @@
-from typing import List
+from typing import List, TypedDict, cast
 
 from asgiref.sync import sync_to_async
 from django.contrib.auth.models import Permission
 from django.test import TestCase
+from strawberry import ID
 from strawberry_django.utils import is_strawberry_type
 
 from storefront_backend.api.relay.node import Node
 from users.api.types.permission_type import PermissionType
 
 
+class PermissionTypeDefaultValues(TypedDict):
+    id: ID
+    name: str
+    codename: str
+
+
 class TestPermissionType(TestCase):
     def setUp(self) -> None:
-        self.default_values = {
-            "id": "1",
+        self.default_values: PermissionTypeDefaultValues = {
+            "id": cast(ID, "1"),
             "name": "permission",
             "codename": "perm"
         }
@@ -42,4 +49,3 @@ class TestPermissionType(TestCase):
         self.assertIsNotNone(permission_type.id)
         self.assertEqual(permission_type.codename, "add_permission")
         self.assertEqual(permission_type.name, "Can add permission")
-

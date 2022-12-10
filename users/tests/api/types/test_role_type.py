@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, TypedDict, cast
 
 from asgiref.sync import sync_to_async
 from django.contrib.auth.models import Group, Permission
 from django.test import TestCase
+from strawberry import ID
 from strawberry_django.utils import is_strawberry_type
 
 from storefront_backend.api.relay.connection import Connection
@@ -11,10 +12,15 @@ from users.api.types.permission_type import PermissionType
 from users.api.types.role_type import RoleType
 
 
+class RoleTypeDefaultValues(TypedDict):
+    id: ID
+    name: str
+
+
 class TestRoleType(TestCase):
     def setUp(self) -> None:
-        self.default_values = {
-            "id": "1",
+        self.default_values: RoleTypeDefaultValues = {
+            "id": cast(ID, "1"),
             "name": "Role1",
         }
 
@@ -67,4 +73,7 @@ class TestRoleType(TestCase):
         self.assertIsNotNone(permission_connection)
         self.assertGreater(len(permission_connection.edges), 0)
         self.assertGreater(permission_connection.total_count, 0)
-        self.assertGreater(permission_connection.page_info.total_count, 0)
+
+        self.assertIsNotNone(permission_connection.page_info.total_count)
+        if permission_connection.page_info.total_count:
+            self.assertGreater(permission_connection.page_info.total_count, 0)
