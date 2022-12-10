@@ -1,15 +1,16 @@
 import datetime
 
 from django.test import TestCase
-from strawberry_django.utils import is_strawberry_type, is_django_type
-from strawberry_django_plus import gql
+from strawberry_django.utils import is_strawberry_type
 
+from storefront_backend.api.relay.node import Node
 from users.api.types.user_type import UserType
 
 
 class UserTypeTest(TestCase):
     def setUp(self):
         self.default_values = {
+            "id": "1",
             "username": "username",
             "first_name": "FirstName",
             "last_name": "LastName",
@@ -25,10 +26,7 @@ class UserTypeTest(TestCase):
         self.assertTrue(is_strawberry_type(UserType))
 
     def test_is_node(self):
-        self.assertTrue(issubclass(UserType, gql.Node))
-
-    def test_is_django_strawberry_type(self):
-        self.assertTrue(is_django_type(UserType))
+        self.assertTrue(issubclass(UserType, Node))
 
     def test_username(self):
         expected: str = self.default_values.get("username")
