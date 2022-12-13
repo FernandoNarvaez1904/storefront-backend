@@ -1,8 +1,14 @@
 import datetime
+from typing import List
 
 from django.test import TransactionTestCase
 from django.utils import timezone
+from strawberry.django.context import StrawberryDjangoContext
+from strawberry.django.views import TemporalHttpResponse
+from strawberry.types import ExecutionResult
 
+from storefront_backend.api.schema import schema
+from storefront_backend.tests.utils import create_user_with_permission, get_async_request_with_user_and_session
 from users.api.mutations.user_create.user_create_input import UserCreateInput
 from users.api.mutations.user_create.user_create_payload import UserCreatePayload
 from users.api.mutations.user_create.user_create_resolver import user_create_resolver
@@ -19,6 +25,26 @@ class UserCreateResolverTest(TransactionTestCase):
             "email": "unleash@gmail.com",
             "username": "unleash"
         }
+        self.mutation_query = """
+            mutation UserCreate($input: UserCreateInput!) {
+              userCreate(input: $input) {
+                node {
+                  id
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }
+        """
+        self.mutation_variables = {"input": {
+            "password": "pws",
+            "firstName": "First",
+            "lastName": "Last",
+            "email": "unleash@gmail.com",
+            "username": "unleash"
+        }}
 
     async def test_user_create_resolver_response(self):
         user_create_input = UserCreateInput(**self.input)
@@ -63,3 +89,33 @@ class UserCreateResolverTest(TransactionTestCase):
         self.input.pop("password")
         does_user_exist = await User.objects.filter(**self.input).aexists()
         self.assertTrue(does_user_exist)
+
+    async def test_user_create_resolver_permission_denied(self) -> None:
+        user: User = await create_user_with_permission("User", "Password")
+        request = await get_async_request_with_user_and_session(user=user)
+
+        execution_result: ExecutionResult = await schema.execute(
+            self.mutation_query,
+            self.mutation_variables,
+            StrawberryDjangoContext(request, TemporalHttpResponse())
+        )
+
+        self.assertIsNotNone(execution_result.data)
+        if execution_result.data:
+            user_errors: List[dict] = execution_result.data["userCreate"]["userErrors"]
+            self.assertEqual(user_errors[0]["field"], "permission")
+
+    async def test_user_create_resolver_permission_accepted(self) -> None:
+        user: User = await create_user_with_permission("User", "Password", "add_user")
+        request = await get_async_request_with_user_and_session(user=user)
+
+        execution_result: ExecutionResult = await schema.execute(
+            self.mutation_query,
+            self.mutation_variables,
+            StrawberryDjangoContext(request, TemporalHttpResponse())
+        )
+
+        self.assertIsNotNone(execution_result.data)
+        if execution_result.data:
+            user_errors: List[dict] = execution_result.data["userCreate"]["userErrors"]
+            self.assertFalse(user_errors)

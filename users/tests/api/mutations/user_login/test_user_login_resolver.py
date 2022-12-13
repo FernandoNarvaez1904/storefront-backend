@@ -1,55 +1,65 @@
 import datetime
-from pathlib import Path
-from typing import cast
+from typing import cast, Any
 
+import strawberry
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.core.handlers.asgi import ASGIRequest
 from django.test import TransactionTestCase, AsyncRequestFactory  # type: ignore
 from django.utils import timezone
-from graphql import GraphQLResolveInfo, OperationDefinitionNode
+from graphql import GraphQLResolveInfo, OperationDefinitionNode, GraphQLSchema
+from graphql.pyutils import Path
+from strawberry.django.context import StrawberryDjangoContext
+from strawberry.django.views import TemporalHttpResponse
+from strawberry.field import StrawberryField
 from strawberry.types import Info
 
+from storefront_backend.api.mutation import Mutation
+from storefront_backend.api.schema import schema
 from users.api.mutations.user_login.user_login_input import UserLoginInput
 from users.api.mutations.user_login.user_login_payload import UserLoginPayload
 from users.api.mutations.user_login.user_login_resolver import user_login_resolver
 from users.models import User
 
 
+def get_info(field: StrawberryField, field_name: str, return_type: Any,
+             parent_type: Any) -> Info:
+    # Faking Request
+    async_request = AsyncRequestFactory().post("/graphql")
+    middleware = SessionMiddleware(lambda x: x)
+    middleware.process_request(async_request)
+
+    def is_awaitable(a):
+        return False
+
+    # Faking Info for resolver
+    resolver_info = GraphQLResolveInfo(
+        context=StrawberryDjangoContext(async_request, TemporalHttpResponse()),
+        root_value=None,
+        variable_values={},
+        fragments={},
+        field_name=field_name,
+        operation=OperationDefinitionNode(),
+        field_nodes=[],
+        is_awaitable=is_awaitable,
+        return_type=schema.schema_converter.from_object(return_type._type_definition),
+        parent_type=schema.schema_converter.from_object(parent_type._type_definition),
+        schema=GraphQLSchema(),
+        path=Path("", "", "")
+    )
+    return Info(_raw_info=resolver_info, _field=field)
+
+
 class UserLoginResolverTest(TransactionTestCase):
 
     # Do not type. MYPY will scream at you
-    def setUp(self):
+    def setUp(self) -> None:
         self.input = {
             "password": "pws",
             "username": "unleash"
         }
         self.user = User.objects.create_user(**self.input)
-
-        # Faking Request
-        async_request = AsyncRequestFactory().post("/graphql")
-        middleware = SessionMiddleware(lambda x: x)
-        middleware.process_request(async_request)
-
-        def f() -> bool:
-            return False
-
-        # Faking Info for resolver
-        resolver_info = GraphQLResolveInfo(
-            context={},
-            root_value=None,
-            variable_values={},
-            fragments={},
-            field_name="",
-            operation=OperationDefinitionNode(),
-            field_nodes=[],
-            is_awaitable=f,
-            return_type=None,
-            parent_type=None,
-            schema=None,
-            path=Path()
-        )
-        resolver_info.context["request"] = async_request
-        self.info: Info = Info(_raw_info=resolver_info, _field=None)
+        self.info: Info = get_info(strawberry.field(resolver=user_login_resolver), "user_login_resolver",
+                                   UserLoginPayload, Mutation)
 
     async def test_user_login_resolver_response(self):
         user_login_input = UserLoginInput(**self.input)
