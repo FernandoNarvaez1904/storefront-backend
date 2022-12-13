@@ -3,13 +3,19 @@ from typing import cast, TypedDict, List, Optional
 from django.contrib.auth.models import Group, Permission
 from django.test import TransactionTestCase
 from strawberry import ID
+from strawberry.django.context import StrawberryDjangoContext
+from strawberry.django.views import TemporalHttpResponse
+from strawberry.types import ExecutionResult
 
 from storefront_backend.api.relay.connection import Connection
+from storefront_backend.api.schema import schema
+from storefront_backend.tests.utils import create_user_with_permission, get_async_request_with_user_and_session
 from users.api.mutations.role_create.role_create_input import RoleCreateInput
 from users.api.mutations.role_create.role_create_payload import RoleCreatePayload
 from users.api.mutations.role_create.role_create_resolver import role_create_resolver
 from users.api.types.permission_type import PermissionType
 from users.api.types.role_type import RoleType
+from users.models import User
 
 
 class RoleCreateInputData(TypedDict):
@@ -27,6 +33,25 @@ class TestRoleCreateResolver(TransactionTestCase):
                                 PermissionType.encode_id("PermissionType", str(perm[1].id))]
 
         }
+        self.mutation_query = """
+            mutation RoleCreate($input: RoleCreateInput!) {
+              roleCreate(input: $input) {
+                node {
+                  id
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }
+        """
+        self.mutation_variables = {"input": {
+            "name": "Role1",
+            "permissionsIds": [PermissionType.encode_id("PermissionType", str(perm[0].id)),
+                               PermissionType.encode_id("PermissionType", str(perm[1].id))]
+
+        }}
 
     async def test_role_create_resolver_response(self) -> None:
         permissions_ids: List[ID] = cast(List[ID], self.input["permissions_ids"])
@@ -68,3 +93,33 @@ class TestRoleCreateResolver(TransactionTestCase):
         # Checking if field was updated in database
         does_role_exist = await Group.objects.filter(name=self.input["name"]).aexists()
         self.assertTrue(does_role_exist)
+
+    async def test_item_activate_resolver_permission_denied(self) -> None:
+        user: User = await create_user_with_permission("User", "Password")
+        request = await get_async_request_with_user_and_session(user=user)
+
+        execution_result: ExecutionResult = await schema.execute(
+            self.mutation_query,
+            self.mutation_variables,
+            StrawberryDjangoContext(request, TemporalHttpResponse())
+        )
+
+        self.assertIsNotNone(execution_result.data)
+        if execution_result.data:
+            user_errors: List[dict] = execution_result.data["roleCreate"]["userErrors"]
+            self.assertEqual(user_errors[0]["field"], "permission")
+
+    async def test_item_activate_resolver_permission_accepted(self) -> None:
+        user: User = await create_user_with_permission("User", "Password", "add_group")
+        request = await get_async_request_with_user_and_session(user=user)
+
+        execution_result: ExecutionResult = await schema.execute(
+            self.mutation_query,
+            self.mutation_variables,
+            StrawberryDjangoContext(request, TemporalHttpResponse())
+        )
+
+        self.assertIsNotNone(execution_result.data)
+        if execution_result.data:
+            user_errors: List[dict] = execution_result.data["roleCreate"]["userErrors"]
+            self.assertFalse(user_errors)
