@@ -13,6 +13,7 @@ from users.api.types.role_type import RoleType
 @strawberry_mutation_resolver_payload(
     input_type=RoleCreateInput,
     payload_type=RoleCreatePayload,
+    permission="auth.add_group"
 )
 async def role_create_resolver(input: RoleCreateInput, info) -> RoleType:
     role = await Group.objects.acreate(name=input.name)

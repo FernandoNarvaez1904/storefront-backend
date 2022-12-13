@@ -18,3 +18,8 @@ class Item(models.Model):
     sku = models.CharField(max_length=255, unique=True)
     current_stock = models.FloatField(default=0)
     group = models.ForeignKey(ItemGroup, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        permissions = [
+            ("activate_item", "Can Activate and Deactivate Items")
+        ]
