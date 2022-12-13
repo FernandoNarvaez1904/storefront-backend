@@ -73,7 +73,7 @@ class ItemDeactivateResolverTest(TransactionTestCase):
         item = await Item.objects.aget(pk=self.item.id)
         self.assertFalse(item.is_active)
 
-    async def test_item_activate_resolver_permission_denied(self) -> None:
+    async def test_item_deactivate_resolver_permission_denied(self) -> None:
         user: User = await create_user_with_permission("User", "Password")
         request = await get_async_request_with_user_and_session(user=user)
 
@@ -88,7 +88,7 @@ class ItemDeactivateResolverTest(TransactionTestCase):
             user_errors: List[dict] = execution_result.data["itemDeactivate"]["userErrors"]
             self.assertEqual(user_errors[0]["field"], "permission")
 
-    async def test_item_activate_resolver_permission_accepted(self) -> None:
+    async def test_item_deactivate_resolver_permission_accepted(self) -> None:
         user: User = await create_user_with_permission("User", "Password", "activate_item")
         request = await get_async_request_with_user_and_session(user=user)
 
@@ -102,4 +102,3 @@ class ItemDeactivateResolverTest(TransactionTestCase):
         if execution_result.data:
             user_errors: List[dict] = execution_result.data["itemDeactivate"]["userErrors"]
             self.assertFalse(user_errors)
-

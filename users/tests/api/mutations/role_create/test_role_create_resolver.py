@@ -94,7 +94,7 @@ class TestRoleCreateResolver(TransactionTestCase):
         does_role_exist = await Group.objects.filter(name=self.input["name"]).aexists()
         self.assertTrue(does_role_exist)
 
-    async def test_item_activate_resolver_permission_denied(self) -> None:
+    async def test_role_create_resolver_permission_denied(self) -> None:
         user: User = await create_user_with_permission("User", "Password")
         request = await get_async_request_with_user_and_session(user=user)
 
@@ -109,7 +109,7 @@ class TestRoleCreateResolver(TransactionTestCase):
             user_errors: List[dict] = execution_result.data["roleCreate"]["userErrors"]
             self.assertEqual(user_errors[0]["field"], "permission")
 
-    async def test_item_activate_resolver_permission_accepted(self) -> None:
+    async def test_role_create_resolver_permission_accepted(self) -> None:
         user: User = await create_user_with_permission("User", "Password", "add_group")
         request = await get_async_request_with_user_and_session(user=user)
 
