@@ -14,6 +14,7 @@ from storefront_backend.api.utils import strawberry_mutation_resolver_payload
 @strawberry_mutation_resolver_payload(
     input_type=ItemUpdateInput,
     payload_type=ItemUpdatePayload,
+    permission="inventory.change_item"
 )
 async def item_update_resolver(input, info) -> Optional[ItemType]:
     instance_id = Node.decode_id(input.id).get("instance_id")
