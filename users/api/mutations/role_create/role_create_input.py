@@ -43,7 +43,7 @@ class RoleCreateInput(InputTypeInterface):
             if not perms == len(self.permissions_ids) or not is_perm_id:
                 errors.append(
                     CannotCreateRolePermissionDoesNotExist(
-                        message=f"Some of the permission_ids given are incorrect or does not represent a Permission {perms} {ids} {self.permissions_ids} {is_perm_id}"
+                        message=f"Some of the permission_ids given are incorrect or does not represent a Permission"
                     ))
 
         return errors
