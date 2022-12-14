@@ -18,7 +18,7 @@ class ItemConnectionResolverTest(TransactionTestCase):
         self.item_number = 20
         temp: List[Item] = async_to_sync(create_bulk_of_item)(self.item_number)
 
-    async def test_item_connection_resolver_response(self):
+    async def test_item_connection_resolver_response(self) -> None:
         response: Connection[ItemType] = await item_connection_resolver()
 
         # Test if response is correct type
@@ -30,7 +30,7 @@ class ItemConnectionResolverTest(TransactionTestCase):
         # Test if total_count works
         self.assertEqual(response.total_count, len(response.edges))
 
-    async def test_item_connection_resolver_filter_response(self):
+    async def test_item_connection_resolver_filter_response(self) -> None:
         filter = ItemFilter(name=FilterLookup(contains="1"))
         response: Connection[ItemType] = await item_connection_resolver(filter=filter)
 
