@@ -8,29 +8,31 @@ from storefront_backend.api.relay.node import Node
 from storefront_backend.api.types import InputTypeInterface, UserError
 
 
+@strawberry.type
+class PayloadType(PayloadTypeInterface):
+    user_errors: List[UserError]
+    node: Optional[Node]
+
+
+@strawberry.type
+class NodeIns(Node):
+    id: strawberry.ID
+
+
+@strawberry.type
+class InputType(InputTypeInterface):
+    pass
+
+
 class GqlMutationPayloadTest(TestCase):
-    def setUp(self):
-        @strawberry.type
-        class InputType(InputTypeInterface):
-            pass
-
+    def setUp(self) -> None:
         self.input_type = InputType
-
-        @strawberry.type
-        class PayloadType(PayloadTypeInterface):
-            user_errors: List[UserError]
-            node: Optional[Node]
-
-        @strawberry.type
-        class NodeIns(Node):
-            id: strawberry.ID
-
         self.payload_type = PayloadType
-        self.payload_type_ins = PayloadType(user_errors=[], node=NodeIns(id=1))
+        self.payload_type_ins = PayloadType(user_errors=[], node=NodeIns(id=Node.encode_id("Node", "1")))
 
         self.node = NodeIns
 
-    async def _n_test_gql_mutation_payload(self):
+    async def _n_test_gql_mutation_payload(self) -> None:
         # If all mutations are working and its test passing this can work
         # I could not figure how to test it in isolation. solo the mutation working
         # is good enough
