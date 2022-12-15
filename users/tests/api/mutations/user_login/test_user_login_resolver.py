@@ -17,7 +17,6 @@ from users.models import User
 
 class UserLoginResolverTest(TransactionTestCase):
 
-    # Do not type. MYPY will scream at you
     def setUp(self) -> None:
         self.input = {
             "password": "pws",
@@ -27,7 +26,7 @@ class UserLoginResolverTest(TransactionTestCase):
         self.info: Info = get_info(strawberry.field(resolver=user_login_resolver), "user_login_resolver",
                                    UserLoginPayload, Mutation)
 
-    async def test_user_login_resolver_response(self):
+    async def test_user_login_resolver_response(self) -> None:
         user_login_input = UserLoginInput(**self.input)
         result: UserLoginPayload = cast(UserLoginPayload,
                                         await user_login_resolver(input=user_login_input, info=self.info))
@@ -38,20 +37,24 @@ class UserLoginResolverTest(TransactionTestCase):
         # Test if payload has no errors
         self.assertFalse(result.user_errors)
 
-        # Test if id is not null
-        self.assertIsNotNone(result.node.id)
+        self.assertIsNotNone(result.node)
+        if result.node:
+            # Test if id is not null
+            self.assertIsNotNone(result.node.id)
 
-        # Test if user is is_active
-        self.assertTrue(result.node.is_active)
+            # Test if user is is_active
+            self.assertTrue(result.node.is_active)
 
-        # Test if last_login registered
-        self.assertAlmostEqual(result.node.last_login, timezone.now(),
-                               delta=datetime.timedelta(seconds=0.5))
+            # Test if last_login registered
+            self.assertIsNotNone(result.node.last_login)
+            if result.node.last_login:
+                self.assertAlmostEqual(result.node.last_login, timezone.now(),
+                                       delta=datetime.timedelta(seconds=0.5))
 
-        # Test id the right user was logged in
-        self.assertEqual(self.input.get("username"), result.node.username)
+            # Test id the right user was logged in
+            self.assertEqual(self.input.get("username"), result.node.username)
 
-    async def test_item_login_resolver_side_effect(self):
+    async def test_item_login_resolver_side_effect(self) -> None:
         user_login_input = UserLoginInput(**self.input)
         request: ASGIRequest = self.info.context.get("request")
 
