@@ -16,7 +16,10 @@ async def item_connection_resolver(
         first: Optional[int] = None,
         last: Optional[int] = None, filter: Optional[ItemFilter] = None) -> Connection[
     ItemType]:
-    filt = await get_filter_arg_from_filter_input(filter)
+    filt = {}
+    if filter:
+        filt = await get_filter_arg_from_filter_input(filter=filter)
+
     qs = Item.objects.filter(**filt)
     page = await get_cursor_page_from_queryset(qs, after, before, first, last)
     connection = await get_connection_from_cursor_page(page, ItemType)

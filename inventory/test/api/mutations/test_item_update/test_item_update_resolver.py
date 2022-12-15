@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, TypedDict
 
 from asgiref.sync import async_to_sync
 from django.test import TransactionTestCase
@@ -18,12 +18,17 @@ from storefront_backend.tests.utils import get_async_request_with_user_and_sessi
 from users.models import User
 
 
+class DefaultValuesType(TypedDict):
+    name: str
+    cost: float
+
+
 class ItemUpdateResolverTest(TransactionTestCase):
 
     def setUp(self) -> None:
         temp: List[Item] = async_to_sync(create_bulk_of_item)(1)
         self.item = temp[0]
-        self.new_data = {
+        self.new_data: DefaultValuesType = {
             "name": "new_name",
             "cost": 10.50
         }
@@ -48,7 +53,7 @@ class ItemUpdateResolverTest(TransactionTestCase):
             }
         }}
 
-    async def test_item_update_resolver_response(self):
+    async def test_item_update_resolver_response(self) -> None:
         id_node = Node.encode_id("ItemType", f"{self.item.id}")
         update_data = ItemUpdateDataInput(**self.new_data)
         item_update_input = ItemUpdateInput(id=id_node, data=update_data)
@@ -61,17 +66,19 @@ class ItemUpdateResolverTest(TransactionTestCase):
         # Test if payload has no errors
         self.assertFalse(result.user_errors)
 
-        # Test if id is not null
-        self.assertIsNotNone(result.node.id)
+        self.assertIsNotNone(result.node)
+        if result.node:
+            # Test if id is not null
+            self.assertIsNotNone(result.node.id)
 
-        # Test if item is the same that input
-        self.assertEqual(result.node.id, id_node)
+            # Test if item is the same that input
+            self.assertEqual(result.node.id, id_node)
 
-        # test if data was updated according to update_data
-        for key, value in self.new_data.items():
-            self.assertEqual(value, result.node.__getattribute__(key))
+            # test if data was updated according to update_data
+            for key, value in self.new_data.items():
+                self.assertEqual(value, result.node.__getattribute__(key))
 
-    async def test_item_update_resolver_side_effect(self):
+    async def test_item_update_resolver_side_effect(self) -> None:
         # Building input
         id_node = Node.encode_id("ItemType", f"{self.item.id}")
         update_data = ItemUpdateDataInput(**self.new_data)

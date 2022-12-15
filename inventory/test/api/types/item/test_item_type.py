@@ -7,11 +7,11 @@ from inventory.test.api.utils import create_bulk_of_item
 
 class ItemTypeTest(TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         items = async_to_sync(create_bulk_of_item)(1)
         self.item = items[0]
 
-    def test_price_gql(self):
+    def test_price_gql(self) -> None:
         # Positive Markup
         price = ItemType.price(self.item)
         self.assertEqual(15, price)

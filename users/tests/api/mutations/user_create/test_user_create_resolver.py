@@ -46,7 +46,7 @@ class UserCreateResolverTest(TransactionTestCase):
             "username": "unleash"
         }}
 
-    async def test_user_create_resolver_response(self):
+    async def test_user_create_resolver_response(self) -> None:
         user_create_input = UserCreateInput(**self.input)
         result: UserCreatePayload = await user_create_resolver(input=user_create_input)
 
@@ -56,29 +56,31 @@ class UserCreateResolverTest(TransactionTestCase):
         # Test if payload has no errors
         self.assertFalse(result.user_errors)
 
-        # Test if id is not null
-        self.assertIsNotNone(result.node.id)
+        self.assertIsNotNone(result.node)
+        if result.node:
+            # Test if id is not null
+            self.assertIsNotNone(result.node.id)
 
-        # Test if user is is_active
-        self.assertTrue(result.node.is_active)
+            # Test if user is is_active
+            self.assertTrue(result.node.is_active)
 
-        # Test if no special permission were granted
-        self.assertFalse(result.node.is_superuser)
-        self.assertFalse(result.node.is_staff)
+            # Test if no special permission were granted
+            self.assertFalse(result.node.is_superuser)
+            self.assertFalse(result.node.is_staff)
 
-        # Test if date_joined is correct
-        self.assertAlmostEqual(result.node.date_joined, timezone.now(),
-                               delta=datetime.timedelta(seconds=0.5))
+            # Test if date_joined is correct
+            self.assertAlmostEqual(result.node.date_joined, timezone.now(),
+                                   delta=datetime.timedelta(seconds=0.5))
 
-        # Test that no login happened
-        self.assertIsNone(result.node.last_login)
+            # Test that no login happened
+            self.assertIsNone(result.node.last_login)
 
-        self.input.pop("password")
-        # Test if response has all input data
-        for key, value in self.input.items():
-            self.assertEqual(value, result.node.__getattribute__(key))
+            self.input.pop("password")
+            # Test if response has all input data
+            for key, value in self.input.items():
+                self.assertEqual(value, result.node.__getattribute__(key))
 
-    async def test_user_create_resolver_side_effect(self):
+    async def test_user_create_resolver_side_effect(self) -> None:
         # Building input
         user_create_input = UserCreateInput(**self.input)
 

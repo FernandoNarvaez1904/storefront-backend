@@ -11,15 +11,13 @@ from storefront_backend.api.types import UserError
 
 
 class ItemUpdateInputTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         items = async_to_sync(create_bulk_of_item)(1)
         self.item = items[0]
 
         inactive_items = async_to_sync(create_bulk_of_item)(1, active=False, seed="not")
         self.inactive_item = inactive_items[0]
-
-    async def test_validate_and_get_errors(self):
-        default_args = {
+        self.default_args = {
             'name': None,
             'sku': None,
             'barcode': None,
@@ -27,21 +25,24 @@ class ItemUpdateInputTest(TestCase):
             'markup': None,
         }
 
+    async def test_validate_and_get_errors_not_existing_id(self) -> None:
         # Test not existing id
         not_existing_item_type = ItemUpdateInput(id=Node.encode_id(type_name='ItemType', node_id='3549'),
-                                                 data=ItemUpdateDataInput(**default_args))
+                                                 data=ItemUpdateDataInput(**self.default_args))
         expected_not_exist_error: List[UserError] = await not_existing_item_type.validate_and_get_errors()
         self.assertIsInstance(expected_not_exist_error[0], CannotUpdateNonExistentItem)
 
+    async def test_validate_and_get_errors_inactive_item(self) -> None:
         # Test already inactivate item
         inactive_item_type = ItemUpdateInput(
             id=Node.encode_id(type_name='ItemType', node_id=f"{self.inactive_item.id}"),
-            data=ItemUpdateDataInput(**default_args))
+            data=ItemUpdateDataInput(**self.default_args))
         expected_is_not_active_error: List[UserError] = await inactive_item_type.validate_and_get_errors()
         self.assertIsInstance(expected_is_not_active_error[0], CannotUpdateInactiveItem)
 
+    async def test_validate_and_get_errors_no_errors(self) -> None:
         # Test no errors
         item_type = ItemUpdateInput(id=Node.encode_id(type_name='ItemType', node_id=f"{self.item.id}"),
-                                    data=ItemUpdateDataInput(**default_args))
+                                    data=ItemUpdateDataInput(**self.default_args))
         expected_no_error: List[UserError] = await item_type.validate_and_get_errors()
         self.assertFalse(len(expected_no_error))
