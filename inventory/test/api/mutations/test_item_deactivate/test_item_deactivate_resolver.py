@@ -41,7 +41,7 @@ class ItemDeactivateResolverTest(TransactionTestCase):
             "id": async_to_sync(ItemType.get_id_from_model_instance)(self.item),
         }}
 
-    async def test_item_deactivate_resolver_response(self):
+    async def test_item_deactivate_resolver_response(self) -> None:
         id_node = Node.encode_id("ItemType", f"{self.item.id}")
         item_input = ItemDeactivateInput(id=id_node)
         result: ItemDeactivatePayload = await item_deactivate_resolver(item_input)
@@ -52,16 +52,18 @@ class ItemDeactivateResolverTest(TransactionTestCase):
         # Test if payload has no errors
         self.assertFalse(result.user_errors)
 
-        # Test if id is not null
-        self.assertIsNotNone(result.node.id)
+        self.assertIsNotNone(result.node)
+        if result.node:
+            # Test if id is not null
+            self.assertIsNotNone(result.node.id)
 
-        # Test if item is the same that input
-        self.assertEqual(result.node.id, id_node)
+            # Test if item is the same that input
+            self.assertEqual(result.node.id, id_node)
 
-        # Test if item is not is_active
-        self.assertFalse(result.node.is_active)
+            # Test if item is not is_active
+            self.assertFalse(result.node.is_active)
 
-    async def test_item_deactivate_resolver_side_effect(self):
+    async def test_item_deactivate_resolver_side_effect(self) -> None:
         # Building input
         id_node = Node.encode_id("ItemType", f"{self.item.id}")
         item_input = ItemDeactivateInput(id=id_node)
