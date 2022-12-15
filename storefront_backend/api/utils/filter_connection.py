@@ -6,7 +6,7 @@ from strawberry_django.filters import FilterLookup, lookup_name_conversion_map
 
 from storefront_backend.api.types import Filter
 
-FilterInput = TypeVar("FilterInput")
+FilterInput = TypeVar("FilterInput", bound=Filter)
 
 
 async def get_filter_arg_from_lookup(lookup: FilterLookup, prefix: str = "") -> dict:
