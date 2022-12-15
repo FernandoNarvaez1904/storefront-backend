@@ -91,7 +91,9 @@ class TestUserType(TestCase):
         self.assertEqual(user_type_is_active, expected)
 
     async def test_from_model_instance(self) -> None:
-        user: User = await sync_to_async(User.objects.create_user)(**self.default_values, password="hello")
+        user_input = self.default_values.copy()
+        user_input.pop("id")  # type: ignore
+        user: User = await sync_to_async(User.objects.create_user)(**user_input, password="hello")
         user_type: UserType = await UserType.from_model_instance(user)
 
         self.assertEqual(str(user.id), UserType.decode_id(user_type.id)["instance_id"])
