@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-from typing import ClassVar, Union, Optional, TypedDict, List, cast, TypeVar
+from typing import ClassVar, Optional, TypedDict, List, cast, TypeVar
 
 import strawberry
 from django.db.models import Model
@@ -25,9 +25,9 @@ class Node:
     _model_: ClassVar[Type[Model]]
 
     @classmethod
-    def encode_id(cls, type_name: str, node_id: str):
+    def encode_id(cls, type_name: str, node_id: str) -> ID:
         id_ins = f"{type_name}_{node_id}".encode("utf-8")  # format "typeName_id"
-        calc_id: Union[strawberry.ID, str] = base64.b64encode(id_ins).decode()
+        calc_id: strawberry.ID = cast(ID, base64.b64encode(id_ins).decode())
         return calc_id
 
     @classmethod
