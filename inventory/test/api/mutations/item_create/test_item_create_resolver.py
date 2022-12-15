@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import List, TypedDict
 
 from asgiref.sync import sync_to_async
 from django.test import TransactionTestCase  # type: ignore
@@ -17,10 +17,19 @@ from storefront_backend.tests.utils import create_user_with_permission, get_asyn
 from users.models import User
 
 
+class DefaultValuesType(TypedDict):
+    sku: str
+    is_service: bool
+    name: str
+    barcode: str
+    cost: float
+    markup: float
+
+
 class ItemCreateResolverTest(TransactionTestCase):
 
     def setUp(self) -> None:
-        self.default_data = {
+        self.default_data: DefaultValuesType = {
             "sku": "sku",
             "is_service": False,
             "name": "name",
@@ -50,7 +59,7 @@ class ItemCreateResolverTest(TransactionTestCase):
             "sku": "ItemSku"
         }}
 
-    async def test_item_create_resolver_response(self):
+    async def test_item_create_resolver_response(self) -> None:
         input_item = ItemCreateInput(**self.default_data)
         result: ItemCreatePayload = await item_create_resolver(input_item)
 
@@ -60,24 +69,26 @@ class ItemCreateResolverTest(TransactionTestCase):
         # Test if payload has no errors
         self.assertFalse(result.user_errors)
 
-        # Test if id is not null
-        self.assertIsNotNone(result.node.id)
+        self.assertIsNotNone(result.node)
+        if result.node:
+            # Test if id is not null
+            self.assertIsNotNone(result.node.id)
 
-        # Test if creation date is correct
-        self.assertAlmostEqual(result.node.creation_date, timezone.now(),
-                               delta=datetime.timedelta(seconds=0.5))
+            # Test if creation date is correct
+            self.assertAlmostEqual(result.node.creation_date, timezone.now(),
+                                   delta=datetime.timedelta(seconds=0.5))
 
-        # Test if current_stock equals 0
-        self.assertEqual(result.node.current_stock, 0)
+            # Test if current_stock equals 0
+            self.assertEqual(result.node.current_stock, 0)
 
-        # Test if item is_active
-        self.assertTrue(result.node.is_active)
+            # Test if item is_active
+            self.assertTrue(result.node.is_active)
 
-        # Test if response has all input data
-        for key, value in self.default_data.items():
-            self.assertEqual(value, result.node.__getattribute__(key))
+            # Test if response has all input data
+            for key, value in self.default_data.items():
+                self.assertEqual(value, result.node.__getattribute__(key))
 
-    async def test_item_create_resolver_side_effect(self):
+    async def test_item_create_resolver_side_effect(self) -> None:
         input_item = ItemCreateInput(**self.default_data)
         await item_create_resolver(input_item)
 
