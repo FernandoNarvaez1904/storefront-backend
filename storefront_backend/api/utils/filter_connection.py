@@ -1,4 +1,4 @@
-from typing import Optional, TypeVar, List
+from typing import TypeVar, List
 
 from asgiref.sync import sync_to_async
 from django.db.models import QuerySet
@@ -12,52 +12,43 @@ FilterInput = TypeVar("FilterInput")
 async def get_filter_arg_from_lookup(lookup: FilterLookup, prefix: str = "") -> dict:
     result = {}
 
-    if lookup:
-        if not isinstance(lookup, FilterLookup):
-            raise ValueError(f"{lookup.__class__.__name__} is not implementing {FilterLookup.__name__}")
-
-        for name, val in lookup.__dict__.items():
-            if val:
-                if prefix:
-                    if name in lookup_name_conversion_map.keys():
-                        name = f"__{lookup_name_conversion_map[name]}"
-                    else:
-                        name = f"__{name}"
-                result.update({f"{prefix}{name}": val})
+    for name, val in lookup.__dict__.items():
+        if val:
+            if prefix:
+                if name in lookup_name_conversion_map.keys():
+                    name = f"__{lookup_name_conversion_map[name]}"
+                else:
+                    name = f"__{name}"
+            result.update({f"{prefix}{name}": val})
 
     return result
 
 
-async def get_filter_arg_from_filter_input(filter: Optional[FilterInput], prefix: str = "") -> dict:
+async def get_filter_arg_from_filter_input(filter: FilterInput, prefix: str = "") -> dict:
     filter_result = {}
 
-    if filter:
+    for name, value in filter.__dict__.items():
 
-        if not isinstance(filter, Filter):
-            raise ValueError(f"{filter.__class__.__name__} is not implementing {Filter.__name__} ")
+        if not value:
+            continue
 
-        for name, value in filter.__dict__.items():
+        if prefix:
+            name = f"{prefix}__{name}"
 
-            if not value:
-                continue
+        value_is_another_filter = isinstance(value, Filter)
+        if value_is_another_filter:
+            result = await get_filter_arg_from_filter_input(prefix=name, filter=value)
+            filter_result.update(result)
+            continue
 
-            if prefix:
-                name = f"{prefix}__{name}"
+        value_is_lookup = isinstance(value, FilterLookup)
+        if value_is_lookup:
+            result = await get_filter_arg_from_lookup(lookup=value, prefix=name)
+            filter_result.update(result)
+            continue
 
-            value_is_another_filter = isinstance(value, Filter)
-            if value_is_another_filter:
-                result = await get_filter_arg_from_filter_input(prefix=name, filter=value)
-                filter_result.update(result)
-                continue
-
-            value_is_lookup = isinstance(value, FilterLookup)
-            if value_is_lookup:
-                result = await get_filter_arg_from_lookup(lookup=value, prefix=name)
-                filter_result.update(result)
-                continue
-
-            # If value is a simple exact filter
-            filter_result.update({f"{name}": value})
+        # If value is a simple exact filter
+        filter_result.update({f"{name}": value})
 
     return filter_result
 
