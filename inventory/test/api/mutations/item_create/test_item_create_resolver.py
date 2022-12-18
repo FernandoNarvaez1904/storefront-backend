@@ -1,7 +1,6 @@
 import datetime
 from typing import List, TypedDict
 
-from asgiref.sync import sync_to_async
 from django.test import TransactionTestCase  # type: ignore
 from django.utils import timezone
 from strawberry.django.context import StrawberryDjangoContext
@@ -13,6 +12,7 @@ from inventory.api.mutations.item_create.item_create_payload import ItemCreatePa
 from inventory.api.mutations.item_create.item_create_resolver import item_create_resolver
 from inventory.models import Item
 from storefront_backend.api.schema import schema
+from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 from storefront_backend.tests.utils import create_user_with_permission, get_async_request_with_user_and_session
 from users.models import User
 
@@ -97,7 +97,7 @@ class ItemCreateResolverTest(TransactionTestCase):
         self.assertEqual(item_count, 1)
 
         # Test if an item with the input_data exist
-        item = await sync_to_async(list)(Item.objects.filter(**self.default_data))
+        item = await get_lazy_query_set_as_list(Item.objects.filter(**self.default_data))
         # Test if item is not empty
         self.assertTrue(item)
         # Test that not duplication exist

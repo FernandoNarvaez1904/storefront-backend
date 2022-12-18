@@ -8,6 +8,7 @@ from strawberry_django.utils import is_strawberry_type
 
 from storefront_backend.api.relay.connection import Connection
 from storefront_backend.api.relay.node import Node
+from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 from users.api.types.permission_type import PermissionType
 from users.api.types.role_type import RoleType
 
@@ -37,7 +38,7 @@ class TestRoleType(TestCase):
 
     async def test_permissions(self) -> None:
         group: Group = await Group.objects.acreate(name="Role1")
-        permissions: List[Permission] = await sync_to_async(list)(Permission.objects.filter()[:2])
+        permissions: List[Permission] = await get_lazy_query_set_as_list(Permission.objects.filter()[:2])
         await sync_to_async(group.permissions.add)(*permissions)
 
         role_type = await RoleType.from_model_instance(group)
@@ -59,7 +60,7 @@ class TestRoleType(TestCase):
 
     async def test_from_model_instance(self) -> None:
         group: Group = await Group.objects.acreate(name="Role156")
-        permissions: List[Permission] = await sync_to_async(list)(Permission.objects.filter()[:2])
+        permissions: List[Permission] = await get_lazy_query_set_as_list(Permission.objects.filter()[:2])
         await sync_to_async(group.permissions.add)(*permissions)
 
         role_type = await RoleType.from_model_instance(group)

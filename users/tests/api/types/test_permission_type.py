@@ -1,12 +1,12 @@
 from typing import List, TypedDict, cast
 
-from asgiref.sync import sync_to_async
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 from strawberry import ID
 from strawberry_django.utils import is_strawberry_type
 
 from storefront_backend.api.relay.node import Node
+from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 from users.api.types.permission_type import PermissionType
 
 
@@ -41,7 +41,7 @@ class TestPermissionType(TestCase):
         self.assertEqual(permission_type_codename, expected)
 
     async def test_from_model_instance(self) -> None:
-        permissions_filtered: List[Permission] = await sync_to_async(list)(
+        permissions_filtered: List[Permission] = await get_lazy_query_set_as_list(
             Permission.objects.filter(codename="add_permission"))
         permission: Permission = permissions_filtered[0]
         permission_type = await PermissionType.from_model_instance(permission)
