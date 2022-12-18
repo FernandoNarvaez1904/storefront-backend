@@ -1,6 +1,5 @@
 from typing import cast, TypedDict, List, Optional
 
-from asgiref.sync import sync_to_async
 from django.contrib.auth.models import Permission
 from django.test import TransactionTestCase
 from strawberry import ID
@@ -10,6 +9,7 @@ from strawberry.types import ExecutionResult
 
 from storefront_backend.api.relay.connection import Connection
 from storefront_backend.api.schema import schema
+from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 from storefront_backend.tests.utils import create_user_with_permission, get_async_request_with_user_and_session
 from users.api.mutations.role_add_permission.role_add_permission_input import RoleAddPermissionInput
 from users.api.mutations.role_add_permission.role_add_permission_payload import RoleAddPermissionPayload
@@ -98,7 +98,7 @@ class TestRoleAddPermissionResolver(TransactionTestCase):
         role_id = RoleType.decode_id(self.input["role_id"])["instance_id"]
         role = await Role.objects.aget(id=role_id)
 
-        role_permissions: List[Permission] = await sync_to_async(list)(role.permissions.all())
+        role_permissions: List[Permission] = await get_lazy_query_set_as_list(role.permissions.all())
 
         returned_perm_ids: List[ID] = [await PermissionType.get_id_from_model_instance(perm) for perm in
                                        role_permissions]

@@ -1,7 +1,7 @@
 from typing import TypeVar, List
 
 from asgiref.sync import sync_to_async
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Model
 from strawberry_django.filters import FilterLookup, lookup_name_conversion_map
 
 from storefront_backend.api.types import Filter
@@ -53,6 +53,9 @@ async def get_filter_arg_from_filter_input(filter: FilterInput, prefix: str = ""
     return filter_result
 
 
-async def get_lazy_query_set_as_list(query_set: QuerySet) -> List:
-    list_coroutine = sync_to_async(len)
+ModelType = TypeVar("ModelType", bound=Model)
+
+
+async def get_lazy_query_set_as_list(query_set: QuerySet[ModelType]) -> List[ModelType]:
+    list_coroutine = sync_to_async(list)
     return await list_coroutine(query_set)

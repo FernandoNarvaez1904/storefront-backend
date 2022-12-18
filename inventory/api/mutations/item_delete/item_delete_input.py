@@ -1,13 +1,13 @@
 from typing import List, cast
 
 import strawberry
-from asgiref.sync import sync_to_async
 
 from inventory.api.mutations.item_delete.item_delete_errors import CannotDeleteNonExistentItem, \
     CannotDeleteItemHasDocuments
 from inventory.models import Item
 from storefront_backend.api.relay.node import DecodedID, Node
 from storefront_backend.api.types import UserError, InputTypeInterface
+from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 
 
 @strawberry.input
@@ -18,7 +18,7 @@ class ItemDeleteInput(InputTypeInterface):
         errors: List[UserError] = []
         decoded_id: DecodedID = Node.decode_id(self.id)
         node_id = cast(str, decoded_id.get("instance_id"))
-        item_list = await sync_to_async(list)(Item.objects.filter(id=node_id))
+        item_list = await get_lazy_query_set_as_list(Item.objects.filter(id=node_id))
 
         if not item_list:
             errors.append(

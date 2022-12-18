@@ -1,6 +1,5 @@
 from typing import Optional, List
 
-from asgiref.sync import sync_to_async
 from django.db.models import Model
 
 from inventory.api.mutations.item_update.item_update_input import ItemUpdateInput
@@ -9,6 +8,7 @@ from inventory.api.types.item import ItemType
 from inventory.models import Item
 from storefront_backend.api.relay.node import Node
 from storefront_backend.api.utils import strawberry_mutation_resolver_payload
+from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 
 
 @strawberry_mutation_resolver_payload(
@@ -31,7 +31,7 @@ async def item_update_resolver(input, info) -> Optional[ItemType]:
     if input_data:
         item_as_qs = Item.objects.filter(pk=item.id)
         await item_as_qs.aupdate(**input_data)
-        temp: List[Model] = await sync_to_async(list)(item_as_qs)
+        temp: List[Model] = await get_lazy_query_set_as_list(item_as_qs)
         new_item = temp[0]
 
     if not new_item:

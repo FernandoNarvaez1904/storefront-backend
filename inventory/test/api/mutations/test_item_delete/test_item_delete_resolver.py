@@ -1,6 +1,6 @@
 from typing import List
 
-from asgiref.sync import async_to_sync, sync_to_async
+from asgiref.sync import async_to_sync
 from django.test import TransactionTestCase
 from strawberry.django.context import StrawberryDjangoContext
 from strawberry.django.views import TemporalHttpResponse
@@ -14,6 +14,7 @@ from inventory.models import Item
 from inventory.test.api.utils import create_bulk_of_item
 from storefront_backend.api.relay.node import Node
 from storefront_backend.api.schema import schema
+from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 from storefront_backend.tests.utils import get_async_request_with_user_and_session, create_user_with_permission
 from users.models import User
 
@@ -56,7 +57,7 @@ class ItemDeleteResolverTest(TransactionTestCase):
         if result.node:
             # Test if id is not null
             self.assertIsNotNone(result.node.id)
-    
+
             # Test if item is the same that input
             self.assertEqual(result.node.id, id_node)
 
@@ -69,7 +70,7 @@ class ItemDeleteResolverTest(TransactionTestCase):
         await item_delete_resolver(item_input)
 
         # Checking if item was deleted
-        item = await sync_to_async(list)(Item.objects.filter(pk=self.item.id))
+        item = await get_lazy_query_set_as_list(Item.objects.filter(pk=self.item.id))
         self.assertFalse(item)
 
     async def test_item_delete_resolver_permission_denied(self) -> None:
