@@ -51,7 +51,7 @@ class ItemCreateInputTest(TestCase):
         self.assertIsInstance(expected_errors[1], CannotCreateItemBarcodeIsNotUnique)
         self.assertIsInstance(expected_errors[2], CannotCreateItemNameIsNotUnique)
 
-    async def test_validate_and_get_errors_good(self) -> None:
+    async def test_validate_and_get_no_errors(self) -> None:
         # Test should have no problem
         passing_item_type = ItemCreateInput(sku=f"{self.item.sku}1", barcode=f"{self.item.barcode}1",
                                             name=f"{self.item.name}@", **self.default_args)
