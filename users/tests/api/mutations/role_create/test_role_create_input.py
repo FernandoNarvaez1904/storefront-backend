@@ -1,4 +1,4 @@
-from typing import List, TypedDict
+from typing import List, TypedDict, cast
 
 from django.contrib.auth.models import Group, Permission
 from django.db.models import QuerySet
@@ -39,7 +39,7 @@ class TestRoleCreateInput(TransactionTestCase):
         self.assertIsInstance(name_error_payload[0], CannotCreateRoleNameIsNotUnique)
 
     async def test_validate_and_get_errors_perm(self) -> None:
-        last_perm = await Permission.objects.order_by("id").alast()
+        last_perm = cast(Permission, await Permission.objects.order_by("id").alast())
         not_existent_id = str(last_perm.id + 1)
         input_non_existent_perm = RoleCreateInput(name=self.default_values["name"],
                                                   permissions_ids=[
@@ -48,7 +48,7 @@ class TestRoleCreateInput(TransactionTestCase):
         self.assertIsInstance(perm_error_payload[0], CannotCreateRolePermissionDoesNotExist)
 
     async def test_validate_and_get_errors_all(self) -> None:
-        last_perm = await Permission.objects.order_by("id").alast()
+        last_perm = cast(Permission, await Permission.objects.order_by("id").alast())
         not_existent_id = str(last_perm.id + 1)
         all_error_input = RoleCreateInput(name=self.role.name,
                                           permissions_ids=[PermissionType.encode_id("PermissionType", not_existent_id)])
