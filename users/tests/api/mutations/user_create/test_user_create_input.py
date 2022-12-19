@@ -40,5 +40,5 @@ class TestUserCreateInput(TransactionTestCase):
 
     async def test_validate_and_get_errors_no_errors(self) -> None:
         input_no_errors = UserCreateInput(**self.default_values)
-        all_error_payload: List[UserError] = await input_no_errors.validate_and_get_errors()
-        self.assertFalse(all_error_payload)
+        no_error_payload: List[UserError] = await input_no_errors.validate_and_get_errors()
+        self.assertFalse(no_error_payload)
