@@ -27,3 +27,8 @@ class TestUserLoginsInput(TransactionTestCase):
         not_valid_password_input = UserLoginInput(**{**self.default_values, "password": "123456"})
         password_error_payload: List[UserError] = await not_valid_password_input.validate_and_get_errors()
         self.assertIsInstance(password_error_payload[0], CannotLoginPasswordIsNotCorrect)
+
+    async def test_validate_and_get_errors_not_valid_no_errors(self) -> None:
+        user_login_input = UserLoginInput(**self.default_values)
+        no_error_payload: List[UserError] = await user_login_input.validate_and_get_errors()
+        self.assertFalse(no_error_payload)
