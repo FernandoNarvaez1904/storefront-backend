@@ -1,7 +1,7 @@
 from typing import List, cast
 
 import strawberry
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from strawberry import ID
 
 from storefront_backend.api.relay.node import DecodedID
@@ -9,6 +9,7 @@ from storefront_backend.api.types import InputTypeInterface, UserError
 from users.api.mutations.role_create.role_create_errors import CannotCreateRoleNameIsNotUnique, \
     CannotCreateRolePermissionDoesNotExist
 from users.api.types.role_type import RoleType
+from users.models import Role
 
 
 @strawberry.input
@@ -19,7 +20,7 @@ class RoleCreateInput(InputTypeInterface):
     async def validate_and_get_errors(self) -> List[UserError]:
         errors: List[UserError] = []
 
-        if await Group.objects.filter(name=self.name).aexists():
+        if await Role.objects.filter(name=self.name).aexists():
             errors.append(CannotCreateRoleNameIsNotUnique(
                 message="Name already exist, please try with another one"
             ))

@@ -1,22 +1,22 @@
 from typing import List, cast
 
 from asgiref.sync import sync_to_async
-from django.contrib.auth.models import Group
 
 from storefront_backend.api.relay.node import DecodedID
 from storefront_backend.api.utils.strawberry_mutation_resolver_payload import strawberry_mutation_resolver_payload
 from users.api.mutations.role_create.role_create_input import RoleCreateInput
 from users.api.mutations.role_create.role_create_payload import RoleCreatePayload
 from users.api.types.role_type import RoleType
+from users.models import Role
 
 
 @strawberry_mutation_resolver_payload(
     input_type=RoleCreateInput,
     payload_type=RoleCreatePayload,
-    permission="auth.add_group"
+    permission="users.add_role"
 )
 async def role_create_resolver(input: RoleCreateInput, info) -> RoleType:
-    role = await Group.objects.acreate(name=input.name)
+    role = await Role.objects.acreate(name=input.name)
 
     if input.permissions_ids:
         ids: List[int] = []

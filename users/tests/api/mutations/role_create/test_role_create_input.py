@@ -1,6 +1,6 @@
 from typing import List, TypedDict, cast
 
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from django.db.models import QuerySet
 from django.test import TransactionTestCase
 from strawberry import ID
@@ -10,6 +10,7 @@ from users.api.mutations.role_create.role_create_errors import CannotCreateRoleN
     CannotCreateRolePermissionDoesNotExist
 from users.api.mutations.role_create.role_create_input import RoleCreateInput
 from users.api.types.permission_type import PermissionType
+from users.models import Role
 
 
 class DefaultValuesType(TypedDict):
@@ -20,7 +21,7 @@ class DefaultValuesType(TypedDict):
 class TestRoleCreateInput(TransactionTestCase):
 
     def setUp(self) -> None:
-        self.role: Group = Group.objects.create(name="Role1")
+        self.role: Role = cast(Role, Role.objects.create(name="Role1"))
         perm: QuerySet[Permission] = Permission.objects.all()[:2]
 
         if not self.role.permissions.count():
