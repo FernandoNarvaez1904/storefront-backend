@@ -1,17 +1,18 @@
 from typing import Optional
 
 import strawberry
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 
 from storefront_backend.api.relay.connection import Connection, get_cursor_page_from_queryset, \
     get_connection_from_cursor_page
 from storefront_backend.api.relay.node import Node
 from users.api.types.permission_type import PermissionType
+from users.models import Role
 
 
 @strawberry.type
 class RoleType(Node):
-    _model_ = Group
+    _model_ = Role
     id: strawberry.ID
     name: str
 

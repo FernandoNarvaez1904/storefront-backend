@@ -1,7 +1,7 @@
 from typing import List, TypedDict, cast
 
 from asgiref.sync import sync_to_async
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from strawberry import ID
 from strawberry_django.utils import is_strawberry_type
@@ -11,6 +11,7 @@ from storefront_backend.api.relay.node import Node
 from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 from users.api.types.permission_type import PermissionType
 from users.api.types.role_type import RoleType
+from users.models import Role
 
 
 class RoleTypeDefaultValues(TypedDict):
@@ -37,11 +38,11 @@ class TestRoleType(TestCase):
         self.assertEqual(user_type_name, expected)
 
     async def test_permissions(self) -> None:
-        group: Group = await Group.objects.acreate(name="Role1")
+        role: Role = cast(Role, await Role.objects.acreate(name="Role1"))
         permissions: List[Permission] = await get_lazy_query_set_as_list(Permission.objects.filter()[:2])
-        await sync_to_async(group.permissions.add)(*permissions)
+        await sync_to_async(role.permissions.add)(*permissions)
 
-        role_type = await RoleType.from_model_instance(group)
+        role_type = await RoleType.from_model_instance(role)
 
         role_type_permission: Connection[PermissionType] = await role_type.permissions()
 
@@ -59,15 +60,15 @@ class TestRoleType(TestCase):
             self.assertIn(str(perm.id), ids_of_perm_in_type)
 
     async def test_from_model_instance(self) -> None:
-        group: Group = await Group.objects.acreate(name="Role156")
+        role: Role = cast(Role, await Role.objects.acreate(name="Role156"))
         permissions: List[Permission] = await get_lazy_query_set_as_list(Permission.objects.filter()[:2])
-        await sync_to_async(group.permissions.add)(*permissions)
+        await sync_to_async(role.permissions.add)(*permissions)
 
-        role_type = await RoleType.from_model_instance(group)
+        role_type = await RoleType.from_model_instance(role)
 
         # Test fields
         self.assertIsNotNone(role_type.id)
-        self.assertEqual(role_type.name, group.name)
+        self.assertEqual(role_type.name, role.name)
 
         # Test permission connection
         permission_connection: Connection[PermissionType] = await role_type.permissions()

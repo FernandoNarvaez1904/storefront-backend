@@ -1,6 +1,6 @@
 from typing import cast, TypedDict, List, Optional
 
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from django.test import TransactionTestCase
 from strawberry import ID
 from strawberry.django.context import StrawberryDjangoContext
@@ -15,7 +15,7 @@ from users.api.mutations.role_create.role_create_payload import RoleCreatePayloa
 from users.api.mutations.role_create.role_create_resolver import role_create_resolver
 from users.api.types.permission_type import PermissionType
 from users.api.types.role_type import RoleType
-from users.models import User
+from users.models import User, Role
 
 
 class RoleCreateInputData(TypedDict):
@@ -91,7 +91,7 @@ class TestRoleCreateResolver(TransactionTestCase):
         await role_create_resolver(input=role_create_input)
 
         # Checking if field was updated in database
-        does_role_exist = await Group.objects.filter(name=self.input["name"]).aexists()
+        does_role_exist = await Role.objects.filter(name=self.input["name"]).aexists()
         self.assertTrue(does_role_exist)
 
     async def test_role_create_resolver_permission_denied(self) -> None:
@@ -110,7 +110,7 @@ class TestRoleCreateResolver(TransactionTestCase):
             self.assertEqual(user_errors[0]["field"], "permission")
 
     async def test_role_create_resolver_permission_accepted(self) -> None:
-        user: User = await create_user_with_permission("User", "Password", "add_group")
+        user: User = await create_user_with_permission("User", "Password", "add_role")
         request = await get_async_request_with_user_and_session(user=user)
 
         execution_result: ExecutionResult = await schema.execute(
