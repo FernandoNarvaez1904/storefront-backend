@@ -1,5 +1,7 @@
 from typing import List, TypedDict, cast
 
+from django.contrib.auth.models import Permission
+from django.db.models import QuerySet
 from django.test import TransactionTestCase
 from strawberry import ID
 
@@ -13,7 +15,7 @@ from users.models import Role
 
 
 class DefaultValuesType(TypedDict):
-    id: ID
+    role_id: ID
     permissions_ids: List[ID]
 
 
@@ -22,10 +24,11 @@ class TestRoleAddPermissionInput(TransactionTestCase):
     def setUp(self) -> None:
         self.role = Role.objects.create(name="Role1")
 
+        perms: QuerySet[Permission] = Permission.objects.all()[:2]
         self.default_values: DefaultValuesType = {
-            "id": RoleType.encode_id("RoleType", str(self.role.id)),
-            "permissions_ids": [PermissionType.encode_id("PermissionType", "1"),
-                                PermissionType.encode_id("PermissionType", "2")]
+            "role_id": RoleType.encode_id("RoleType", str(self.role.id)),
+            "permissions_ids": [PermissionType.encode_id("PermissionType", str(perms[0].id)),
+                                PermissionType.encode_id("PermissionType", str(perms[1].id))]
         }
 
     async def test_validate_and_get_errors_id(self) -> None:
@@ -42,7 +45,7 @@ class TestRoleAddPermissionInput(TransactionTestCase):
         last_role = cast(Role, await Role.objects.alast())
         not_existent_perm_id: ID = PermissionType.encode_id("PermissionType", str(last_role.id + 1))
         input_non_existent_perm = RoleAddPermissionInput(
-            role_id=self.default_values["id"],
+            role_id=self.default_values["role_id"],
             permissions_ids=[not_existent_perm_id]
         )
         perm_error_payload: List[UserError] = await input_non_existent_perm.validate_and_get_errors()
@@ -50,7 +53,7 @@ class TestRoleAddPermissionInput(TransactionTestCase):
 
     async def test_validate_and_get_errors_perm_empty(self) -> None:
         input_empty_perm = RoleAddPermissionInput(
-            role_id=self.default_values["id"],
+            role_id=self.default_values["role_id"],
             permissions_ids=[]
         )
         perm_empty_error_payload: List[UserError] = await input_empty_perm.validate_and_get_errors()
@@ -75,3 +78,8 @@ class TestRoleAddPermissionInput(TransactionTestCase):
         all_id_and_perm_empty_payload: List[UserError] = await all_id_and_perm_empty_input.validate_and_get_errors()
         self.assertIsInstance(all_id_and_perm_empty_payload[0], RoleDoesNotExistError)
         self.assertIsInstance(all_id_and_perm_empty_payload[1], ListOfIDIsEmptyError)
+
+    async def test_validate_and_get_errors_no_errors(self) -> None:
+        role_add_perm_input = RoleAddPermissionInput(**self.default_values)
+        expected_no_errors = await role_add_perm_input.validate_and_get_errors()
+        self.assertFalse(expected_no_errors)
