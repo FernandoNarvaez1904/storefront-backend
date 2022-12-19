@@ -37,3 +37,8 @@ class TestUserCreateInput(TransactionTestCase):
         all_error_payload: List[UserError] = await input_all_errors.validate_and_get_errors()
         self.assertIsInstance(all_error_payload[0], CannotCreateUserUsernameIsNotUnique)
         self.assertIsInstance(all_error_payload[1], CannotCreateUserEmailIsNotUnique)
+
+    async def test_validate_and_get_errors_no_errors(self) -> None:
+        input_no_errors = UserCreateInput(**self.default_values)
+        all_error_payload: List[UserError] = await input_no_errors.validate_and_get_errors()
+        self.assertFalse(all_error_payload)
