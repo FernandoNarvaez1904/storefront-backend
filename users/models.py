@@ -10,5 +10,6 @@ class Role(Group):
     class Meta:
         proxy = True
         permissions = [
-            ("add_permission_to_role", "Can add permissions to Roles")
+            ("add_permission_to_role", "Can add permissions to Roles"),
+            ("remove_permission_to_role", "Can remove permissions to Roles")
         ]
