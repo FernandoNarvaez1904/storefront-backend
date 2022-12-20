@@ -101,7 +101,7 @@ class TestRoleRemovePermissionResolver(TransactionTestCase):
         # Test if both permissions were discarded
         self.assertFalse(role_permissions)
 
-    async def test_remove_create_resolver_permission_denied(self) -> None:
+    async def test_role_remove_permission_resolver_permission_denied(self) -> None:
         user: User = await create_user_with_permission("User", "Password")
         request = await get_async_request_with_user_and_session(user=user)
 
@@ -116,7 +116,7 @@ class TestRoleRemovePermissionResolver(TransactionTestCase):
             user_errors: List[dict] = execution_result.data["roleRemovePermission"]["userErrors"]
             self.assertEqual(user_errors[0]["field"], "permission")
 
-    async def test_role_create_resolver_permission_accepted(self) -> None:
+    async def test_role_remove_permission_resolver_permission_accepted(self) -> None:
         user: User = await create_user_with_permission("User", "Password", "remove_permission_to_role")
         request = await get_async_request_with_user_and_session(user=user)
 

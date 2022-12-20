@@ -87,7 +87,7 @@ class TestRoleCreateResolver(TransactionTestCase):
         # Building input
         role_create_input = RoleCreateInput(**self.input)
 
-        # Creating user
+        # Creating role
         await role_create_resolver(input=role_create_input)
 
         # Checking if field was updated in database

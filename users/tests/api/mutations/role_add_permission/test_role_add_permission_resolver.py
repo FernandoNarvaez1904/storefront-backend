@@ -91,7 +91,7 @@ class TestRoleAddPermissionResolver(TransactionTestCase):
         # Building input
         role_create_input = RoleAddPermissionInput(**self.input)
 
-        # Creating user
+        # Adding permission to role
         await role_add_permission_resolver(input=role_create_input)
 
         # Getting Role Object
@@ -110,7 +110,7 @@ class TestRoleAddPermissionResolver(TransactionTestCase):
         for i in self.input["permissions_ids"]:
             self.assertIn(i, returned_perm_ids)
 
-    async def test_role_create_resolver_permission_denied(self) -> None:
+    async def test_role_add_permission_resolver_permission_denied(self) -> None:
         user: User = await create_user_with_permission("User", "Password")
         request = await get_async_request_with_user_and_session(user=user)
 
@@ -125,7 +125,7 @@ class TestRoleAddPermissionResolver(TransactionTestCase):
             user_errors: List[dict] = execution_result.data["roleAddPermission"]["userErrors"]
             self.assertEqual(user_errors[0]["field"], "permission")
 
-    async def test_role_create_resolver_permission_accepted(self) -> None:
+    async def test_role_add_permission_resolver_permission_accepted(self) -> None:
         user: User = await create_user_with_permission("User", "Password", "add_permission_to_role")
         request = await get_async_request_with_user_and_session(user=user)
 
