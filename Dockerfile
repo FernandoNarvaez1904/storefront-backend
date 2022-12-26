@@ -14,4 +14,6 @@ COPY . /code/
 
 EXPOSE 8080
 
+RUN pypy manage.py migrate
+
 CMD gunicorn -k uvicorn.workers.UvicornWorker storefront_backend.asgi:application
