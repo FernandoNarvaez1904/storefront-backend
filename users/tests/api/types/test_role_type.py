@@ -11,7 +11,8 @@ from storefront_backend.api.relay.node import Node
 from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 from users.api.types.permission_type import PermissionType
 from users.api.types.role_type import RoleType
-from users.models import Role
+from users.api.types.user_type import UserType
+from users.models import Role, User
 
 
 class RoleTypeDefaultValues(TypedDict):
@@ -58,6 +59,29 @@ class TestRoleType(TestCase):
         ids_of_perm_in_type = [RoleType.decode_id(i.node.id)["instance_id"] for i in role_type_permission.edges]
         for perm in permissions:
             self.assertIn(str(perm.id), ids_of_perm_in_type)
+
+    async def test_users(self) -> None:
+        create_user_func = sync_to_async(User.objects.create_user)
+        users = [await create_user_func(username=f"user{i}", password=f"{i}") for i in range(5)]
+
+        role: Role = cast(Role, await Role.objects.acreate(name="Role1"))
+        await sync_to_async(role.user_set.add)(*users[:4])
+
+        role_type = await RoleType.from_model_instance(role)
+        role_type_users_con: Connection[UserType] = await role_type.users()
+
+        # Test of total count is correct
+        self.assertEqual(role_type_users_con.page_info.total_count, 4)
+        self.assertEqual(role_type_users_con.total_count, 4)
+
+        # Test if all the edged are returned
+        self.assertEqual(role_type_users_con.page_info.edges_count, 4)
+        self.assertEqual(len(role_type_users_con.edges), 4)
+
+        # Test if the returned permissions are correct
+        ids_of_user_in_type = [UserType.decode_id(i.node.id)["instance_id"] for i in role_type_users_con.edges]
+        for user in users[:4]:
+            self.assertIn(str(user.id), ids_of_user_in_type)
 
     async def test_from_model_instance(self) -> None:
         role: Role = cast(Role, await Role.objects.acreate(name="Role156"))
