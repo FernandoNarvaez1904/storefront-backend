@@ -27,7 +27,15 @@ def strawberry_mutation_resolver_payload(
         permission: str = ""
 ):
     """
-        It is used to automatically implement the payload and error logic of all mutations.
+    A decorator that automatically implements the payload and error logic of all mutations.
+
+    Args:
+        input_type: The type of the input object for the mutation.
+        payload_type: The type of the payload object for the mutation.
+        permission: An optional permission string that the user must have to execute the mutation.
+
+    Returns:
+        A decorator that can be applied to a mutation resolver function.
     """
 
     def inner(func):
