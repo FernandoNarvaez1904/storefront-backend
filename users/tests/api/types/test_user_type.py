@@ -27,7 +27,7 @@ class DefaultValuesType(TypedDict):
 class TestUserType(TestCase):
     def setUp(self) -> None:
         self.default_values: DefaultValuesType = {
-            "id": UserType.encode_id("UserType", "1"),
+            "id": UserType.encode_id("1"),
             "username": "username",
             "first_name": "FirstName",
             "last_name": "LastName",

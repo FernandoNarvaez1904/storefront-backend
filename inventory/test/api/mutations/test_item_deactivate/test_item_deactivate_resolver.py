@@ -12,7 +12,6 @@ from inventory.api.mutations.item_deactivate.item_deactivate_resolver import ite
 from inventory.api.types.item import ItemType
 from inventory.models import Item
 from inventory.test.api.utils import create_bulk_of_item
-from storefront_backend.api.relay.node import Node
 from storefront_backend.api.schema import schema
 from storefront_backend.tests.utils import create_user_with_permission, get_async_request_with_user_and_session
 from users.models import User
@@ -42,7 +41,7 @@ class ItemDeactivateResolverTest(TransactionTestCase):
         }}
 
     async def test_item_deactivate_resolver_response(self) -> None:
-        id_node = Node.encode_id("ItemType", f"{self.item.id}")
+        id_node = ItemType.encode_id(f"{self.item.id}")
         item_input = ItemDeactivateInput(id=id_node)
         result: ItemDeactivatePayload = await item_deactivate_resolver(item_input)
 
@@ -65,7 +64,7 @@ class ItemDeactivateResolverTest(TransactionTestCase):
 
     async def test_item_deactivate_resolver_side_effect(self) -> None:
         # Building input
-        id_node = Node.encode_id("ItemType", f"{self.item.id}")
+        id_node = ItemType.encode_id(f"{self.item.id}")
         item_input = ItemDeactivateInput(id=id_node)
 
         # Updating is_active

@@ -23,15 +23,15 @@ class TestRoleAddUsersInput(TransactionTestCase):
         self.role = Role.objects.create(name="Role1")
         self.users: List[User] = [User.objects.create_user(username=f"user{i}", password=f"{i}") for i in range(2)]
         self.valid_input_values: DefaultValuesType = {
-            "role_id": RoleType.encode_id("RoleType", str(self.role.id)),
-            "users_ids": [UserType.encode_id("UserType", str(self.users[0].id)),
-                          UserType.encode_id("UserType", str(self.users[1].id))]
+            "role_id": RoleType.encode_id(str(self.role.id)),
+            "users_ids": [UserType.encode_id(str(self.users[0].id)),
+                          UserType.encode_id(str(self.users[1].id))]
         }
 
     async def test_validate_and_get_errors_with_invalid_role_id(self) -> None:
         # Create an ID for a non-existent role by incrementing the ID of the last role object
         last_role = cast(Role, await Role.objects.alast())
-        invalid_role_id = RoleType.encode_id("RoleType", str(last_role.id + 1))
+        invalid_role_id = RoleType.encode_id(str(last_role.id + 1))
 
         # Create an instance of RoleAddUsersInput with the invalid role ID and a list of valid user IDs
         input_with_invalid_role_id = RoleAddUsersInput(
@@ -47,7 +47,7 @@ class TestRoleAddUsersInput(TransactionTestCase):
     async def test_validate_and_get_errors_with_invalid_user_id(self) -> None:
         # Create an ID for a non-existent user by incrementing the ID of the last user object
         last_user = cast(User, await User.objects.alast())
-        invalid_user_id = UserType.encode_id("UserType", str(last_user.id + 1))
+        invalid_user_id = UserType.encode_id(str(last_user.id + 1))
 
         # Create an instance of RoleAddUsersInput with a valid role ID and the invalid user ID
         input_with_invalid_user_id = RoleAddUsersInput(
@@ -75,9 +75,9 @@ class TestRoleAddUsersInput(TransactionTestCase):
     async def test_validate_and_get_errors_with_invalid_role_and_user_ids(self) -> None:
         # Create IDs for non-existent role and user by incrementing the IDs of the last role and user objects
         last_role = cast(Role, await Role.objects.alast())
-        invalid_role_id = RoleType.encode_id("RoleType", str(last_role.id + 1))
+        invalid_role_id = RoleType.encode_id(str(last_role.id + 1))
         last_user = cast(User, await User.objects.alast())
-        invalid_user_id = UserType.encode_id("UserType", str(last_user.id + 1))
+        invalid_user_id = UserType.encode_id(str(last_user.id + 1))
 
         # Create an instance of RoleAddUsersInput with the invalid role and user IDs
         input_with_invalid_role_and_user_ids = RoleAddUsersInput(
@@ -94,7 +94,7 @@ class TestRoleAddUsersInput(TransactionTestCase):
     async def test_validate_and_get_errors_with_invalid_role_id_and_empty_list_of_user_ids(self) -> None:
         # Create an ID for a non-existent role by incrementing the ID of the last role object
         last_role = cast(Role, await Role.objects.alast())
-        invalid_role_id = RoleType.encode_id("RoleType", str(last_role.id + 1))
+        invalid_role_id = RoleType.encode_id(str(last_role.id + 1))
 
         # Create an instance of RoleAddUsersInput with the invalid role ID and an empty list of user IDs
         input_with_invalid_role_id_and_empty_list_of_user_ids = RoleAddUsersInput(

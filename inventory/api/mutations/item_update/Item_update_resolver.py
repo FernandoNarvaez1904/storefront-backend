@@ -6,7 +6,6 @@ from inventory.api.mutations.item_update.item_update_input import ItemUpdateInpu
 from inventory.api.mutations.item_update.item_update_payload import ItemUpdatePayload
 from inventory.api.types.item import ItemType
 from inventory.models import Item
-from storefront_backend.api.relay.node import Node
 from storefront_backend.api.utils import strawberry_mutation_resolver_payload
 from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 
@@ -17,7 +16,7 @@ from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as
     permission="inventory.change_item"
 )
 async def item_update_resolver(input, info) -> Optional[ItemType]:
-    instance_id = Node.decode_id(input.id).get("instance_id")
+    instance_id = ItemType.decode_id(input.id).get("instance_id")
     item: Item = await Item.objects.aget(id=instance_id)
 
     current_item_data = item.__dict__

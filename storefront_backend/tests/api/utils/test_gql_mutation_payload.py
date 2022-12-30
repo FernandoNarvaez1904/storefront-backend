@@ -28,7 +28,7 @@ class GqlMutationPayloadTest(TestCase):
     def setUp(self) -> None:
         self.input_type = InputType
         self.payload_type = PayloadType
-        self.payload_type_ins = PayloadType(user_errors=[], node=NodeIns(id=Node.encode_id("Node", "1")))
+        self.payload_type_ins = PayloadType(user_errors=[], node=NodeIns(id=Node.encode_id("1")))
 
         self.node = NodeIns
 

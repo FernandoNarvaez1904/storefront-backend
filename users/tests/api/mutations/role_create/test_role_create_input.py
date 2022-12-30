@@ -29,8 +29,8 @@ class TestRoleCreateInput(TransactionTestCase):
 
         self.default_values: DefaultValuesType = {
             "name": "Role2",
-            "permissions_ids": [PermissionType.encode_id("PermissionType", str(perm[0].id)),
-                                PermissionType.encode_id("PermissionType", str(perm[1].id))]
+            "permissions_ids": [PermissionType.encode_id(str(perm[0].id)),
+                                PermissionType.encode_id(str(perm[1].id))]
         }
 
     async def test_validate_and_get_errors_name(self) -> None:
@@ -44,7 +44,7 @@ class TestRoleCreateInput(TransactionTestCase):
         not_existent_id = str(last_perm.id + 1)
         input_non_existent_perm = RoleCreateInput(name=self.default_values["name"],
                                                   permissions_ids=[
-                                                      PermissionType.encode_id("PermissionType", not_existent_id)])
+                                                      PermissionType.encode_id(not_existent_id)])
         perm_error_payload: List[UserError] = await input_non_existent_perm.validate_and_get_errors()
         self.assertIsInstance(perm_error_payload[0], CannotCreateRolePermissionDoesNotExist)
 
@@ -52,7 +52,7 @@ class TestRoleCreateInput(TransactionTestCase):
         last_perm = cast(Permission, await Permission.objects.order_by("id").alast())
         not_existent_id = str(last_perm.id + 1)
         all_error_input = RoleCreateInput(name=self.role.name,
-                                          permissions_ids=[PermissionType.encode_id("PermissionType", not_existent_id)])
+                                          permissions_ids=[PermissionType.encode_id(not_existent_id)])
         all_error_payload: List[UserError] = await all_error_input.validate_and_get_errors()
         self.assertIsInstance(all_error_payload[0], CannotCreateRoleNameIsNotUnique)
         self.assertIsInstance(all_error_payload[1], CannotCreateRolePermissionDoesNotExist)

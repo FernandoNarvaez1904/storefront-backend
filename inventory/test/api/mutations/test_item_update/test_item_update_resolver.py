@@ -12,7 +12,6 @@ from inventory.api.mutations.item_update.item_update_payload import ItemUpdatePa
 from inventory.api.types.item import ItemType
 from inventory.models import Item
 from inventory.test.api.utils import create_bulk_of_item
-from storefront_backend.api.relay.node import Node
 from storefront_backend.api.schema import schema
 from storefront_backend.tests.utils import get_async_request_with_user_and_session, create_user_with_permission
 from users.models import User
@@ -54,7 +53,7 @@ class ItemUpdateResolverTest(TransactionTestCase):
         }}
 
     async def test_item_update_resolver_response(self) -> None:
-        id_node = Node.encode_id("ItemType", f"{self.item.id}")
+        id_node = ItemType.encode_id(f"{self.item.id}")
         update_data = ItemUpdateDataInput(**self.new_data)
         item_update_input = ItemUpdateInput(id=id_node, data=update_data)
 
@@ -80,7 +79,7 @@ class ItemUpdateResolverTest(TransactionTestCase):
 
     async def test_item_update_resolver_side_effect(self) -> None:
         # Building input
-        id_node = Node.encode_id("ItemType", f"{self.item.id}")
+        id_node = ItemType.encode_id(f"{self.item.id}")
         update_data = ItemUpdateDataInput(**self.new_data)
         item_update_input = ItemUpdateInput(id=id_node, data=update_data)
 

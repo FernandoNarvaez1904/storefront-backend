@@ -14,7 +14,7 @@ from storefront_backend.api.utils import strawberry_mutation_resolver_payload
     permission="inventory.delete_item"
 )
 async def item_delete_resolver(input, info) -> Node:
-    instance_id = Node.decode_id(input.id).get("instance_id")
+    instance_id = ItemType.decode_id(input.id).get("instance_id")
     item: Item = await Item.objects.aget(id=instance_id)
     await sync_to_async(item.delete)()
 

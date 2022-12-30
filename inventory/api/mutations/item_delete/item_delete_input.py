@@ -4,8 +4,9 @@ import strawberry
 
 from inventory.api.mutations.item_delete.item_delete_errors import CannotDeleteNonExistentItem, \
     CannotDeleteItemHasDocuments
+from inventory.api.types.item import ItemType
 from inventory.models import Item
-from storefront_backend.api.relay.node import DecodedID, Node
+from storefront_backend.api.relay.node import DecodedID
 from storefront_backend.api.types import UserError, InputTypeInterface
 from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 
@@ -16,7 +17,7 @@ class ItemDeleteInput(InputTypeInterface):
 
     async def validate_and_get_errors(self) -> List[UserError]:
         errors: List[UserError] = []
-        decoded_id: DecodedID = Node.decode_id(self.id)
+        decoded_id: DecodedID = ItemType.decode_id(self.id)
         node_id = cast(str, decoded_id.get("instance_id"))
         item_list = await get_lazy_query_set_as_list(Item.objects.filter(id=node_id))
 

@@ -29,8 +29,8 @@ class TestRoleCreateResolver(TransactionTestCase):
         perm = Permission.objects.all()
         self.input: RoleCreateInputData = {
             "name": "Role1",
-            "permissions_ids": [PermissionType.encode_id("PermissionType", str(perm[0].id)),
-                                PermissionType.encode_id("PermissionType", str(perm[1].id))]
+            "permissions_ids": [PermissionType.encode_id(str(perm[0].id)),
+                                PermissionType.encode_id(str(perm[1].id))]
 
         }
         self.mutation_query = """
@@ -48,8 +48,8 @@ class TestRoleCreateResolver(TransactionTestCase):
         """
         self.mutation_variables = {"input": {
             "name": "Role1",
-            "permissionsIds": [PermissionType.encode_id("PermissionType", str(perm[0].id)),
-                               PermissionType.encode_id("PermissionType", str(perm[1].id))]
+            "permissionsIds": [PermissionType.encode_id(str(perm[0].id)),
+                               PermissionType.encode_id(str(perm[1].id))]
 
         }}
 

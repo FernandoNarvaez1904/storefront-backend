@@ -31,10 +31,10 @@ class TestRoleAddPermissionResolver(TransactionTestCase):
         self.role = Role.objects.create(name="Role1")
 
         self.input: DefaultValuesType = {
-            "role_id": RoleType.encode_id("RoleType", str(self.role.id)),
+            "role_id": RoleType.encode_id(str(self.role.id)),
             "permissions_ids": [
-                PermissionType.encode_id("PermissionType", str(perm[0].id)),
-                PermissionType.encode_id("PermissionType", str(perm[1].id))
+                PermissionType.encode_id(str(perm[0].id)),
+                PermissionType.encode_id(str(perm[1].id))
             ]
 
         }
@@ -52,10 +52,10 @@ class TestRoleAddPermissionResolver(TransactionTestCase):
             }
         """
         self.mutation_variables = {"input": {
-            "roleId": RoleType.encode_id("RoleType", str(self.role.id)),
+            "roleId": RoleType.encode_id(str(self.role.id)),
             "permissionsIds": [
-                PermissionType.encode_id("PermissionType", str(perm[0].id)),
-                PermissionType.encode_id("PermissionType", str(perm[1].id))
+                PermissionType.encode_id(str(perm[0].id)),
+                PermissionType.encode_id(str(perm[1].id))
             ]
         }}
 

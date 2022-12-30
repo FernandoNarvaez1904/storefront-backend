@@ -25,17 +25,19 @@ class Node:
     _model_: ClassVar[Type[Model]]
 
     @classmethod
-    def encode_id(cls, type_name: str, node_id: str) -> ID:
-        id_ins = f"{type_name}_{node_id}".encode("utf-8")  # format "typeName_id"
+    def encode_id(cls, node_id: str) -> ID:
+        id_ins = f"{cls.__name__}_{node_id}".encode("utf-8")  # format "typeName_id"
         calc_id: strawberry.ID = cast(ID, base64.b64encode(id_ins).decode())
         return calc_id
 
     @classmethod
     def decode_id(cls, id: strawberry.ID) -> DecodedID:
+
         bt: bytes = id.encode("utf-8")
         global_id: str = base64.b64decode(bt).decode()  # format "typeName_id"
 
         data: List[str | ID] = global_id.split("_")
+
         return {
             "type_name": data[0],
             "instance_id": cast(ID, data[1])
@@ -43,7 +45,7 @@ class Node:
 
     @classmethod
     async def get_id_from_model_instance(cls, model_instance: Model) -> strawberry.ID:
-        id_ins = cls.encode_id(cls.__name__, model_instance.pk)  # format "typeName_id"
+        id_ins = cls.encode_id(model_instance.pk)  # format "typeName_id"
         return id_ins
 
     @classmethod

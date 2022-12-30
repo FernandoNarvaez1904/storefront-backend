@@ -1,6 +1,5 @@
 from typing import cast, TypedDict, List, Optional
 
-from django.contrib.auth.models import Permission
 from django.test import TransactionTestCase
 from strawberry import ID
 from strawberry.django.context import StrawberryDjangoContext
@@ -11,13 +10,9 @@ from storefront_backend.api.relay.connection import Connection
 from storefront_backend.api.schema import schema
 from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as_list
 from storefront_backend.tests.utils import create_user_with_permission, get_async_request_with_user_and_session
-from users.api.mutations.role_add_permission.role_add_permission_input import RoleAddPermissionInput
-from users.api.mutations.role_add_permission.role_add_permission_payload import RoleAddPermissionPayload
-from users.api.mutations.role_add_permission.role_add_permission_resolver import role_add_permission_resolver
 from users.api.mutations.role_add_users.role_add_users_input import RoleAddUsersInput
 from users.api.mutations.role_add_users.role_add_users_payload import RoleAddUsersPayload
 from users.api.mutations.role_add_users.role_add_users_resolver import role_add_users_resolver
-from users.api.types.permission_type import PermissionType
 from users.api.types.role_type import RoleType
 from users.api.types.user_type import UserType
 from users.models import Role, User
@@ -35,10 +30,10 @@ class TestRoleAddUsersResolver(TransactionTestCase):
         self.role = Role.objects.create(name="Role1")
 
         self.input: DefaultValuesType = {
-            "role_id": RoleType.encode_id("RoleType", str(self.role.id)),
+            "role_id": RoleType.encode_id(str(self.role.id)),
             "users_ids": [
-                UserType.encode_id("UserType", str(self.users[0].id)),
-                UserType.encode_id("UserType", str(self.users[1].id))
+                UserType.encode_id(str(self.users[0].id)),
+                UserType.encode_id(str(self.users[1].id))
             ]
 
         }
@@ -56,10 +51,10 @@ class TestRoleAddUsersResolver(TransactionTestCase):
             }
         """
         self.mutation_variables = {"input": {
-            "roleId": RoleType.encode_id("RoleType", str(self.role.id)),
+            "roleId": RoleType.encode_id(str(self.role.id)),
             "usersIds": [
-                UserType.encode_id("UserType", str(self.users[0].id)),
-                UserType.encode_id("UserType", str(self.users[1].id))
+                UserType.encode_id(str(self.users[0].id)),
+                UserType.encode_id(str(self.users[1].id))
             ]
         }}
 
@@ -135,7 +130,6 @@ class TestRoleAddUsersResolver(TransactionTestCase):
             # check that the first error has the field "permission"
             self.assertEqual(user_errors[0]["field"], "permission")
 
-
     async def test_role_add_users_resolver_permission_accepted(self) -> None:
         # Create a user with the required permission to add users to a role
         user: User = await create_user_with_permission("User", "Password", "add_role_to_user")
@@ -155,4 +149,3 @@ class TestRoleAddUsersResolver(TransactionTestCase):
             user_errors: List[dict] = execution_result.data["roleAddUsers"]["userErrors"]
             # Assert that there are no user errors
             self.assertFalse(user_errors)
-
