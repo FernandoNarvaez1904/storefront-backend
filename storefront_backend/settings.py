@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "corsheaders",
     'users',
     'document_management',
-    'inventory'
+    'inventory',
+    "django_extensions"
 ]
 
 MIDDLEWARE = [
