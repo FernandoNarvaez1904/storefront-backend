@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "company",
     "stock",
     "sales",
+    "purchases",
     "django_extensions"
 
 ]
