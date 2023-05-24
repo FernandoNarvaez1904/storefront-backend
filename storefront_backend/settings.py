@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'document_management',
     "company",
     "stock",
+    "sales",
     "django_extensions"
 
 ]
