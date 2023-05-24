@@ -1,9 +1,9 @@
 from django.db import models
 
 
-class ItemGroup(models.Model):
+class ItemCategory(models.Model):
     name = models.CharField(max_length=255)
-    group_parent = models.ForeignKey("ItemGroup", on_delete=models.CASCADE, related_name="group_children")
+    group_parent = models.ForeignKey("ItemCategory", on_delete=models.CASCADE, related_name="group_children")
 
 
 class Item(models.Model):
@@ -17,7 +17,7 @@ class Item(models.Model):
     is_service = models.BooleanField(default=False)
     sku = models.CharField(max_length=255, unique=True)
     current_stock = models.FloatField(default=0)
-    group = models.ForeignKey(ItemGroup, on_delete=models.SET_NULL, null=True)
+    group = models.ForeignKey(ItemCategory, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         permissions = [
