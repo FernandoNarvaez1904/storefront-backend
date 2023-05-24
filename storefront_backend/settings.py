@@ -37,12 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # my apps
+    # Libraries
     "corsheaders",
+
+    # my apps
     'users',
-    'document_management',
     'inventory',
+    'document_management',
     "django_extensions"
+
 ]
 
 MIDDLEWARE = [
