@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users',
     'inventory',
     'document_management',
+    "company",
     "django_extensions"
 
 ]
