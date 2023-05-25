@@ -4,6 +4,7 @@ import strawberry
 
 from inventory.api.mutations.item_activate.item_activate_errors import CannotActivateAlreadyActiveItem, \
     CannotActivateNonExistentItem
+
 from inventory.api.types.item import ItemType
 from inventory.models import Item
 from storefront_backend.api.relay.node import DecodedID

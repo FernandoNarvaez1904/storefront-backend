@@ -19,7 +19,7 @@ class StockTransferDocument(DocumentInterface):
                                                                 related_name="stock_transfer_received")
     sender_warehouse_modified_items = models.ManyToManyField(StockModificationDocument,
                                                              related_name="stock_transfer_send")
-
+    
 
 class StockRecountDocument(DocumentInterface):
     modified_item_entry = models.ForeignKey(StockModificationDocument, on_delete=models.PROTECT)

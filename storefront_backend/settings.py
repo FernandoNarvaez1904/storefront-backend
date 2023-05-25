@@ -6,9 +6,9 @@ try:
     import psycopg2
 except ImportError:
     # Fall back to psycopg2cffi
-    from psycopg2cffi import compat
-
-    compat.register()
+    #from psycopg2cffi import compat
+    #compat.register()
+    pass
 
 # The package name is named different from the imported name
 # noinspection PyPackageRequirements
@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "stock",
     "sales",
     "purchases",
-    "django_extensions"
 
 ]
 
@@ -64,7 +63,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'storefront_backend.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
