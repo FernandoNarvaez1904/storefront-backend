@@ -13,7 +13,6 @@ from storefront_backend.api.utils.filter_connection import get_lazy_query_set_as
 @strawberry_mutation_resolver_payload(
     input_type=ItemUpdateInput,
     payload_type=ItemUpdatePayload,
-    permission="inventory.change_item"
 )
 async def item_update_resolver(input, info) -> Optional[ItemType]:
     instance_id = ItemType.decode_id(input.id).get("instance_id")
@@ -32,7 +31,7 @@ async def item_update_resolver(input, info) -> Optional[ItemType]:
         await item_as_qs.aupdate(**input_data)
         temp: List[Model] = await get_lazy_query_set_as_list(item_as_qs)
         new_item = temp[0]
-
+        
     if not new_item:
         return None
 

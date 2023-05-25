@@ -6,8 +6,9 @@ try:
     import psycopg2
 except ImportError:
     # Fall back to psycopg2cffi
-    #from psycopg2cffi import compat
-    #compat.register()
+    from psycopg2cffi import compat
+
+    compat.register()
     pass
 
 # The package name is named different from the imported name

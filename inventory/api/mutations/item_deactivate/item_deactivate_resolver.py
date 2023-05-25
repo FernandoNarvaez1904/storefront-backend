@@ -10,7 +10,6 @@ from storefront_backend.api.utils import strawberry_mutation_resolver_payload
 @strawberry_mutation_resolver_payload(
     input_type=ItemDeactivateInput,
     payload_type=ItemDeactivatePayload,
-    permission="inventory.activate_item"
 )
 async def item_deactivate_resolver(input, info) -> ItemType:
     instance_id = ItemType.decode_id(input.id).get("instance_id")
