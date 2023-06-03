@@ -9,3 +9,4 @@ psycopg2cffi
 django-cursor-pagination==0.2.0
 django-stubs==1.13.0
 mypy==0.991
+mypy-extensions==0.4.3
