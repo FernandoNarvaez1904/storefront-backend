@@ -43,13 +43,6 @@ INSTALLED_APPS = [
 
     # my apps
     'users',
-    'inventory',
-    'document_management',
-    "company",
-    "stock",
-    "sales",
-    "purchases",
-
 ]
 
 MIDDLEWARE = [
