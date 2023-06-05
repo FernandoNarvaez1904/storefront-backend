@@ -21,3 +21,8 @@ class Item(models.Model):
 class Barcode(models.Model):
     barcode = models.CharField(max_length=255, unique=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="barcodes")
+
+
+class Warehouse(models.Model):
+    name = models.CharField(max_length=255)
+    creation_date = models.DateTimeField(auto_now_add=True)
