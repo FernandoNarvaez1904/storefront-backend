@@ -1,12 +1,16 @@
-from typing import List
+from typing import Iterable
 
-import strawberry
+from asgiref.sync import sync_to_async
 from strawberry_django_plus import relay, gql
 
 from inventory.api.types.item_type.item_type import ItemType
+from inventory.models import Item
 
 
-@strawberry.type
+@gql.type
 class Query:
-    items_connection: relay.Connection[ItemType] = relay.connection()
-    items: List[ItemType] = gql.django.field()
+    @relay.connection
+    async def items_connection(self) -> Iterable[ItemType]:
+        items = Item.objects.all()
+        await sync_to_async(len)(items)
+        return items
