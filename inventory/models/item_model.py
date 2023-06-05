@@ -1,12 +1,8 @@
 from django.db import models
 
-
-class ItemCategory(models.Model):
-    name = models.CharField(max_length=255)
-    parent = models.ForeignKey("ItemCategory", on_delete=models.PROTECT)
+from inventory.models.item_category_model import ItemCategory
 
 
-# Create your models here.
 class Item(models.Model):
     name = models.CharField(max_length=255)
     cost = models.FloatField()
@@ -21,8 +17,3 @@ class Item(models.Model):
 class Barcode(models.Model):
     barcode = models.CharField(max_length=255, unique=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="barcodes")
-
-
-class Warehouse(models.Model):
-    name = models.CharField(max_length=255)
-    creation_date = models.DateTimeField(auto_now_add=True)
