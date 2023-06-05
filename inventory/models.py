@@ -11,7 +11,7 @@ class Item(models.Model):
     name = models.CharField(max_length=255)
     cost = models.FloatField()
     markup = models.FloatField()
-    price_c = models.FloatField()
+    price_c = models.FloatField(default=0)
     creation_date = models.DateTimeField(auto_now_add=True)
     is_service = models.BooleanField(default=False)
     unit_of_measure = models.CharField(max_length=255)

@@ -1,7 +1,8 @@
 from abc import ABC
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
+from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 from typing_extensions import Self
 
@@ -22,9 +23,10 @@ class ItemType(gql.Node, ABC):
     price_c: float
     creation_date: datetime
     is_service: bool
-    category: ItemCategoryType
+    category: Optional[ItemCategoryType]
 
     @gql.field
     async def barcodes(self: Item) -> List[str]:
-        bars = await self.barcodes.all()
+        bars = self.barcodes.all()
+        await sync_to_async(len)(bars)
         return [bar.barcode for bar in bars]
