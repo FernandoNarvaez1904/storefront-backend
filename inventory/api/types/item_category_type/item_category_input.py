@@ -9,3 +9,9 @@ from inventory.models import ItemCategory
 class ItemCategoryCreateInput:
     name: str
     parent: Optional[gql.NodeInput]
+
+
+@gql.django.input(ItemCategory)
+class ItemCategoryUpdateInput(gql.NodeInput):
+    name: Optional[str]
+    parent: Optional[gql.NodeInput]
