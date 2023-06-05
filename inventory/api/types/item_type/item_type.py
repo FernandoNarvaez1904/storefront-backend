@@ -4,7 +4,6 @@ from typing import List, Optional
 
 from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
-from typing_extensions import Self
 
 from inventory.models import Item, ItemCategory
 
@@ -12,7 +11,7 @@ from inventory.models import Item, ItemCategory
 @gql.django.type(ItemCategory)
 class ItemCategoryType(gql.Node, ABC):
     name: str
-    parent: Self
+    parent: Optional["ItemCategoryType"]
 
 
 @gql.django.type(Item)
