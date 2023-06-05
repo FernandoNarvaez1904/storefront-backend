@@ -15,7 +15,7 @@ class Item(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     is_service = models.BooleanField(default=False)
     unit_of_measure = models.CharField(max_length=255)
-    category = models.ForeignKey(ItemCategory, on_delete=models.PROTECT)
+    category = models.ForeignKey(ItemCategory, on_delete=models.PROTECT, null=True, blank=True)
 
 
 class Barcode(models.Model):

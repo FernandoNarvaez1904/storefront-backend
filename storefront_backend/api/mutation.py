@@ -1,9 +1,9 @@
 import strawberry
 
-from users.api.mutation import Mutation as UserMutation
+from inventory.api.mutation import Mutation as InventoryMutation
 
 
 # ROOT
 @strawberry.type
-class Mutation(UserMutation):
+class Mutation(InventoryMutation):
     pass

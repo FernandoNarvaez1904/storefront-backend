@@ -1,0 +1,30 @@
+from abc import ABC
+from datetime import datetime
+from typing import List
+
+from strawberry_django_plus import gql
+from typing_extensions import Self
+
+from inventory.models import Item, ItemCategory
+
+
+@gql.django.type(ItemCategory)
+class ItemCategoryType(gql.Node, ABC):
+    name: str
+    parent: Self
+
+
+@gql.django.type(Item)
+class ItemType(gql.Node, ABC):
+    name: str
+    cost: float
+    markup: float
+    price_c: float
+    creation_date: datetime
+    is_service: bool
+    category: ItemCategoryType
+
+    @gql.field
+    async def barcodes(self: Item) -> List[str]:
+        bars = await self.barcodes.all()
+        return [bar.barcode for bar in bars]

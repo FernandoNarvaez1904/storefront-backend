@@ -1,9 +1,12 @@
-import strawberry
+from typing import List
 
-from storefront_backend.api.relay.node import node_resolver, Node
-from users.api.query import Query as UsersQuery
+import strawberry
+from strawberry_django_plus import relay, gql
+
+from inventory.api.types.item_type.item_type import ItemType
 
 
 @strawberry.type
-class Query(UsersQuery):
-    node: Node = strawberry.field(resolver=node_resolver)
+class Query:
+    items_connection: relay.Connection[ItemType] = relay.connection()
+    items: List[ItemType] = gql.django.field()
