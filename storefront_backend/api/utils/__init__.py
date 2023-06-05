@@ -1,1 +1,0 @@
-from .strawberry_mutation_resolver_payload import strawberry_mutation_resolver_payload
