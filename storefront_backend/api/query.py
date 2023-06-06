@@ -1,8 +1,9 @@
 from strawberry_django_plus import gql
 
 from inventory.api.query import Query as InventoryQuery
+from users.api.query import Query as UsersQuery
 
 
 @gql.type
-class Query(InventoryQuery):
+class Query(InventoryQuery, UsersQuery):
     pass
