@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import OneToOneRel
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from strawberry_django_plus import gql
@@ -12,6 +13,7 @@ class StockMovementAction(models.Model):
     parent_document = models.ForeignKey(Document, on_delete=models.PROTECT, related_name="stock_movements")
     modification_amount = models.FloatField()
     description = models.TextField(null=True, blank=True)
+    is_cumulative = models.BooleanField(default=True)
 
     item_cost = models.FloatField(blank=True)
     item_markup = models.FloatField(blank=True)

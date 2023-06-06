@@ -41,3 +41,15 @@ def add_items_stock_to_new_warehouse(sender, instance: "Warehouse", *args, **kwa
             for item in items
         ]
         WarehouseStock.objects.bulk_create(warehouses_stock)
+
+
+# TODO move to a better place
+@receiver(post_save, sender="inventory.StockMovementAction")
+def change_stock_count_after_save(sender, instance: "StockMovementAction", *args, **kwargs):
+    ware_stock = WarehouseStock.objects.get_or_create(warehouse=instance.parent_document.warehouse, item=instance.item)[
+        0]
+    if instance.is_cumulative:
+        ware_stock.stock_amount = ware_stock.stock_amount + instance.modification_amount
+    else:
+        ware_stock.stock_amount = instance.modification_amount
+    ware_stock.save()
