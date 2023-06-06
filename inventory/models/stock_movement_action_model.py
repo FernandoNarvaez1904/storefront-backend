@@ -22,7 +22,8 @@ class StockMovementAction(models.Model):
 
     @gql.model_cached_property(select_related=["parent_document"])
     async def document_type(self):
-        return self.parent_document.__name__
+        doc: OneToOneRel = self.parent_document._meta.related_objects[1]
+        return doc.related_model.__name__
 
 
 @receiver(pre_save, sender=StockMovementAction)
