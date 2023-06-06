@@ -5,4 +5,5 @@ from strawberry_django_plus.optimizer import DjangoOptimizerExtension
 from storefront_backend.api.mutation import Mutation
 from storefront_backend.api.query import Query
 
-schema = Schema(query=Query, mutation=Mutation, extensions=[DjangoOptimizerExtension, ValidationCache(), ParserCache()])
+schema = Schema(query=Query, mutation=Mutation,
+                extensions=[DjangoOptimizerExtension, ValidationCache(), ParserCache()])
