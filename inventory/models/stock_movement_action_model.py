@@ -10,7 +10,7 @@ from inventory.models import Item
 
 class StockMovementAction(models.Model):
     item = models.ForeignKey(Item, on_delete=models.PROTECT, related_name="stock_movements")
-    parent_document = models.ForeignKey(Document, on_delete=models.PROTECT, related_name="stock_movements")
+    parent_document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="stock_movements")
     modification_amount = models.FloatField()
     description = models.TextField(null=True, blank=True)
     is_cumulative = models.BooleanField(default=True)

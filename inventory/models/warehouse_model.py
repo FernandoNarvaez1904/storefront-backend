@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from inventory.models import Item
+from inventory.models import Item, StockMovementAction
 
 
 class Warehouse(models.Model):

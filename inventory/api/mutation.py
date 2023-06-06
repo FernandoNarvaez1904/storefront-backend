@@ -1,5 +1,6 @@
 from strawberry_django_plus import gql
 
+from inventory.api.mutations.stock_recount_document_mutations import stock_recount_document_create
 from inventory.api.types.item_category_type.item_category_input import ItemCategoryCreateInput, ItemCategoryUpdateInput
 from inventory.api.types.item_category_type.item_category_type import ItemCategoryType
 from inventory.api.types.item_type.item_input import ItemCreateInput, ItemUpdateInput
@@ -18,3 +19,4 @@ class Mutation:
 
     warehouse_create: WarehouseType = gql.django.create_mutation(WarehouseCreateInput)
     warehouse_update: WarehouseType = gql.django.update_mutation(WarehouseUpdateInput)
+    stock_recount_document_create = stock_recount_document_create
