@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import OneToOneRel
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from strawberry_django_plus import gql
@@ -22,10 +21,9 @@ class StockMovementAction(models.Model):
     modification_price_value = models.FloatField(blank=True)
     creation_date = models.DateTimeField(blank=True)
 
-    @gql.model_cached_property(select_related=["parent_document"])
+    @gql.model_cached_property
     async def document_type(self):
-        doc: OneToOneRel = self.parent_document._meta.related_objects[1]
-        return doc.related_model.__name__
+        return self.parent_document._meta.object_name
 
 
 @receiver(pre_save, sender=StockMovementAction)
