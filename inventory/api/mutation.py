@@ -19,4 +19,5 @@ class Mutation:
 
     warehouse_create: WarehouseType = gql.django.create_mutation(WarehouseCreateInput)
     warehouse_update: WarehouseType = gql.django.update_mutation(WarehouseUpdateInput)
+
     stock_recount_document_create = stock_recount_document_create

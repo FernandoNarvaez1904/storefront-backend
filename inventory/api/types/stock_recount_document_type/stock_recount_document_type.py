@@ -6,6 +6,7 @@ import strawberry
 from strawberry_django_plus import gql
 from typing_extensions import Annotated
 
+from documents.api.types.document_interface.document_interface import DocumentInterface
 from inventory.api.types.stock_movement_action_type.stock_movement_action_type import StockMovementActionType
 from inventory.models import StockRecountDocument
 
@@ -13,7 +14,7 @@ WareHouseType_Lazy = Annotated["WarehouseType", strawberry.lazy("..warehouse_typ
 
 
 @gql.django.type(StockRecountDocument)
-class StockRecountDocumentType(gql.Node, ABC):
+class StockRecountDocumentType(DocumentInterface, ABC):
     creation_date: datetime
     modification_date: datetime
     description: str
