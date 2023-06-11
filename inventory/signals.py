@@ -36,9 +36,7 @@ def change_stock_count_after_save(sender, instance: "StockMovementAction", *args
 def populate_fields_from_item(sender, instance: StockMovementAction, *args, **kwargs) -> None:
     """
         This signal populates various fields of a StockMovementAction object based on the associated item object.
-        It sets the item_cost, item_markup, and item_price fields to the corresponding attributes of the item.
-        It calculates the modification_cost_value and modification_price_value fields by multiplying the item_cost and
-        item_price with the modification_amount, respectively. It also sets the creation_date field to the creation_date
+        It sets the item_cost, item_markup, and item_price fields to the corresponding attributes of the item. It also sets the creation_date field to the creation_date
         of the parent document of the StockMovementAction.
     """
     # Populate various fields of the StockMovementAction object based on the associated item object
