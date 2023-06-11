@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from strawberry_django_plus import gql
 
 from documents.models import Document
@@ -24,13 +22,3 @@ class StockMovementAction(models.Model):
     @gql.model_cached_property
     async def document_type(self):
         return self.parent_document._meta.object_name
-
-
-@receiver(pre_save, sender=StockMovementAction)
-def populate_fields_from_item(sender, instance: StockMovementAction, *args, **kwargs):
-    instance.item_cost = instance.item.cost
-    instance.item_markup = instance.item.markup
-    instance.item_price = instance.item.price_c
-    instance.modification_cost_value = instance.item_cost * instance.modification_amount
-    instance.modification_price_value = instance.item_price * instance.modification_amount
-    instance.creation_date = instance.parent_document.creation_date

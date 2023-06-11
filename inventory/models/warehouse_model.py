@@ -1,8 +1,6 @@
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
-from inventory.models import Item, StockMovementAction
+from inventory.models import Item
 
 
 class Warehouse(models.Model):
@@ -17,39 +15,3 @@ class WarehouseStock(models.Model):
 
     class Meta:
         unique_together = ('item', 'warehouse')
-
-
-@receiver(post_save, sender="inventory.Item")
-def add_new_item_to_warehouses_stock(sender, instance: "Item", *args, **kwargs):
-    already_exists_in_warehouses = instance.stock.all().exists()
-    if not already_exists_in_warehouses:
-        warehouses = Warehouse.objects.all()
-        warehouses_stock = [
-            WarehouseStock(item=instance, warehouse=warehouse, stock_amount=0)
-            for warehouse in warehouses
-        ]
-        WarehouseStock.objects.bulk_create(warehouses_stock)
-
-
-@receiver(post_save, sender="inventory.Warehouse")
-def add_items_stock_to_new_warehouse(sender, instance: "Warehouse", *args, **kwargs):
-    already_has_stock = instance.stock.all().exists()
-    if not already_has_stock:
-        items = Item.objects.all()
-        warehouses_stock = [
-            WarehouseStock(item=item, warehouse=instance, stock_amount=0)
-            for item in items
-        ]
-        WarehouseStock.objects.bulk_create(warehouses_stock)
-
-
-# TODO move to a better place
-@receiver(post_save, sender="inventory.StockMovementAction")
-def change_stock_count_after_save(sender, instance: "StockMovementAction", *args, **kwargs):
-    ware_stock = WarehouseStock.objects.get_or_create(warehouse=instance.parent_document.warehouse, item=instance.item)[
-        0]
-    if instance.is_cumulative:
-        ware_stock.stock_amount = ware_stock.stock_amount + instance.modification_amount
-    else:
-        ware_stock.stock_amount = instance.modification_amount
-    ware_stock.save()
