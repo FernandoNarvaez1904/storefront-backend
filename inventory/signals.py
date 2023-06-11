@@ -45,8 +45,6 @@ def populate_fields_from_item(sender, instance: StockMovementAction, *args, **kw
     instance.item_cost = instance.item.cost
     instance.item_markup = instance.item.markup
     instance.item_price = instance.item.price_c
-    instance.modification_cost_value = instance.item_cost * instance.modification_amount
-    instance.modification_price_value = instance.item_price * instance.modification_amount
     instance.creation_date = instance.parent_document.creation_date
 
 
