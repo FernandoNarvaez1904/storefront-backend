@@ -9,3 +9,7 @@ class Document(models.Model):
     warehouse = models.ForeignKey("inventory.Warehouse", on_delete=models.PROTECT, related_name="documents")
 
     # TODO add reference number
+
+
+class TransactionDocument(Document):
+    total = models.FloatField()
