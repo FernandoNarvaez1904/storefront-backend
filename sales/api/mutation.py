@@ -1,5 +1,6 @@
 from strawberry_django_plus import gql
 
+from sales.api.mutations.sale_document_mutations import sale_document_create
 from sales.api.types.client_type.client_input import ClientCreateInput, ClientUpdateInput
 from sales.api.types.client_type.client_type import ClientType
 
@@ -11,3 +12,5 @@ class Mutation:
     client_delete: ClientType = gql.django.delete_mutation(gql.NodeInput,
                                                            description="Client instances can only be deleted when there is no "
                                                                        "reference to any Document")
+
+    sale_document_create = sale_document_create

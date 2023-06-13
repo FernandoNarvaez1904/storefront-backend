@@ -18,7 +18,5 @@ class StockMovementActionType(gql.Node, ABC):
     item_cost: float
     item_markup: float
     item_price: float
-    modification_cost_value: float
-    modification_price_value: float
     creation_date: datetime
     document_type: str

@@ -94,3 +94,12 @@ def add_items_stock_to_new_warehouse(sender, instance: "Warehouse", *args, **kwa
 
         # Bulk create the WarehouseStock objects in a single database query
         WarehouseStock.objects.bulk_create(warehouses_stock)
+
+
+# Signal: Triggered after Item object is saved
+@receiver(pre_save, sender="inventory.Item")
+def calculate_price(sender, instance: "Item", *args, **kwargs):
+    """
+        This signals calculates price on Item using cost and markup and add it to price_c
+    """
+    instance.price_c = instance.cost + (instance.markup / 100) * instance.cost
