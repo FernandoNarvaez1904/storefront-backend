@@ -11,7 +11,7 @@ class Warehouse(models.Model):
 class WarehouseStock(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="stock")
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="stock")
-    stock_amount = models.FloatField()
+    stock_amount = models.DecimalField(decimal_places=2, max_digits=12)
 
     class Meta:
         unique_together = ('item', 'warehouse')

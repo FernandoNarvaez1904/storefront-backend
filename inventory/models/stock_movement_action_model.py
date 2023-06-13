@@ -8,14 +8,14 @@ from inventory.models import Item
 class StockMovementAction(models.Model):
     item = models.ForeignKey(Item, on_delete=models.PROTECT, related_name="stock_movements")
     parent_document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="stock_movements")
-    modification_amount = models.FloatField()
+    modification_amount = models.DecimalField(decimal_places=2, max_digits=12)
     description = models.TextField(null=True, blank=True)
-    
+
     is_cumulative = models.BooleanField(default=True)
 
-    item_cost = models.FloatField(blank=True)
-    item_markup = models.FloatField(blank=True)
-    item_price = models.FloatField(blank=True)
+    item_cost = models.DecimalField(decimal_places=2, blank=True, max_digits=12)
+    item_markup = models.DecimalField(decimal_places=2, blank=True, max_digits=12)
+    item_price = models.DecimalField(decimal_places=2, blank=True, max_digits=12)
     creation_date = models.DateTimeField(blank=True)
 
     @gql.model_cached_property

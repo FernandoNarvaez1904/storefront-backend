@@ -5,9 +5,9 @@ from inventory.models.item_category_model import ItemCategory
 
 class Item(models.Model):
     name = models.CharField(max_length=255)
-    cost = models.FloatField()
-    markup = models.FloatField()
-    price_c = models.FloatField(default=0)
+    cost = models.DecimalField(decimal_places=2, max_digits=12)
+    markup = models.DecimalField(decimal_places=2, max_digits=12)
+    price_c = models.DecimalField(decimal_places=2, default=0, max_digits=12)
     creation_date = models.DateTimeField(auto_now_add=True)
     is_service = models.BooleanField(default=False)
     unit_of_measure = models.CharField(max_length=255)

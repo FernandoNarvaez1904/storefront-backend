@@ -12,4 +12,4 @@ class Document(models.Model):
 
 
 class TransactionDocument(Document):
-    total = models.FloatField()
+    total = models.DecimalField(decimal_places=2, max_digits=12)
