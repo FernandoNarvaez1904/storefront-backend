@@ -1,3 +1,4 @@
+import decimal
 from abc import ABC
 from datetime import datetime
 from typing import List
@@ -19,7 +20,7 @@ class SaleDocumentType(TransactionDocumentInterface, ABC):
     modification_date: datetime
     description: str
     warehouse: WarehouseType
-    total: float
+    total: decimal.Decimal
     client: ClientType
     payments: List[PaymentType]
     stock_movements: List[StockMovementActionType]

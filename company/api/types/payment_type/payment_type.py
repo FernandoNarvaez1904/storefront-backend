@@ -1,3 +1,4 @@
+import decimal
 from abc import ABC
 from datetime import datetime
 
@@ -11,4 +12,4 @@ from company.models import Payment
 class PaymentType(gql.NodeType, ABC):
     creation_date: datetime
     payment_method: PaymentMethodType
-    amount: float
+    amount: decimal.Decimal

@@ -1,3 +1,4 @@
+import decimal
 from typing import Optional
 
 from strawberry_django_plus import gql
@@ -8,7 +9,7 @@ from storefront_backend.api.utils.filter_connection import get_filter_arg_from_f
 
 
 @gql.field
-async def total_sales_amount(filter: Optional[TotalSaleSearchFilter] = None) -> float:
+async def total_sales_amount(filter: Optional[TotalSaleSearchFilter] = None) -> decimal.Decimal:
     filter_temp = {}
     if filter:
         filter_temp = await get_filter_arg_from_filter_input(filter)

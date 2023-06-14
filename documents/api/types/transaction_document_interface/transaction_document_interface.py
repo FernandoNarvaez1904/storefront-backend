@@ -1,3 +1,4 @@
+import decimal
 from abc import ABC
 from datetime import datetime
 
@@ -14,4 +15,4 @@ class TransactionDocumentInterface(DocumentInterface, ABC):
     modification_date: datetime
     description: str
     warehouse: WarehouseType
-    total: float
+    total: decimal.Decimal

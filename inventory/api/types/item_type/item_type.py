@@ -1,3 +1,4 @@
+import decimal
 from abc import ABC
 from datetime import datetime
 from typing import List, Optional
@@ -13,9 +14,9 @@ from inventory.models import Item
 @gql.django.type(Item, prefetch_related=["stock"])
 class ItemType(gql.Node, ABC):
     name: str
-    cost: float
-    markup: float
-    price_c: float
+    cost: decimal.Decimal
+    markup: decimal.Decimal
+    price_c: decimal.Decimal
     creation_date: datetime
     is_service: bool
     category: Optional[ItemCategoryType]
