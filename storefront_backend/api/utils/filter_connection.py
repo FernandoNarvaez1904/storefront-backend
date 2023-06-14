@@ -3,6 +3,7 @@ from typing import TypeVar, List
 from asgiref.sync import sync_to_async
 from django.db.models import QuerySet, Model
 from strawberry_django.filters import FilterLookup, lookup_name_conversion_map
+from strawberry_django_plus.relay import GlobalID
 
 from storefront_backend.api.types import Filter
 
@@ -15,6 +16,10 @@ async def get_filter_arg_from_lookup(lookup: FilterLookup, prefix: str = "") -> 
     for name, val in lookup.__dict__.items():
         if val:
             if prefix:
+                
+                if isinstance(val, GlobalID):
+                    val = val.node_id
+
                 if name in lookup_name_conversion_map.keys():
                     name = f"__{lookup_name_conversion_map[name]}"
                 else:
