@@ -3,6 +3,7 @@ from strawberry_django_plus import gql
 from sales.mutations.sale_document_mutations import sale_document_create
 from sales.types.client_type.client_input import ClientCreateInput, ClientUpdateInput
 from sales.types.client_type.client_type import ClientType
+from sales.types.sale_document_type.sale_document_type import SaleDocumentType
 
 
 @gql.type
@@ -14,3 +15,4 @@ class Mutation:
                                                                        "reference to any Document")
 
     sale_document_create = sale_document_create
+    sale_document_delete: SaleDocumentType = gql.django.delete_mutation(gql.NodeInput)
