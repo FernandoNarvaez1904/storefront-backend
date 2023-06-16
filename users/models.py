@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.auth.models import AbstractUser, Group, Permission
 
 
 # Create your models here.
@@ -9,6 +9,7 @@ class User(AbstractUser):
 class Role(Group):
     class Meta:
         proxy = True
+
         permissions = [
             ("add_permission_to_role", "Can add permissions to Roles"),
             ("remove_permission_to_role", "Can remove permissions to Roles"),
