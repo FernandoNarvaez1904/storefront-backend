@@ -1,10 +1,12 @@
 import decimal
-from typing import Optional
+from typing import Optional, Iterable
 
+from asgiref.sync import sync_to_async
 from strawberry_django_plus import gql
 
 from sales.models import SaleDocument
-from sales.types.sale_document_type.sale_document_filter import TotalSaleSearchFilter
+from sales.types.sale_document_type.sale_document_filter import TotalSaleSearchFilter, SaleDocumentFilter
+from sales.types.sale_document_type.sale_document_type import SaleDocumentType
 from storefront_backend.api.utils.filter_connection import get_filter_arg_from_filter_input
 
 
@@ -16,3 +18,14 @@ async def total_sales_amount(filter: Optional[TotalSaleSearchFilter] = None) -> 
 
     sales = SaleDocument.objects.filter(**filter_temp)
     return sum([sale.total async for sale in sales])
+
+
+@gql.relay.connection
+async def sale_document_connection(filter: Optional[SaleDocumentFilter] = None) -> Iterable[SaleDocumentType]:
+    filter_temp = {}
+    if filter:
+        filter_temp = await get_filter_arg_from_filter_input(filter)
+
+    sales = SaleDocument.objects.filter(**filter_temp)
+    await sync_to_async(len)(sales)
+    return sales

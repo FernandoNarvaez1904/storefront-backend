@@ -14,3 +14,12 @@ class TotalSaleSearchFilter(Filter):
     warehouse: Optional[FilterLookup[gql.relay.GlobalID]] = strawberry.UNSET
     client: Optional[FilterLookup[gql.relay.GlobalID]] = strawberry.UNSET
     description: Optional[str] = strawberry.UNSET
+
+
+@gql.input
+class SaleDocumentFilter(Filter):
+    creation_date: Optional[FilterLookup[datetime]] = strawberry.UNSET
+    modification_date: Optional[FilterLookup[datetime]] = strawberry.UNSET
+    warehouse: Optional[FilterLookup[gql.relay.GlobalID]] = strawberry.UNSET
+    client: Optional[FilterLookup[gql.relay.GlobalID]] = strawberry.UNSET
+    description: Optional[str] = strawberry.UNSET
