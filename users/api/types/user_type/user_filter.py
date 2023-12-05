@@ -1,12 +1,12 @@
 from datetime import datetime
 
 from strawberry_django.filters import FilterLookup
-from strawberry_django_plus import gql
+import strawberry
 
 from storefront_backend.api.types import Filter
 
 
-@gql.input
+@strawberry.input
 class UserFilter(Filter):
     user_name: FilterLookup[str]
     first_name: FilterLookup[str]

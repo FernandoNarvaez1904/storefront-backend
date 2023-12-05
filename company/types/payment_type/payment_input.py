@@ -1,11 +1,12 @@
 import decimal
 
-from strawberry_django_plus import gql
+import strawberry
+from strawberry_django import  NodeInput
 
 from company.models import Payment
 
 
-@gql.django.input(Payment)
+@strawberry.django.input(Payment)
 class PaymentCreateInput:
-    payment_method: gql.NodeInput
+    payment_method: NodeInput
     amount: decimal.Decimal

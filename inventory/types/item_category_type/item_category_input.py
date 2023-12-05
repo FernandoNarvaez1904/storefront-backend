@@ -1,17 +1,18 @@
 from typing import Optional
 
-from strawberry_django_plus import gql
+import strawberry
 
 from inventory.models import ItemCategory
 
+from strawberry_django import NodeInput
 
-@gql.django.input(ItemCategory)
+@strawberry.django.input(ItemCategory)
 class ItemCategoryCreateInput:
     name: str
-    parent: Optional[gql.NodeInput]
+    parent: Optional[NodeInput]
 
 
-@gql.django.input(ItemCategory)
-class ItemCategoryUpdateInput(gql.NodeInput):
+@strawberry.django.input(ItemCategory)
+class ItemCategoryUpdateInput(NodeInput):
     name: Optional[str]
-    parent: Optional[gql.NodeInput]
+    parent: Optional[NodeInput]

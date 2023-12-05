@@ -2,11 +2,10 @@ from typing import Optional
 
 import strawberry
 from django.contrib.auth import get_user_model
-from strawberry_django_plus import gql
-from strawberry_django_plus.types import ListInput, NodeInput
+from strawberry_django import ListInput, NodeInput
 
 
-@gql.django.input(get_user_model())
+@strawberry.django.input(get_user_model())
 class UserCreateInput:
     username: str = strawberry.UNSET
     first_name: str = strawberry.UNSET
@@ -15,19 +14,19 @@ class UserCreateInput:
     password: str = strawberry.UNSET
 
 
-@gql.django.input(get_user_model())
-class UserUpdateInput(gql.NodeInput):
+@strawberry.django.input(get_user_model())
+class UserUpdateInput(NodeInput):
     username: str = strawberry.UNSET
     first_name: str = strawberry.UNSET
     last_name: str = strawberry.UNSET
     email: str = strawberry.UNSET
 
 
-@gql.django.input(get_user_model())
-class UserUpdatePasswordInput(gql.NodeInput):
+@strawberry.django.input(get_user_model())
+class UserUpdatePasswordInput(NodeInput):
     password: str
 
 
-@gql.django.input(get_user_model())
-class UserAddRolesInput(gql.NodeInput):
+@strawberry.django.input(get_user_model())
+class UserAddRolesInput(NodeInput):
     roles: Optional[ListInput[NodeInput]]

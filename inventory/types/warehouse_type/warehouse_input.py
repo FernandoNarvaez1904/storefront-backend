@@ -1,13 +1,14 @@
-from strawberry_django_plus import gql
+import strawberry
 
 from inventory.models import Warehouse
+from strawberry_django import  NodeInput
 
 
-@gql.django.input(Warehouse)
+@strawberry.django.input(Warehouse)
 class WarehouseCreateInput:
     name: str
 
 
-@gql.django.input(Warehouse)
-class WarehouseUpdateInput(gql.NodeInput):
+@strawberry.django.input(Warehouse)
+class WarehouseUpdateInput(NodeInput):
     name: str

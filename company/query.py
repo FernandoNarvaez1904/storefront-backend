@@ -1,8 +1,8 @@
-from strawberry_django_plus import gql
+import strawberry
 
 from company.queries.payment_method_queries import payment_method_connection
 
 
-@gql.type
+@strawberry.type
 class Query:
     payment_method_connection = payment_method_connection

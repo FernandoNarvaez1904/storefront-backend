@@ -1,7 +1,7 @@
 from django.test import TestCase
 from strawberry import UNSET
 from strawberry_django.filters import FilterLookup
-from strawberry_django_plus import gql
+import strawberry
 
 from storefront_backend.api.types import Filter
 from storefront_backend.api.utils.filter_connection import get_filter_arg_from_lookup, get_filter_arg_from_filter_input
@@ -25,7 +25,7 @@ class TestFilterArgFromLookup(TestCase):
         self.assertDictEqual(expected_result, {"name__startswith": "10"})
 
 
-@gql.input
+@strawberry.input
 class TestFilter(Filter):
     test_str: str
     test_int: int
@@ -33,12 +33,12 @@ class TestFilter(Filter):
     test_lookup_str: FilterLookup[str]
 
 
-@gql.input
+@strawberry.input
 class AnotherFilter(Filter):
     test_str: str
 
 
-@gql.input
+@strawberry.input
 class SomeFilter(Filter):
     another_filter: AnotherFilter
 

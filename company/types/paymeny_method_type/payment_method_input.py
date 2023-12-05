@@ -1,15 +1,16 @@
 from typing import Optional
 
-from strawberry_django_plus import gql
+import strawberry
+from strawberry_django import NodeInput
 
 from company.models import PaymentMethod
 
 
-@gql.django.input(PaymentMethod)
+@strawberry.django.input(PaymentMethod)
 class PaymentMethodCreateInput:
     name: str
 
 
-@gql.django.input(PaymentMethod)
-class PaymentMethodUpdateInput(gql.NodeInput):
+@strawberry.django.input(PaymentMethod)
+class PaymentMethodUpdateInput(NodeInput):
     name: Optional[str]

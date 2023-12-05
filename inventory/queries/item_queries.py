@@ -1,7 +1,7 @@
 from typing import Optional, Iterable
 
 from asgiref.sync import sync_to_async
-from strawberry_django_plus import gql
+import strawberry
 
 from inventory.models import Item
 from inventory.types.item_type.item_filter import ItemFilter
@@ -9,7 +9,7 @@ from inventory.types.item_type.item_type import ItemType
 from storefront_backend.api.utils.filter_connection import get_filter_arg_from_filter_input
 
 
-@gql.relay.connection
+@strawberry.django.connection(strawberry.relay.ListConnection[ItemType])
 async def items_connection(self, filter: Optional[ItemFilter] = None) -> Iterable[ItemType]:
     filter_temp = {}
     if filter:

@@ -1,8 +1,8 @@
-from strawberry_django_plus import gql
+import strawberry
 
 from documents.types.document_interface.document_filter import DocumentFilter
 
 
-@gql.input
+@strawberry.input
 class StockRecountDocumentFilter(DocumentFilter):
     pass

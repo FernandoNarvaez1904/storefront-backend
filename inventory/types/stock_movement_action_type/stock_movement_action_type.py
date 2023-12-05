@@ -4,15 +4,15 @@ from datetime import datetime
 from typing import Annotated
 
 import strawberry
-from strawberry_django_plus import gql
 
 from inventory.models import StockMovementAction
 
 ItemType_Lazy = Annotated["ItemType", strawberry.lazy("..item_type.item_type")]
+from strawberry.relay import Node
 
 
-@gql.django.type(StockMovementAction)
-class StockMovementActionType(gql.Node, ABC):
+@strawberry.django.type(StockMovementAction)
+class StockMovementActionType(Node, ABC):
     item: ItemType_Lazy
     modification_amount: decimal.Decimal
     description: str

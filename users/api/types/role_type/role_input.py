@@ -1,19 +1,18 @@
 from typing import Optional
 
-from strawberry_django_plus import gql
-from strawberry_django_plus.gql import auto
-from strawberry_django_plus.types import ListInput, NodeInput
+import strawberry
+from strawberry_django import ListInput, NodeInput
 
 from users.models import Role
+from strawberry_django import NodeInput
 
-
-@gql.django.input(Role)
+@strawberry.django.input(Role)
 class RoleCreateInput:
     name: str
-    permissions: auto
+    permissions: strawberry.auto
 
 
-@gql.django.input(Role)
-class RoleUpdateInput(gql.NodeInput):
+@strawberry.django.input(Role)
+class RoleUpdateInput(NodeInput):
     name: Optional[str]
     permissions: Optional[ListInput[NodeInput]]

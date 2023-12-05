@@ -1,10 +1,11 @@
 from abc import ABC
 
-from strawberry_django_plus import gql
+import strawberry
+from strawberry.relay import Node
 
 from company.models import PaymentMethod
 
 
-@gql.django.type(PaymentMethod)
-class PaymentMethodType(gql.relay.Node, ABC):
+@strawberry.django.type(PaymentMethod)
+class PaymentMethodType(Node, ABC):
     name: str

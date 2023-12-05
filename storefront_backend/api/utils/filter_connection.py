@@ -3,7 +3,8 @@ from typing import TypeVar, List
 from asgiref.sync import sync_to_async
 from django.db.models import QuerySet, Model
 from strawberry_django.filters import FilterLookup, lookup_name_conversion_map
-from strawberry_django_plus.relay import GlobalID
+from strawberry.relay import GlobalID
+
 
 from storefront_backend.api.types import Filter
 

@@ -1,5 +1,5 @@
 from django.db import models
-from strawberry_django_plus import gql
+import strawberry_django
 
 from documents.models import Document
 from inventory.models import Item
@@ -18,6 +18,6 @@ class StockMovementAction(models.Model):
     item_price = models.DecimalField(decimal_places=2, blank=True, max_digits=12)
     creation_date = models.DateTimeField(blank=True)
 
-    @gql.model_cached_property
+    @strawberry_django.django_resolver
     async def document_type(self):
         return self.parent_document._meta.object_name

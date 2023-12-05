@@ -2,11 +2,11 @@ from abc import ABC
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from strawberry_django_plus import gql
+import strawberry
 
 
-@gql.django.type(get_user_model())
-class UserType(gql.Node, ABC):
+@strawberry.django.type(get_user_model())
+class UserType(strawberry.relay.Node, ABC):
     username: str
     first_name: str
     last_name: str

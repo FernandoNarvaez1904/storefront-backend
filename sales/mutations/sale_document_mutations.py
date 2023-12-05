@@ -3,7 +3,7 @@ from typing import cast, Dict
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
 from strawberry.types import Info
-from strawberry_django_plus import gql
+import strawberry
 
 from company.models import Payment
 from inventory.models import StockMovementAction, Item
@@ -12,7 +12,7 @@ from sales.types.sale_document_type.sale_document_input import SaleDocumentCreat
 from sales.types.sale_document_type.sale_document_type import SaleDocumentType
 
 
-@gql.django.mutation
+@strawberry.django.mutation
 async def sale_document_create(self, info: Info, input: SaleDocumentCreateInput) -> SaleDocumentType:
     # Validate if all stock_movement is greater than 0
     for mov in input.stock_movements:

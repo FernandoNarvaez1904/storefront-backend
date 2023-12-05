@@ -1,12 +1,12 @@
 from strawberry.types import Info
-from strawberry_django_plus import gql
+import strawberry
 
 from inventory.models import StockRecountDocument, StockMovementAction
 from inventory.types.stock_recount_document_type.stock_recount_document_input import StockRecountDocumentCreateInput
 from inventory.types.stock_recount_document_type.stock_recount_document_type import StockRecountDocumentType
 
 
-@gql.django.mutation
+@strawberry.django.mutation
 async def stock_recount_document_create(self, info: Info,
                                         input: StockRecountDocumentCreateInput) -> StockRecountDocumentType:
     # Create a new StockRecountDocument object with the given warehouse ID and description

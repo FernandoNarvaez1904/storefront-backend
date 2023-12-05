@@ -1,11 +1,13 @@
 from abc import ABC
 
-from strawberry_django_plus import gql
+import strawberry
 
 from sales.models import Client
 
+from strawberry.relay import Node
 
-@gql.django.type(Client)
-class ClientType(gql.NodeType, ABC):
+
+@strawberry.django.type(Client)
+class ClientType(Node, ABC):
     first_name: str
     last_name: str

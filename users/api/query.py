@@ -1,13 +1,13 @@
 from strawberry_django import auth
-from strawberry_django_plus import gql
+import strawberry
 
 from users.api.types.role_type.role_type import PermissionType, RoleType
 from users.api.types.user_type.user_type import UserType
 
 
-@gql.type
+@strawberry.type
 class Query:
     me: UserType = auth.current_user()
-    user_connection: gql.Connection[UserType] = gql.django.connection()
-    permission_connection: gql.Connection[PermissionType] = gql.django.connection()
-    role_connection: gql.Connection[RoleType] = gql.django.connection()
+    user_connection: strawberry.relay.ListConnection[UserType] = strawberry.django.connection()
+    permission_connection: strawberry.relay.ListConnection[PermissionType] = strawberry.django.connection()
+    role_connection: strawberry.relay.ListConnection[RoleType] = strawberry.django.connection()
